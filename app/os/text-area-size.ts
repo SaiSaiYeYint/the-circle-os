@@ -14,14 +14,19 @@ export function sizeTextAreaToContent(editor: HTMLTextAreaElement | null) {
   editor.style.minHeight = "0px";
   editor.style.height = "0px";
 
-  const lineHeight = Number.parseFloat(window.getComputedStyle(editor).lineHeight);
+  const style = window.getComputedStyle(editor);
+  const lineHeight = Number.parseFloat(style.lineHeight);
+  // Padded Week rows opt in; existing unpadded editors keep their contract.
+  const padding = editor.hasAttribute("data-os-padded-editor")
+    ? Number.parseFloat(style.paddingTop) + Number.parseFloat(style.paddingBottom)
+    : 0;
   const scrollHeight = editor.scrollHeight;
   const renderedLines = lineHeight
-    ? Math.max(1, Math.round(scrollHeight / lineHeight))
+    ? Math.max(1, Math.round((scrollHeight - padding) / lineHeight))
     : 1;
 
   editor.style.height = lineHeight
-    ? `${renderedLines * lineHeight}px`
+    ? `${renderedLines * lineHeight + padding}px`
     : `${scrollHeight}px`;
   editor.style.minHeight = previousMinHeight;
 }

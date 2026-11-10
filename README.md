@@ -1,120 +1,95 @@
 # The Circle OS
 
-Circle OS helps a person connect the life they live with the life they want.
-Athena's intended role is personal reflection, open questions, feedback, and
-motivation grounded in that person's records and commitments.
+Circle OS helps a person notice the life they live, explore the life they want
+and reflect on chosen actions. Athena's intended feedback and motivation stay
+grounded in the person's records. The person decides how to live.
 
-This project's delivery goal is a web MVP for friends and family. The long-term
-destination is an iOS/Android app with Supabase as its backend. Current priority:
-the invited web beta with accounts, safe sync, and requested paid Athena. Fix
-data-safety failures and blocked journeys before dependent changes; broad
-optimization and broader visual changes follow later.
+Current goal: a mobile-first web beta for friends/family, with accounts, safe
+sync, redesigned onboarding and requested paid Athena. iOS/Android follows web
+learning. See [Product](docs/PRODUCT.md) and [Roadmap](docs/ROADMAP.md).
 
 ## Project documents
 
-- [Product](docs/PRODUCT.md): destination, scope, and current inventory.
-- [Roadmap](docs/ROADMAP.md): phases, dependencies, and completion criteria.
-- [Work plan](docs/WORK_PLAN.md): ordered work, UI priorities, fixes, and open choices.
-- [Decisions](docs/DECISION_LOG.md): confirmed choices and unresolved questions.
-- [Architecture](docs/PRODUCTION_ARCHITECTURE.md): current and target systems.
-- [Development workflow](docs/DEVELOPMENT_WORKFLOW.md): implementation and verification.
-- [Current task](docs/CURRENT_TASK.md) and [handoff](docs/SESSION_HANDOFF.md).
-- [Design](DESIGN.md) and [Page standard](app/os/APP_SESSION_STANDARD.md).
+Read the relevant owner, not every plan or historical handoff.
 
-## Current product
+| Need | Current owner |
+| --- | --- |
+| Working rules/approval | [AGENTS](AGENTS.md) and [Development workflow](docs/DEVELOPMENT_WORKFLOW.md) |
+| Product direction/behavior | [Product](docs/PRODUCT.md) |
+| Release dependencies/gates | [Roadmap](docs/ROADMAP.md) |
+| Ordered next work | [Work plan](docs/WORK_PLAN.md) |
+| Decisions/reasons/open choices | [Decision log](docs/DECISION_LOG.md) |
+| Current job/session | [Current task](docs/CURRENT_TASK.md), [Handoff](docs/SESSION_HANDOFF.md) |
+| Current/target system | [Architecture](docs/PRODUCTION_ARCHITECTURE.md) |
+| Evidence/time/deletion/migration rules | [Record contract](docs/PERSONAL_RECORDS_AND_ATHENA_PLAN.md) |
+| Writing cloud protocol/limits | [Account writing sync](docs/ACCOUNT_WRITING_SYNC.md) |
+| Visual and interaction rules | [Design](DESIGN.md), [Page standard](app/os/APP_SESSION_STANDARD.md), [brand source](app/brand-system.ts) |
+| Admin-first catalog/Explore work | [Content Admin plan](docs/CONTENT_ADMIN_PLAN.md) |
+| Planned replacement onboarding | [Onboarding specification](docs/ONBOARDING_SPEC.md) |
+| Founder audience hypotheses | [Audience and Purpose](docs/AUDIENCE_AND_PURPOSE.md) |
+| Selected Home direction, unresolved mapping | [Personal Imprint](docs/PERSONAL_IMPRINT_HOME.md) |
+| Deferred Reflect proposal | [Reflect proposal](docs/REFLECT_PAGE_POTENTIAL_IMPLEMENTATION.md) |
+| Operating the quote catalog | [Quotes](docs/QUOTES.md) |
+| Bugs and dated verification | [Bugs](bugs.md), [Journey record](docs/USER_JOURNEY_TESTING.md) |
+| Retired plans and prior session evidence | [Archive index](docs/archive/2026-11-11-doc-cleanup/README.md) |
 
-- `/os` — Today: Note, Thoughts, Routine, Protocol, Log, Week, and chapter journeys.
-- `/os/mirror` — Reflect: Vision declarations, Athena's Reading, and Quests.
-- `/` — The Circle website.
-- `/brand` — The Circle brand system.
+Current documents distinguish implemented behavior, approved targets, proposals
+and open choices. Archived plans/history are evidence, not active instructions.
+Git owns code and repository documents; external runtime files remain integrations.
 
-Chapter authoring, profile synchronization, and prepared Athena content already
-exist. Their presence does not certify every user path. Verified outcomes and
-remaining gaps are in [the journey record](docs/USER_JOURNEY_TESTING.md).
+## Current product and data
 
-## Current data behavior
+- /os: Today and full-page Note/Deep Thoughts, Routine/Protocol, Log/Week pairs.
+- /os/mirror: existing Reflect declarations, readings and chapter/Quest paths.
+- /os/home and /os/explore: bottom-nav roots, intentionally empty for now.
+- / and /brand: public Circle site and identity system.
 
-The browser saves records in IndexedDB and a localStorage copy, with migration
-support for older records. Supabase mode uses verified accounts and separate
-local stores. Legacy mode uses `circle-os-state-v2` and can synchronize profile
-and day records through the file-based profile server. Signed-in account mode
-does not use that legacy transport. Development test mode uses isolated synthetic
-accounts and is rejected in production.
+Verified Supabase entry and account-separated local stores exist. The planned
+onboarding will replace current Day One; its new screens/signup are not built
+by a documentation decision.
 
-Consequences:
+Main records use IndexedDB with localStorage copy/migrations. Account writing
+has a separate owner-scoped ledger. Both writing SQL migrations have bounded
+hosted evidence, but automatic product sync remains off. General lifestyle sync,
+personal migration, device recovery and operating backups are not certified.
+Login is not a cloud backup.
 
-- Supabase authentication/local isolation exist; lifestyle database sync does not;
-- hosted sign-in/reset/logout/offline return have developer-reported success,
-  while refresh/revocation, cross-device behavior, and wider device checks remain open;
-- local records must remain safe while the server is unavailable;
-- clearing unsynced browser data can lose records; login is not a cloud backup;
-- privacy, recovery, and cross-user access need explicit verification before
-  treating the prototype as a private multi-user service.
+Legacy mode can use the file-based profile server and prepared Athena content;
+account mode rejects that legacy transport. Development test mode isolates
+synthetic accounts and is rejected in production. Live requested paid Athena
+and membership enforcement remain planned. Details: [Architecture](docs/PRODUCTION_ARCHITECTURE.md).
 
-See [Production architecture](docs/PRODUCTION_ARCHITECTURE.md) for the current
-runtime and the requirements for durable accounts and sync.
+## Local development and checks
 
-## Local development
+Node.js >=22.13.0 and npm are required.
 
-Requirements:
-
-- Node.js `>=22.13.0`
-- npm
-
-```bash
+~~~bash
 npm install
 npm run dev
-```
+~~~
 
-## Verification
+Use focused checks under the [workflow](docs/DEVELOPMENT_WORKFLOW.md#choosing-checks).
+Common entry points:
 
-```bash
+~~~bash
 npm test
 npm run lint
 npm run build:vercel
-```
+~~~
 
-- `npm test` verifies the existing Vinext/Cloudflare-compatible build and
-  rendered routes.
-- `npm run build:vercel` verifies the native Next.js production build used by
-  Vercel.
+npm test runs the Vinext build before the model test suite.
+npm run build:vercel checks the separate Next production target.
+Documentation-only edits need statement/reference/link review and whitespace
+checks; they do not establish fresh runtime acceptance.
 
-## Deployment targets
+## Deployment and Admin
 
-- Sites/Vinext uses `npm run build`.
-- Vercel uses `npm run build:vercel` through `vercel.json`.
+Sites/Vinext uses npm run build; Vercel uses npm run build:vercel via vercel.json.
+Deploy only on the developer's explicit request.
 
-## Admin editor access
-
-The hidden Admin editor requires a private server-side password. To use the
-editor locally, create an ignored `.env.local` file in the repository root and
-add:
-
-```text
-CIRCLE_OS_ADMIN_CODE=replace-with-a-unique-random-password
-```
-
-Replace the example with a unique password of at least 16 characters. The app
-will keep Admin locked if this setting is missing or shorter than 16
-characters. Do not use a `NEXT_PUBLIC_` prefix, put the password in application
-code, or commit the `.env.local` file.
-
-For Vercel, add `CIRCLE_OS_ADMIN_CODE` as a server-side environment variable in
-the project settings for the environments where you want Admin enabled, then
-redeploy. The password is only used for the Admin editor; app users do not need
-it. Lifestyle evidence may sync to the separate profile server described above.
-
-## Roadmap
-
-1. Review record/history interactions and contracts; reproduce critical defects.
-2. Build and verify local writing and essential histories; polish sign-in early.
-3. Implement safe Supabase evidence sync and separately reviewed migration/recovery.
-4. Add optional confirmed Day One action setup after history and safe sync.
-5. Implement membership controls and requested paid Athena with sourced corrections.
-6. Verify real-phone, installation, privacy, recovery, and release journeys.
-7. Release only with developer authorization, then use beta evidence for later work.
-
-Streaks and/or a leaderboard are planned possibilities with undecided scoring
-and release timing. The [roadmap](docs/ROADMAP.md) records their decision gates,
-the invited beta route, and the exit criteria for each phase. The
-[work plan](docs/WORK_PLAN.md) links the detailed plans without replacing them.
+The hidden Admin requires a private server-side CIRCLE_OS_ADMIN_CODE of at
+least 16 characters. Put a unique value in ignored .env.local for local use,
+or the hosting environment for that target. Missing/short configuration stays
+locked. Never prefix it NEXT_PUBLIC_, put it in client code, or commit it.
+The reserved entry phrase opens the password prompt; it is not authentication.
+See the [Admin contract](app/os/APP_SESSION_STANDARD.md#admin-previews-and-access).

@@ -1,0 +1,586 @@
+> Historical snapshot preserved on 2026-11-11 before the approved documentation cleanup.
+> This records earlier decisions, proposals and verification; it is not current instruction.
+> Start with the [active document map](../../../README.md#project-documents) and
+> [archive index](README.md) for the current replacement.
+
+# Circle OS product
+
+## Week compact rhythm and folded records - 2026-11-10
+
+Week keeps the approved all-goals/day-filtered-task behavior, with a clear cross on each goal/task row using Routine’s archive actions. The Orange disclosure arrow follows the goal wording rather than sitting beside the completion circle. Task completion saves immediately; in normal motion the checkbox completes its 300ms response before Routine’s 300ms text fade, then the row leaves. Reduced motion remains direct. Day’s Record starts folded and groups each main activity with its hour and smaller activities below. History starts folded by event day, then by goal with that day’s tasks. Saved calendar weeks/reviews remain reachable in a separate folded group. Existing retention, local-first and review/Protocol rules remain.
+
+## Day-filtered Week refinement - 2026-11-10
+
+All open weekly goals remain visible on every day. Goals start folded; an Orange downward arrowhead beside the title opens only the tasks assigned to the selected tab. Choose a day before adding a task, or keep a goal open while choosing the day. New tasks are limited to today/future days; past days remain readable. Task dates are not selected inside rows. Clearing or completing shared tasks removes them from both live surfaces and makes them reachable in History. Clearing an authored goal archives its linked unfinished tasks and preserves their words. Completed/removed goals and tasks appear in History with compact Circle-day labels such as Write a note  Tue 10. The Day’s record section omits its day, date and title editor; Log retains the underlying day title.
+
+## Week goals and lived records - 2026-11-10
+
+The developer approved the Week preview and interaction model, with the tappable
+Log swipe cue at the bottom left. Week shows the planning week's date range,
+goals with their dated steps across the week, and the selected day's Log record.
+Choosing a day highlights its steps and changes the record without filtering
+away the wider plan. Goal groups fold; words remain editable inline. Add step
+belongs to its goal and defaults to the selected day within that goal's week.
+
+Steps remain the same Routine tasks. Their date can move within the parent
+week, without duplicating tasks or changing actual completion dates. Goal
+completion remains manual; completed goals stay reachable for reading and
+reopening with unfinished steps preserved. Log preview counts include all
+saved entries while showing at most the established six. Day naming, past-day
+Log reading/corrections, read-only Week History and the chosen Sunday review
+remain available. The previous Sunday stays reachable to read/review the week
+just ended, clearly marked Previous week. Review/next-week/Protocol outcomes,
+cloud sync and AI behavior are unchanged; separating review and planning needs
+its own proposal. See [verification](../../USER_JOURNEY_TESTING.md#week-goals-and-lived-records---2026-11-10).
+
+## Log fixes and Week goal hierarchy - 2026-11-10
+
+Log and Week use Geist at 28px headings, 18px primary/body, 16px secondary/controls and 12px metadata, with only 400/700. Main activities and goals are bold 18px; moments and steps normal 18px; hours normal 16px except bold Orange current hour. History is regular 16px, explicitly superseding the earlier bold Header rule for these two Pages. Reading/editing/placeholders share role metrics.
+
+An empty-hour plus opens its main activity; once a main activity exists, plus adds a smaller moment. Saved main activity stays in the hour's first grid row, with moments below. Week starts with day/date/tabs; This week's goals follows. Each goal appears once with its completion control and selected-day steps below. Spacing replaces dividers; Add Step/Add Goal precede The day and the Log return cue. Linked Tasks, existing completion/Undo, dates and read-only History retain their domain behavior.
+
+## Log and Week controls approved - 2026-11-10
+
+Log uses bold Orange current-hour text, one top-right History action and no Now shortcut. Empty-hour prompts read Add activity only at the current hour; saved/suggested activities stay readable and all hours remain editable. Visible plus/save marks meet the 24px right anchor while retaining 44px targets.
+
+Week has top-right History, a bottom-left Log return cue, borderless day planning and aligned step rows. Add Step appears only with an existing goal; Add Goal sits after day planning/day tabs and before The day. Both use the shared glass action dimensions. The day count says N written. Existing completion/Undo, linked tasks, dates, History and Sunday review remain.
+
+This approved refinement supersedes the earlier History/Now header and Week
+header/step-placement rules. No record model or persistence change.
+
+## Quiet Log controls and Week checkbox trial - 2026-11-10
+
+Log uses spacing between hours, Orange wording for the current hour, shared
+glass Add hour actions and plain Orange inline save ticks. Existing recording,
+range expansion and dates remain. Week's goal/step checkboxes retain their
+colors and Bone tick with a glass reflection and reversible completion response;
+the existing goal/linked-task actions and restored completion state remain.
+
+## Full-page Log - 2026-11-10
+
+Today offers a Log button opening the daily timeline in the full-page tool
+frame. History opens saved days; Now keeps its top-right position and opens
+the current hour's activity editor. The editable day title, activities, small
+moments, saved-day browsing and deliberate text corrections keep their current
+recording rules. Long timelines grow naturally. Week remains the paired Page,
+reachable by swipe or its footer cue. Its redesign is a later slice. Today in
+the bottom navigation exits the opened Log. The Note return cue on Deep
+Thoughts is left aligned. No recording, sync or AI behavior changes.
+
+## Deep Thoughts and the writing pair - 2026-11-10
+
+Today offers Note and Deep Thoughts as a pair of full-page tools, above Routine
+and Protocol. A tappable swipe cue below Note's New Note action opens Deep
+Thoughts; the reverse cue below Deep Thoughts' action returns to Note. Ordinary
+swipes use the same Page travel. Note keeps Back/History; Deep Thoughts has
+Quote/History. Quote returns to the same question and answer without sending it.
+Send retains the saved answer, Save changes corrects it, and only Next question
+advances the question. Draft recovery, History/Trash/Restore and existing saved
+records remain. This adopts the current glass family and natural page growth;
+the writing storage, prepared-question selection and Spark pause are unchanged.
+
+## Automatic writing Sparks paused - 2026-11-10
+
+The developer asked to temporarily stop the prewritten Spark chapters that
+replace the Note editor, including the animal/day and head/noise questions.
+Automatic Spark delivery to Note/Thoughts is paused. Published content, saved
+answers and unfinished runs remain intact. Note keeps normal free writing and
+Deep Thoughts keeps its separate question flow. No chapter versions are edited.
+
+## Bottom navigation - 2026-11-10
+
+Home, Today, Reflect and Explore share a persistent bottom navigation bar,
+including opened daily tools. Home and Explore are intentionally empty for now;
+the developer explicitly requested no placeholder content. Current /os entry
+remains Today; Reflect keeps /os/mirror. This does not move existing catalogue
+content, change onboarding, introduce evidence or change persistence rules.
+
+## Full-page tools, starting with Note - 2026-11-10
+
+The developer approved Note as a full-page tool like Routine/Protocol. Today
+shows its Note button without an inline writing Page. Note, History and Trash
+use the opened full-page frame and natural page scrolling, replacing their earlier
+compact cap/inner scrolling contract below. Back returns to Today; Header History,
+Footer New Note retains creation. Line access is temporarily hidden while the
+developer decides how jokes/facts should work; the content is retained.
+Autosave, recovery, dated records and local-first ownership are unchanged.
+Every tool is intended to have its own full-page experience; remaining tools
+adopt that direction in reviewed slices. Today redesign remains later work.
+
+## Record shows the person's words - 2026-11-09
+
+Habit records show saved name, time/location and result separately, omitting
+empty fields. Name/result are emphasized; time/location is secondary. Record
+does not add “To become” or “I will” around those fields. Today's display and
+past records use saved completion wording. Text-only older records retain their
+original wording without inventing fields. Today's Undo and read-only past
+records remain; evidence and stored compatibility sentences are unchanged.
+
+## Routine row clearing - 2026-11-09
+
+Each Habit and Task has a small Orange x on the left. One click clears that
+row from Routine by archiving it, including unfinished Habit drafts. Past
+completion evidence stays. Clearing a just-completed Task dismisses its row
+while keeping its Record entry. Habit result remains the existing identity
+field, emphasized with the Habit name; time/location is secondary.
+
+## Routine Record - 2026-11-09
+
+The developer approved combining Routine's Record and History into one Record
+page. Today appears first with Undo; earlier dates follow newest first and
+remain read only. Back returns to Routine. This changes navigation only:
+past wording/snapshots and attributed days remain unchanged.
+
+Updated: 2026-11-03. This document records the developer's product direction.
+Use [the decision log](DECISION_LOG.md) to distinguish confirmed decisions from
+preferences and unresolved choices.
+
+2026-11-06 label clarification: Saved copies calls its latest saved entry This
+note. It belongs to the owning History row. New Note creates a separate entry
+and does not replace that note's latest text or retained snapshots.
+
+2026-11-06 Saved copies refinement: show the latest saved Note above its retained
+Cloud/Device copies; current-note history follows later saves while older copies
+stay unchanged. New notes continue to appear in normal History. Note, History
+and Trash hide scrollbar chrome while preserving scrolling and the visible Footer.
+
+2026-11-06 Sync visibility: the History action is labelled Sync and appears only
+for pending saved work, unresolved copies or recoverable errors. Drafts and
+completed syncs alone do not show it. Try again is error-only and hides while
+retrying or after recovery. Saved copies on the owning Note History row keeps
+retained histories accessible independently; normal Note opening still edits.
+
+2026-11-06 conflict presentation refinement: comparison shows Cloud and Device
+with authored content; tap a copy for dated read-only history. Stack Note-style
+Use Cloud and Use Device buttons. Confirmed choice returns silently to the list.
+No persistent success message, inline history expander or explanatory comparison
+copy. Hide scrollbar chrome while preserving scrolling and relevant error/retry
+states. Saved histories and normal Note History editing remain intact.
+
+2026-11-06 writing-sync decision: History has a separate Writing sync view;
+Note keeps silent autosave and the global header stays free of save/sync labels.
+Show where saved writing stands and let the person compare This device with
+Cloud copy. Choosing a current copy preserves both saved histories and creates
+a new current revision; it does not merge prose or choose by device time. If
+either copy changes, ask the person to review again. Drafts stay on the device;
+permanent deletion remains final. Repository UI/resolution support is locally
+verified; its follow-up SQL migration and activation still need separate hosted
+review. See [the current contract](ACCOUNT_WRITING_SYNC.md#writing-status-and-conflict-resolution---2026-11-06).
+
+2026-11-06 entry decision: after any completed Day One, enter directly into the
+app. Week setup, Log setup, Week review and the daily greeting do not open
+automatically. Existing manual chapter/review controls and saved progress remain.
+An unfinished Day One can still appear on entry. This supersedes older automatic
+greeting, next-day Week setup and Sunday-review entry requirements.
+
+2026-11-05 implementation update: account-writing SQL/access policies,
+authenticated transport, initial saved-writing inventory and conflict/deletion
+safety are implemented and locally verified. Activation defaults to off; no
+hosted migration or environment change has occurred. Existing local-save UI
+makes no cloud-success claim. Hosted/device recovery, conflict/status UI,
+other-domain sync and backup/deletion gates remain open. See
+[the account-writing contract](ACCOUNT_WRITING_SYNC.md).
+
+## Purpose and destination
+
+Approved spacing refinement (2026-11-03): Pages use a 48px shared label gap and
+25px Main-to-Sub and Body-to-Footer gaps. This supersedes earlier spacing values;
+App Boxes retain their shared minimum and grow downward. Note/Deep Thoughts
+Trash detail omits “In Trash” and its divider, with 4px between Restore and Delete
+forever and unchanged touch targets and deletion confirmation.
+
+Editable reading typography (2026-11-03): the developer approved a 29px main /
+18px body scale only where people read and write. It applies to Note/Deep
+Thoughts and opened history/trash entries, Athena's reply editor, Vision
+declarations, Week goals/steps, and Chapter short/long text questions with their
+matching Workshop preview. Lists retain compact row sizes. Other reading-only
+Pages retain their type, weights and navigation; use the approved spacing above.
+
+Latest approved writing flow (2026-11-03): Today has Note for free writing and
+Deep Thoughts for a question and answer. Ordinary Thoughts is retired from new
+writing; earlier entries and recovery text remain reachable in history without
+conversion. Note remains first and opens a Line from its label. Deep Thoughts
+opens a managed quote from its label, keeping its question and answer in place
+when returning. Send keeps the saved answer visible with Next question.
+
+Deep Thoughts shares Note's direct HISTORY, dated groups/times, saved-row trash
+buttons, silent removal, Trash/Restore/confirmed Delete forever and bounded
+scrolling. It keeps explicit Send/Save changes and silent draft recovery. Routine
+saving/sent and recovered/discarded messages and the Discard draft control are
+absent; clearing the answer clears its recovery text. Actual save errors remain.
+Question and
+source links remain intact. Quotes are managed in the existing Admin using a
+shared Supabase catalog and cached locally for offline reading. No AI runs on
+writing or quote visits. See [the latest contract](PERSONAL_RECORDS_AND_ATHENA_PLAN.md#1412-note-deep-thoughts-and-quotes---2026-11-03).
+
+The earlier account Note refinement remains in effect below; references to
+Thoughts' separate History controls are superseded by the flow above.
+Local account writing is connected as of 2026-11-02, with the Note-only
+autosave refinement approved on 2026-11-03. Notes autosave with internal
+recovery; Thoughts and reading answers keep Send and their draft workflow.
+Note uses direct History navigation and row trash-bin buttons, with restoration
+in Trash. It has no Versions UI, Undo, save-status messages or focused input box.
+Internal revisions remain for safe saving; other writing keeps its existing
+controls. New Note lives in the Note editor Footer and saves current text before
+opening a blank Note. Account Note, History and Trash grow from the shared minimum
+to a 480px App Box ceiling (60% of a short viewport, never below that minimum).
+Their content then scrolls with header/actions in place. Trashing a Note shows
+no Moved to Trash message. Other Apps keep their existing growth rules.
+Histories and Trash use the existing App Box. Saves accept writing on
+this device; they do not claim cloud sync or call Athena. Older writing remains
+read only until separately reviewed migration. This bounded implementation
+does not complete the wider beta history/sync requirements. See
+[the current Note contract](PERSONAL_RECORDS_AND_ATHENA_PLAN.md#1411-bounded-note-pages---2026-11-03).
+
+Circle OS helps a person reflect on the life they live, the life they want,
+and how their commitments connect the two. Athena is the AI that learns from
+that person's records and offers reflections, open questions, feedback, and
+motivation. The person remains in charge of their goals and choices.
+
+The long-term product is an iOS and Android app backed by Supabase. This
+repository's delivery goal is a mobile-friendly web MVP that friends and
+family can test before the mobile app is built.
+
+The immediate delivery priority is the approved
+[web beta launch plan](WEB_BETA_LAUNCH_PLAN.md): 10-20 invited users mainly in
+Myanmar and Thailand, with Home Screen installation, accounts, safe sync,
+and paid Athena. This supersedes the earlier core-first release order.
+Critical data-safety and blocked-journey fixes remain launch requirements.
+The bounded Day One action setup is now planned before beta, after the
+personal-record/history and safe-sync work. Broader optimization and other
+chapter simplification remain paused. Supabase lifestyle sync and expanded
+Athena access remain planned work, not implemented by these decisions.
+
+The invited users are Burmese people, including people with only basic English.
+For web launch, the app UI and Athena's responses use simple English. People
+can write in Burmese (Myanmar language), English or a mixture; Athena must
+understand that writing and respond in English. After the web app launches,
+the UI and Athena will support both Burmese and English. Location in Thailand
+does not add Thai language support to this scope. Live Athena understanding and
+response quality still require provider integration and verification.
+
+## The experience
+
+1. Name something that matters and a direction worth trying.
+2. Make a manageable commitment and decide how to approach it.
+3. Live, record moments, write thoughts, and complete or correct commitments.
+4. Read reflections grounded in those records and answer open questions.
+5. Decide what to keep, change, or explore next.
+
+Today receives input through Note, Thoughts, Routine, Protocol, Log, and Week.
+Reflect holds the wanted life, readings of actual life, and the space between.
+Chapters teach or ask one thing at a time. Quests group chapters into a path.
+
+Tasks and completion records are evidence for reflection. They do not by
+themselves measure the value of a life. Athena must distinguish what the person
+said, what was recorded, and what she infers.
+
+### Day One and a chosen beginning
+
+The developer confirmed the [Day One action plan](DAY_ONE_ACTION_PLAN.md) on
+2026-11-02 and approved documentation only. Keep the short introduction about
+what matters now, wanted change and one optional small action. Offer Try once,
+Make a habit, or Keep for later; create at most one task or one habit only after
+explicit confirmation. Try once defaults to the current Circle day with another
+day available; the Habit branch asks for a cue. Reuse existing setup and Today
+tools rather than requiring another chapter or a full life plan.
+
+Day One finishes after confirmation or explicit skip using the shared terminal
+interaction. Leaving midway saves resumable progress. Saved answers remain
+dated source records, not automatic goals, Protocol terms, identity, Vision,
+Mission or Character declarations. Completion makes no Athena request.
+Existing completions, commitments and access remain; new setup is optional for
+completed users, while unfinished older runs retain their versions and behavior.
+Protocol/Week access gates stay unchanged. Week setup is chosen manually under
+the 2026-11-06 entry decision; it no longer interrupts next-day entry.
+
+Implement this addition after personal-record/history and safe-sync work and
+before beta readiness. V3 remains unchanged until a new immutable version is
+reviewed, implemented and verified. Exact copy, controls and contracts still
+require an implementation proposal.
+
+### Personal records and history
+
+The developer confirmed the [personal records and Athena
+plan](PERSONAL_RECORDS_AND_ATHENA_PLAN.md) on 2026-11-02 and approved recording
+it. These are target requirements, not claims of implemented history or sync.
+
+- Notes are multiple titled, revisitable entries grouped by Circle day.
+  Notes autosave after a short typing pause and when leaving, with automatic
+  local recovery and no Save, Clear, Discard or Drafts UI. Editing all text away
+  saves an empty version of an existing Note; an untouched empty composer saves
+  nothing. Note exposes current writing and History, with an orange trash-bin
+  button per local row and restoration from the Trash page. Note has no Versions
+  UI, Undo or routine saving/saved messages. Internal revision records remain for
+  save/conflict safety. Focused writing is borderless with the caret visible;
+  NOTE/HISTORY share the header baseline. Deep Thoughts begins with a question
+  and keeps Send, Save changes and recoverable drafts. Ordinary Thoughts remains
+  a historical record kind; new free writing belongs in Note.
+  Recovery buffers stay outside saved evidence until committed. This Note-only
+  refinement was explicitly approved on 2026-11-03.
+- Each App has history. The shared day view is deferred under the developer's
+  2026-11-05 scope update. Past writing can be corrected; completed Week reviews
+  stay read only and Week-review corrections are removed from current scope.
+  Past Habit completion corrections are also deferred. These three items no
+  longer block the next safe-sync slice. Note removes
+  user-facing version review while retaining internal saved revisions; other
+  domains keep their existing or planned version review.
+- Habit and active Protocol changes apply going forward. Earlier records keep
+  the applicable wording/terms. Deliberate past-day writing, Log and habit
+  corrections retain the attributed day and actual entry/correction time.
+- The Circle day starts at 06:00. Old records keep their assigned day/timezone;
+  new records use the current local timezone. Deliberate corrections are allowed.
+- Deleted Notes/Thoughts enter recoverable Trash, excluded from Athena. They
+  stay until restored or permanently deleted; there is no automatic expiry.
+  Permanent-deletion coverage still needs review. This is separate from the
+  maximum 30-day deleted-backup rule and manual account deletion.
+- Moving an answered Deep Thought to Trash or deleting it forever keeps its
+  question marked answered and does not restart first-use greetings. Keep minimal
+  question/app-use metadata, without the deleted answer, versions or drafts.
+  Trash/deletion keeps the writing outside Athena's evidence. Wider deletion
+  coverage remains separately reviewed.
+- Tags are optional. Athena can suggest correctable topics/feelings when used.
+  Show sourced observations with Wrong, Has changed and Forget controls. Exact
+  control semantics and interaction need review; originals and inferences stay
+  separate.
+- Writing, reading, history, corrections, core tools and sync are available to
+  free and paid users. Paid access gates new requested AI generation; previously
+  received readings remain readable after expiry.
+- AI interpretation and relevant memory updates run when a paid user requests
+  Athena, not on every save or through background profiling. Saved lifestyle
+  evidence may inform Athena, with draft/Trash and login/payment exclusions.
+
+Essential history/corrections across existing tools within the scope above, safe sync and basic Athena
+memory controls are beta requirements. Advanced search/filtering follows later.
+Exact UI/visual design, schemas, migration and implementation slices need review.
+This supersedes the single ongoing Note assumption in the earlier storage plan.
+
+### Wanted-life records
+
+- **Vision** names the life worth wanting.
+- **Character** names who the person is becoming across mind, body, spirit, and
+  social life. It is the authoritative top of Athena's chain of why.
+- **Mission statement** says how the person intends to live.
+- **Typical Tuesday** makes that wanted life concrete as an ordinary day.
+- **Six-month picture** is a nearer milestone between today and the larger
+  Vision.
+- **Routine identity** is a short, editable focus for daily life. It may stand
+  in when no Character exists, but it does not overwrite Character.
+- A **habit identity** belongs to one habit and says who that action helps the
+  person become. It is not the person's whole Character.
+- **Dreamline** remains a separate finite, practical record with costs and
+  immediate steps.
+
+Declarations are dated and versioned. The newest unsuperseded Character is
+authoritative; Routine identity and then Mission statement are clearly labelled
+fallbacks for older or incomplete profiles.
+
+## Athena
+
+Confirmed responsibilities:
+
+- Reflect on a person's own records, including task and habit completion.
+- Ask open questions that help the person think and respond.
+- Explore what the person wants and how they intend to approach it.
+- Offer personal feedback and motivation without inventing evidence.
+
+Current code consumes prepared readings and chapters and performs local
+calculations. A future server-side service will provide authorized access to
+Supabase evidence for AI preparation or interaction. Provider, conversation
+details, memory retention, and operating cost still need implementation review.
+The beta reading flow below settles how a person starts a new reading.
+
+The current launch plan includes personalized Athena in the invited web beta.
+Athena replies only when asked. Saving a reflection or answering her question
+saves dated personal evidence without triggering a reply. Requesting a reply
+is separate and subject to the Athena allowance; saving reflections stays free.
+This rule is confirmed for implementation, not built behavior.
+
+The person requests a reading, and that requested reading appears automatically
+when ready without a second request to reveal it. This does not authorize
+automatic preparation of unrequested readings. This flow is confirmed for
+implementation, not built behavior.
+
+Athena readings live in Reflect; this beta location is confirmed. Each reading
+includes one optional reflection question. The person may leave it unanswered;
+answering saves a reflection without triggering a reply. Readings are short,
+straight to the point, calm, and advisory. Exact tone and language guidance will
+be configured later in a skill or similar instruction file. Follow-up questions
+have no fixed count limit beyond usage allowance; requested replies may use all
+evidence available to Athena for that person, including their whole history.
+Exact controls, language instructions/quality checks, allowance amounts, and
+counting rules remain open within the confirmed language scope above.
+Provider/model selection is deferred until integration. Actual
+processing terms and spending controls must be reviewed before real evidence
+is sent to an AI provider.
+Existing prepared readings, history, and chapter evidence remain preserved.
+
+## Membership
+
+The planned free tier includes core writing/reading, reviewable history,
+corrections, existing tools, personal records, and sync. Paid
+membership enables new personalized Athena generation in the browser and Home
+Screen app alike. The developer manually confirms payment and grants access
+for 30, 90, 180, or 365 days, with automatic expiry. No
+automatic payment collection is in the beta scope. Admin grants, revocation,
+audit history, configurable usage limits, and spending controls need server
+enforcement. Previously received readings remain readable after paid access
+expires; expiry stops new Athena generation. Core tools, personal records, and
+sync remain available. Exact allowances remain a launch-contract decision.
+Reading access after expiry is separate from deletion and backup rules below.
+
+Renewals add time from the current expiry while membership is active, or from
+the grant time after expiry. This starting point is confirmed for implementation
+and preserves unused paid time. The four standard durations use explicit day
+counts rather than calendar months or years; 365 days is not twelve 30-day
+periods. Month-end adjustments do not apply. Access expires at the same time
+of day after the selected duration, measured from the agreed renewal starting
+point, and expiry is displayed in the person's local timezone. Timestamp storage
+and date-calculation details require implementation review; membership is not
+yet built.
+
+Daily usage resets in Myanmar time (`Asia/Yangon`). Unused daily allowance
+carries within the person's membership cycle, then disappears at its monthly
+reset. Monthly allowance does not carry over. Failed requests consume no user
+allowance. Exact amounts/counting, reset hour, monthly-cycle calculation for
+longer grants, renewal effects, and retry/no-change accounting remain open.
+Total spending budget, prices, and payment details are deferred.
+
+## Privacy and identity
+
+2026-11-06 account controls: the header's three-dot button opens Edit alias and
+Sign out in a menu that fits its labels with equal side padding. Keep the alias
+in the greeting rather than
+on the button. Remove the separate account bar and header save/sync status. The Today
+greeting uses the signed-in account's alias, including after an edit or offline
+return. Keep the alias in authentication metadata, separate from profile/name
+evidence. Legacy mode retains its existing name source. Alias edits require a
+connection; a failed edit keeps the currently saved alias.
+
+The developer wants people to use Circle OS without disclosing a real-world
+identity to other users. Email/password login with a separate display alias is
+now confirmed, superseding the earlier username-only preference.
+
+New users must verify their email before using their account. The optional
+Supabase-mode gate is implemented and locally tested; hosted public settings
+also confirmed email confirmation is required. Complete hosted/device coverage
+remains open in the [journey record](../../USER_JOURNEY_TESTING.md).
+
+Password recovery uses a reset link sent to the account's verified email
+address. Manual recovery will also be offered when the person loses access
+to that email. Browser reset-link handling exists, and the developer reported
+successful hosted reset. That report does not certify every recovery/device
+path. Lost-email ownership proof and the manual process remain open.
+
+Login should last until logout, and local records may remain stored. They must
+remain account-separated and inaccessible to another account or a signed-out
+person. Session renewal, revocation, and lost-device handling require design
+and verification. For conflicting device edits, the person chooses. The Circle
+day still starts at 06:00 and its timezone follows the person; exact handling
+of travel and dated records requires implementation review.
+
+Design for pseudonymous use and private personal records. Do not promise
+complete anonymity: free writing can identify someone, and a service or AI
+provider may process personal information even if signup collects no email.
+
+The proposed architecture separates private evidence, authentication details,
+and any intentionally public identity or score. It includes per-user access
+rules, scoped Athena access, a data-use explanation, recovery, and manual
+account/data deletion by admin on request. Users cannot download or export
+their data during beta. Operational backups and restore still need verification.
+Deleted data may remain in backups for at most 30 days. Deletion turnaround and
+coverage of retained devices, logs, and provider copies remain to be designed.
+These are requirements to implement and verify, not security
+claims about the current prototype. See [architecture](PRODUCTION_ARCHITECTURE.md).
+
+Singapore is the chosen database region for the invited beta. Connection checks
+from Myanmar and Thailand are required before launch. A hosted project has been
+created and connected, but this review did not inspect its region or certify
+regional connections. The chosen region does not settle AI processing location
+or other infrastructure transfers.
+
+Requesting an Athena reading requires no separate AI opt-in prompt. The person
+requests the reading directly. This beta interaction is confirmed for
+implementation. The developer will explain data use manually on the website
+or social pages and tell users not to enter sensitive information. Exact
+wording/publication remain pending. The developer accepts processing Athena
+needs without additional provider privacy restrictions at this planning stage;
+actual retention, training use, and processing locations must be documented
+when a provider is selected. No processing capabilities are assumed verified.
+
+For requested readings, Athena may use relevant notes, reflections, goals,
+habits, and activity records belonging to that person. Login and payment details
+stay out of the AI context. Relevant evidence may come from the person's whole
+history, for readings and requested replies. These boundaries are confirmed for
+implementation; selection and exclusion checks are not yet built or verified.
+
+Admin has always-available read-only access to personal writing, without a
+separate support-case approval. Admin-only error logs may contain personal
+writing; retention and read-access audit details remain open. This read-only
+access does not remove the separate manual account-deletion power. The developer
+will monitor the beta; feedback and recovery/rollback procedures remain open.
+
+## Commitments, streaks, points, and leaderboards
+
+The developer intends to explore streaks, a leaderboard, or both, with points
+for commitment and improvement. The formula, visibility, timing, fairness,
+abuse handling, and inclusion in the web MVP remain undecided.
+
+Proposals for later review:
+
+- Begin by evaluating private personal progress before social comparison.
+- Make participation in any shared leaderboard an explicit choice.
+- Publish only approved score summaries and aliases, never private evidence.
+- Define how edits, missed days, rest, differing goals, and self-reporting work.
+- Avoid using an AI opinion of someone's life as a public ranking.
+
+Do not implement these proposals as settled rules during stabilization.
+
+## Current inventory
+
+Current source inventory, reviewed on 2026-11-02:
+
+| Area | Existing implementation |
+| --- | --- |
+| Daily input | Note, Deep Thoughts, Log and moments; historical Thoughts remain readable/correctable |
+| Commitments | Habits, tasks, Protocol terms and phases, daily and weekly goals |
+| Reflection | Vision declarations and history, Athena readings and replies |
+| Learning | Chapter player, authoring, publishing, delivery, and Quests |
+| Evidence | Browser state, migrations, outbox, revisions, profile sync |
+| Personal memory | Source references, observations, confidence, corrections, editions |
+| Installation | Web manifest and service worker |
+| Accounts | Supabase entry, account-separated local stores, development-only test mode |
+| Hidden work | Dreamline and The Four behind disabled flags |
+
+The main chapter bundle contains 27 IDs across 36 versions; the spark bundle
+adds 20 IDs/versions, for 47 IDs across 56 versions combined, plus three Quests.
+These are source counts, not verification of chapter behavior or external sources.
+[The journey record](../../USER_JOURNEY_TESTING.md) holds actual verification evidence.
+
+The prototype uses browser storage. Legacy mode connects to the file-based
+profile server; Supabase accounts use separate local stores and reject that
+transport. Account-writing SQL/access/transport exists behind an off-by-default
+activation flag with local evidence; hosted sync and other lifestyle domains,
+membership, live Athena and native mobile apps remain planned/unverified work.
+
+## Boundaries
+
+- Preserve the Circle identity and shared App Box/Page system while stabilizing.
+- Keep records safe locally while a server is unavailable.
+- Preserve chapter and reading history; migrate existing records deliberately.
+- Keep real tester data out of development logs and synthetic test fixtures.
+- Native framework choice follows web MVP learning; none is selected here.
+- Oscar, the 3D Room, courses, and Circle membership integration appeared in
+  older plans. They are unconfirmed future ideas, not current release gates.
+
+## Authorities
+
+- [Roadmap](ROADMAP.md): sequence, dependencies, and completion criteria.
+- [Architecture](PRODUCTION_ARCHITECTURE.md): current and target systems.
+- [Development workflow](../../DEVELOPMENT_WORKFLOW.md): required implementation cycle.
+- [Design](DESIGN.md) and [Page standard](APP_SESSION_STANDARD.md).
+- [Current task](CURRENT_TASK.md), [handoff](SESSION_HANDOFF.md), and
+  [bugs](bugs.md): active work and evidence.
+
+Unavailable external notes are not required authorities. Preserve historical
+references and existing runtime integrations until their migration is planned.

@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { InfoPage } from "./app-session";
 import { useAppBack } from "./app-back";
 import { CreativeButton } from "./button-engine";
+import { RoutineHeaderButton } from "./routine-controls";
 import { useWritingSync } from "./writing-sync-provider";
 import { writingSyncLabel } from "./writing-conflict-model.js";
 import { canonicalWriting, type WritingCloudBundle, type WritingSnapshot } from "./writing-cloud-model.js";
@@ -60,11 +61,11 @@ export function WritingSyncPage({ onBack, notes, className = "", initialEntryId 
       })}{!entries.length && bundle ? <p>No saved writing yet.</p> : null}</div>;
     if (sync?.error && !sync.running) footer = action("Try again", () => sync.retry(), !sync.online);
   }
-  return <InfoPage className={`os-writing-page os-writing-bounded os-writing-sync ${className} ${navigation.className}`} header={<button className="os-card-label os-writing-back" type="button" onClick={event => {
+  return <InfoPage className={`os-writing-page os-writing-bounded os-writing-sync ${className} ${navigation.className}`} header={<RoutineHeaderButton reflectionDirection="back" className="os-card-label os-writing-back" onClick={event => {
     if (navigation.side === "history") navigation.flip("review", () => setHistory(null), event.currentTarget);
     else if (review && !initialEntryId) navigation.flip("list", () => { setReview(null); setError(""); }, event.currentTarget);
     else onBack();
-  }}><span aria-hidden="true">‹</span> {navigation.side === "history" ? "Copies" : review && !initialEntryId ? "Sync" : "History"}</button>}
+  }}><span aria-hidden="true">‹</span> {navigation.side === "history" ? "Copies" : review && !initialEntryId ? "Sync" : "History"}</RoutineHeaderButton>}
     footer={footer || error ? <div className="os-writing-footer">{error ? <p role="alert">{error}</p> : null}{footer}</div> : undefined}>
     <div className="os-note-content"><div className="os-info-page-main">{body}</div></div>
   </InfoPage>;

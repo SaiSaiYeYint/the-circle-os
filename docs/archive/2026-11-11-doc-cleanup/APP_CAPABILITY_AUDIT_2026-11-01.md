@@ -1,3 +1,8 @@
+> Historical snapshot preserved on 2026-11-11 before the approved documentation cleanup.
+> This records earlier decisions, proposals and verification; it is not current instruction.
+> Start with the [active document map](../../../README.md#project-documents) and
+> [archive index](README.md) for the current replacement.
+
 # Circle OS: features, personal data, and future direction
 
 Date: 2026-11-01, Asia/Bangkok. Repository snapshot: `paing-branch`, commit `a0a96e6`.
@@ -55,7 +60,7 @@ Five distinctions are especially important for redesigning it:
 
 The Note discussion is therefore a real product-design issue. If the intended experience is daily journaling with past-day review, the current one-value Note model does not provide it. Syncing that model safely would not create a journal by itself.
 
-Sources: [current task](CURRENT_TASK.md), [architecture](PRODUCTION_ARCHITECTURE.md), [Note plan](NOTE_SYNC_PLAN.md), [main state model](../app/os/circle-os-model.js), [Today and provider](../app/os/circle-os-shell.tsx), [Reflect](../app/os/mirror/page.tsx).
+Sources: [current task](CURRENT_TASK.md), [architecture](PRODUCTION_ARCHITECTURE.md), [Note plan](NOTE_SYNC_PLAN.md), [main state model](../../../app/os/circle-os-model.js), [Today and provider](../../../app/os/circle-os-shell.tsx), [Reflect](../../../app/os/mirror/page.tsx).
 
 ## 2. What counts as implemented
 
@@ -176,7 +181,7 @@ Signing into the same Supabase account on a new device authenticates the same ac
 
 The old profile server has its own recovery and device-attachment mechanisms. Those are legacy credentials and ownership rules, not a substitute for the target account sync. Legacy recovery rotates keys; the recovery code must be treated as sensitive. This report intentionally includes no personal profile codes or keys.
 
-Sources: [authentication boundary](../app/os/auth/auth-boundary.tsx), [controller](../app/os/auth/auth-controller.js), [Supabase adapter](../app/os/auth/supabase-client.ts), [offline proof](../app/os/auth/offline-proof.js), [account scope](../app/os/account-scope.js), [development test session](../app/os/auth/development-test-session.js).
+Sources: [authentication boundary](../../../app/os/auth/auth-boundary.tsx), [controller](../../../app/os/auth/auth-controller.js), [Supabase adapter](../../../app/os/auth/supabase-client.ts), [offline proof](../../../app/os/auth/offline-proof.js), [account scope](../../../app/os/account-scope.js), [development test session](../../../app/os/auth/development-test-session.js).
 
 ## 5. A person's first days
 
@@ -227,7 +232,7 @@ People can put a sheet down. Deferral is recorded rather than forcing completion
 
 The new-day chapter records how the person is arriving and one thing for the day. Its current save handler stores the chapter run; it does not turn that answer into a new Routine task. Daily opening runs are keyed by day, so yesterday's answers do not occupy today's sheet.
 
-Sources: [Day One handler](../app/os/day-one-model.js), [access gates](../app/os/phases.js), [door selection](../app/os/day-door.js), [Today](../app/os/circle-os-shell.tsx), [bundled chapters](../app/os/chapters/published/index.json).
+Sources: [Day One handler](../../../app/os/day-one-model.js), [access gates](../../../app/os/phases.js), [door selection](../../../app/os/day-door.js), [Today](../../../app/os/circle-os-shell.tsx), [bundled chapters](../../../app/os/chapters/published/index.json).
 
 ## 6. Today: writing and light content
 
@@ -316,7 +321,7 @@ The last Page reveals a reaction footer after a forward swipe. Reacting or anoth
 
 Reaction state records a Line ID, reaction, and time. Repeating the same reaction can undo it. The current selector is driven by seen IDs and kind balance; no adaptive taste-ranking service based on reactions was found.
 
-Sources: [Note and Thought UI](../app/os/circle-os-shell.tsx), [answer model](../app/os/circle-os-model.js), [regular prompts](../app/os/thought-prompt-model.js), [Deep Thoughts](../app/os/deep-thought-model.js), [Line selection](../app/os/lines/line-pool.js), [Line feedback](../app/os/lines/line-feedback.js).
+Sources: [Note and Thought UI](../../../app/os/circle-os-shell.tsx), [answer model](../../../app/os/circle-os-model.js), [regular prompts](../../../app/os/thought-prompt-model.js), [Deep Thoughts](../../../app/os/deep-thought-model.js), [Line selection](../../../app/os/lines/line-pool.js), [Line feedback](../../../app/os/lines/line-feedback.js).
 
 ## 7. Today: Routine, habits, and tasks
 
@@ -372,7 +377,7 @@ The `dayRecord` read model uses current habit definitions and completion records
 - Legacy sync can send these records to the profile server.
 - Future Athena is intended to use relevant same-person habits and actions as evidence.
 
-Sources: [habit/task models](../app/os/circle-os-model.js), [Habit Building projection](../app/os/habit-building-model.js), [goal links](../app/os/goal-model.js), [Routine UI](../app/os/circle-os-shell.tsx).
+Sources: [habit/task models](../../../app/os/circle-os-model.js), [Habit Building projection](../../../app/os/habit-building-model.js), [goal links](../../../app/os/goal-model.js), [Routine UI](../../../app/os/circle-os-shell.tsx).
 
 ## 8. Today: Protocol and phases
 
@@ -415,7 +420,7 @@ The latest completed phase can retain correctable term records on its relevant s
 
 Phases connect a finite commitment to a goal and give later reflection concrete evidence: what was agreed, what was ticked, what was sealed, whether it ended, and what the person planned to do after a slip. They do not automatically establish whether the goal itself was achieved.
 
-Sources: [Protocol model](../app/os/circle-os-model.js), [Protocol UI](../app/os/protocol-page.tsx), [phase/access rules](../app/os/phases.js).
+Sources: [Protocol model](../../../app/os/circle-os-model.js), [Protocol UI](../../../app/os/protocol-page.tsx), [phase/access rules](../../../app/os/phases.js).
 
 ## 9. Today: Log and Week
 
@@ -482,7 +487,7 @@ The code has several different measures. They should not be confused:
 - A habit ratio may use definitions active now, rather than a historical snapshot of what was available that day.
 - No entry means no recorded evidence. It does not prove that the person did nothing.
 
-Sources: [Log/Week UI and handlers](../app/os/circle-os-shell.tsx), [Week read model](../app/os/week-app-model.js), [goals](../app/os/goal-model.js), [day/time models](../app/os/circle-os-model.js).
+Sources: [Log/Week UI and handlers](../../../app/os/circle-os-shell.tsx), [Week read model](../../../app/os/week-app-model.js), [goals](../../../app/os/goal-model.js), [day/time models](../../../app/os/circle-os-model.js).
 
 ## 10. Reflect: wanted life and Athena
 
@@ -550,7 +555,7 @@ Reflect includes a suggestion textarea, capped at 800 characters in the UI. Subm
 
 In Supabase account mode, no evidence/suggestion transport to the future backend is connected. The visible Send/Saved interaction should not be interpreted as proof that the developer received the suggestion remotely.
 
-Sources: [Reflect route](../app/os/mirror/page.tsx), [declarations and answer models](../app/os/circle-os-model.js), [memory/edition model](../app/os/athena-memory-model.js), [suggestion server handling](../local-ai/server.mjs).
+Sources: [Reflect route](../../../app/os/mirror/page.tsx), [declarations and answer models](../../../app/os/circle-os-model.js), [memory/edition model](../../../app/os/athena-memory-model.js), [suggestion server handling](../../../local-ai/server.mjs).
 
 ## 11. Chapters, Quests, and content delivery
 
@@ -615,7 +620,7 @@ Progress comes from actual chapter runs, including completions made before the Q
 
 The three bundled Quests are Getting started, The life you want, and Knowing yourself. Their full steps are in [section 22](#22-complete-bundled-chapter-and-quest-inventory).
 
-Sources: [types](../app/os/chapters/chapter-types.ts), [run model](../app/os/chapters/chapter-model.js), [player](../app/os/chapters/chapter-player.tsx), [scheduler](../app/os/chapters/chapter-scheduler.js), [supply](../app/os/chapters/chapter-supply.ts), [Quest model](../app/os/quests.js).
+Sources: [types](../../../app/os/chapters/chapter-types.ts), [run model](../../../app/os/chapters/chapter-model.js), [player](../../../app/os/chapters/chapter-player.tsx), [scheduler](../../../app/os/chapters/chapter-scheduler.js), [supply](../../../app/os/chapters/chapter-supply.ts), [Quest model](../../../app/os/quests.js).
 
 ## 12. Admin and authoring
 
@@ -660,7 +665,7 @@ This is a craft/development tool. It does not let an ordinary user redesign thei
 
 No complete implementation was found for granting paid Athena days, enforcing live-model allowances, reading all Supabase users' writing, deleting accounts with verified backup suppression, viewing a production access audit, or managing payment confirmation. These remain separate planned systems.
 
-Sources: [admin access](../app/os/admin/admin-access.ts), [unlock route](../app/os/admin/unlock/route.ts), [Workshop](../app/os/admin/chapter-editor.tsx), [authoring model](../app/os/admin/chapter-authoring.js), [draft storage](../app/os/admin/chapter-draft-store.ts).
+Sources: [admin access](../../../app/os/admin/admin-access.ts), [unlock route](../../../app/os/admin/unlock/route.ts), [Workshop](../../../app/os/admin/chapter-editor.tsx), [authoring model](../../../app/os/admin/chapter-authoring.js), [draft storage](../../../app/os/admin/chapter-draft-store.ts).
 
 ## 13. Hidden and older capabilities
 
@@ -698,7 +703,7 @@ Oscar exists as a supported content voice and in two bundled spark chapters. Tha
 
 Courses, native apps, social leaderboards, and broader Circle membership experiences are not established release requirements simply because older records mention them.
 
-Sources: [Today flags](../app/os/circle-os-shell.tsx), [Reflect flags](../app/os/mirror/page.tsx), [Dreamline Pages](../app/os/dreamline-pages.tsx), [dimension record](../app/os/dimension-record.js), [open decisions](DECISION_LOG.md).
+Sources: [Today flags](../../../app/os/circle-os-shell.tsx), [Reflect flags](../../../app/os/mirror/page.tsx), [Dreamline Pages](../../../app/os/dreamline-pages.tsx), [dimension record](../../../app/os/dimension-record.js), [open decisions](DECISION_LOG.md).
 
 ## 14. Every major kind of personal data
 
@@ -787,7 +792,7 @@ These are not all equivalent under a distributed merge. The proposed backend mus
 
 The current code's memory extraction and summary calculations are not model training. No pipeline was found that trains a custom model on a person's records. Future AI processing may send selected evidence to a provider under a reviewed integration, but provider, retention/training terms, and processing location have not been established by this repository audit.
 
-Sources: [state envelope and mutations](../app/os/circle-os-model.js), [provider/types](../app/os/circle-os-shell.tsx), [storage](../app/os/circle-os-store.ts), [memory](../app/os/athena-memory-model.js), [goals](../app/os/goal-model.js), [Week](../app/os/week-app-model.js).
+Sources: [state envelope and mutations](../../../app/os/circle-os-model.js), [provider/types](../../../app/os/circle-os-shell.tsx), [storage](../../../app/os/circle-os-store.ts), [memory](../../../app/os/athena-memory-model.js), [goals](../../../app/os/goal-model.js), [Week](../../../app/os/week-app-model.js).
 
 ## 15. What Athena currently does with data
 
@@ -891,7 +896,7 @@ The legacy README describes an external scheduled preparation process, including
 
 This audit read that integration's repository code and README. It did not read the unavailable external instructions, inspect personal files, confirm the scheduler is running, or verify a particular morning's evidence selection. Server health is not proof that a person's analysis is fresh.
 
-Sources: [memory model](../app/os/athena-memory-model.js), [pricing](../app/os/athena-pricing-model.js), [alignment](../app/os/athena-alignment-model.js), [answer capture](../app/os/circle-os-model.js), [server README](../local-ai/README.md), [server](../local-ai/server.mjs).
+Sources: [memory model](../../../app/os/athena-memory-model.js), [pricing](../../../app/os/athena-pricing-model.js), [alignment](../../../app/os/athena-alignment-model.js), [answer capture](../../../app/os/circle-os-model.js), [server README](../../../local-ai/README.md), [server](../../../local-ai/server.mjs).
 
 ## 16. Storage, sync, installation, and technical structure
 
@@ -981,7 +986,7 @@ The repository has meaningful shared infrastructure, but much behavior still mee
 
 The separate `chatgpt-auth.ts` helper reads platform-provided headers. It is not the general Supabase user-login implementation and should not be counted as a second complete end-user account system.
 
-Sources: [main store](../app/os/circle-os-store.ts), [account scope](../app/os/account-scope.js), [provider/client](../app/os/circle-os-shell.tsx), [legacy transport](../app/os/circle-os-ai.ts), [server](../local-ai/server.mjs), [service worker](../public/os-sw.js), [manifest](../public/circle-os.webmanifest), [package](../package.json).
+Sources: [main store](../../../app/os/circle-os-store.ts), [account scope](../../../app/os/account-scope.js), [provider/client](../../../app/os/circle-os-shell.tsx), [legacy transport](../../../app/os/circle-os-ai.ts), [server](../../../local-ai/server.mjs), [service worker](../../../public/os-sw.js), [manifest](../../../public/circle-os.webmanifest), [package](../../../package.json).
 
 ## 17. The planned Supabase and Athena system
 
@@ -1119,7 +1124,7 @@ A positive animation is not independent proof of a durable local or cloud save. 
 
 The app is intended to read as calm and human. These references do not certify every current contrast, target size, wrap, or animation. Visual-language changes belong to developer/design review rather than being incidental side effects of a backend task.
 
-Sources: [design](../DESIGN.md), [Page standard](../app/os/APP_SESSION_STANDARD.md), [brand tokens](../app/brand-system.ts), [session engine](../app/os/app-session.tsx), [App back](../app/os/app-back.ts), [buttons](../app/os/button-engine.tsx).
+Sources: [design](DESIGN.md), [Page standard](APP_SESSION_STANDARD.md), [brand tokens](../../../app/brand-system.ts), [session engine](../../../app/os/app-session.tsx), [App back](../../../app/os/app-back.ts), [buttons](../../../app/os/button-engine.tsx).
 
 ## 19. Known failures, limits, and document conflicts
 
@@ -1178,7 +1183,7 @@ The following preserves the recorded status instead of treating source presence 
 
 These differences are included so a redesign does not accidentally implement an outdated description. This approved audit did not edit the owning documents to reconcile them.
 
-Sources: [bugs](../bugs.md), [journey evidence](USER_JOURNEY_TESTING.md), [current task](CURRENT_TASK.md), [handoff](SESSION_HANDOFF.md), [decisions](DECISION_LOG.md), [Page standard](../app/os/APP_SESSION_STANDARD.md).
+Sources: [bugs](bugs.md), [journey evidence](../../USER_JOURNEY_TESTING.md), [current task](CURRENT_TASK.md), [handoff](SESSION_HANDOFF.md), [decisions](DECISION_LOG.md), [Page standard](APP_SESSION_STANDARD.md).
 
 ## 20. Decisions to make before changing the system
 
@@ -1274,7 +1279,7 @@ The initial run used the default reporter and produced a large failure dump; the
 | Development onboarding mode | 103 focused cases; two mobile cases on each dev target; production rejection; storage/auth checks | Test mode does not verify real-account cloud records. |
 | Hosted setup | Public settings/JWKS checks, 10 focused auth tests; developer-reported sign-in/reset/logout/offline survival | No agent-observed full hosted lifecycle or evidence-sync proof. |
 
-Detailed commands, attempts, and qualifications remain in [the journey record](USER_JOURNEY_TESTING.md). Counts from separate earlier scopes overlap; they must not be added together as a unique total.
+Detailed commands, attempts, and qualifications remain in [the journey record](../../USER_JOURNEY_TESTING.md). Counts from separate earlier scopes overlap; they must not be added together as a unique total.
 
 ### 21.3 Report checks and handoff limits
 
@@ -1359,7 +1364,7 @@ Spark-bundle total: **20 IDs, 20 versions**. These are chapter definitions and m
 
 Quest copy/estimates can retain older onboarding assumptions. They should be reviewed if the developer changes the conceptual path; this inventory does not declare that wording current merely because it is bundled.
 
-Sources: [main bundle](../app/os/chapters/published/index.json), [spark bundle](../app/os/chapters/published/sparks.json), [Quest manifest](../app/os/chapters/published/quests.json), [runtime registry](../app/os/chapters/registry.ts), [Lines](../app/os/lines/lines.json), [Note placeholders](../app/os/note-placeholders/note-placeholders.json).
+Sources: [main bundle](../../../app/os/chapters/published/index.json), [spark bundle](../../../app/os/chapters/published/sparks.json), [Quest manifest](../../../app/os/chapters/published/quests.json), [runtime registry](../../../app/os/chapters/registry.ts), [Lines](../../../app/os/lines/lines.json), [Note placeholders](../../../app/os/note-placeholders/note-placeholders.json).
 
 ## 23. Source guide
 
@@ -1367,8 +1372,8 @@ Sources: [main bundle](../app/os/chapters/published/index.json), [spark bundle](
 
 | Source | Role in this audit |
 | --- | --- |
-| [AGENTS.md](../AGENTS.md) | Approval, invariants, product boundaries, and source authority. |
-| [Development workflow](DEVELOPMENT_WORKFLOW.md) | Preflight, verification, and evidence rules. |
+| [AGENTS.md](../../../AGENTS.md) | Approval, invariants, product boundaries, and source authority. |
+| [Development workflow](../../DEVELOPMENT_WORKFLOW.md) | Preflight, verification, and evidence rules. |
 | [Current task](CURRENT_TASK.md) | Latest Note-sync planning state and unresolved warnings. |
 | [Session handoff](SESSION_HANDOFF.md) | Current continuity evidence and preceding scopes. |
 | [Product](PRODUCT.md) | Product purpose and confirmed experience; stale implementation claims flagged above. |
@@ -1378,29 +1383,29 @@ Sources: [main bundle](../app/os/chapters/published/index.json), [spark bundle](
 | [Launch plan](WEB_BETA_LAUNCH_PLAN.md) | Invited-beta sequence and contract. |
 | [Note plan](NOTE_SYNC_PLAN.md) | Proposed first evidence-sync scope, not implemented behavior. |
 | [Chapter simplification plan](CHAPTER_SIMPLIFICATION_PLAN.md) | Earlier simplification proposals and Day One context; not blanket implementation approval. |
-| [Design](../DESIGN.md) and [Page standard](../app/os/APP_SESSION_STANDARD.md) | Intended interaction/visual contract. |
-| [Bugs](../bugs.md) and [journey record](USER_JOURNEY_TESTING.md) | Recorded verification, failures, and qualifications. |
+| [Design](DESIGN.md) and [Page standard](APP_SESSION_STANDARD.md) | Intended interaction/visual contract. |
+| [Bugs](bugs.md) and [journey record](../../USER_JOURNEY_TESTING.md) | Recorded verification, failures, and qualifications. |
 
 ### 23.2 Code navigation
 
 | Source | Main responsibility |
 | --- | --- |
-| [Main model](../app/os/circle-os-model.js) | State creation/migration, Note answers, declarations, habits/tasks, days, legacy merge, Protocol, Dreamline, older analysis. |
-| [Shell/provider](../app/os/circle-os-shell.tsx) | Storage lifecycle, legacy sync, Today, shared chapter outcomes, Log/Week, writing actions. |
-| [Reflect](../app/os/mirror/page.tsx) | Declarations/history, current Athena reading, reply input, Quests, suggestions. |
-| [Main store](../app/os/circle-os-store.ts) | IndexedDB and localStorage copies. |
-| [Account scope](../app/os/account-scope.js) | Namespaces, scope lifecycle, guarded transactions. |
-| [Auth boundary](../app/os/auth/auth-boundary.tsx), [controller](../app/os/auth/auth-controller.js), [adapter](../app/os/auth/supabase-client.ts) | Account entry and session lifecycle. |
-| [Day One](../app/os/day-one-model.js), [Habit Building](../app/os/habit-building-model.js) | Shared completion projections and compatibility. |
-| [Goals](../app/os/goal-model.js), [Week](../app/os/week-app-model.js), [Protocol](../app/os/protocol-page.tsx) | Plans, shared task links, weekly records, and phase UI. |
-| [Thought prompts](../app/os/thought-prompt-model.js), [Deep Thoughts](../app/os/deep-thought-model.js) | Local/prepared question selection and feedback eligibility. |
-| [Memory](../app/os/athena-memory-model.js), [pricing](../app/os/athena-pricing-model.js), [alignment](../app/os/athena-alignment-model.js) | Fact capture, prepared observations/readings, and deterministic analysis utilities. |
-| [Chapter model](../app/os/chapters/chapter-model.js), [player](../app/os/chapters/chapter-player.tsx), [scheduler](../app/os/chapters/chapter-scheduler.js) | Versioned answers, journey interaction, and eligibility. |
-| [Publications](../app/os/chapters/chapter-publication-store.ts), [supply](../app/os/chapters/chapter-supply.ts) | Cached delivery and built-in content. |
-| [Workshop](../app/os/admin/chapter-editor.tsx), [authoring](../app/os/admin/chapter-authoring.js), [compiler](../scripts/chapter-compiler.mjs) | Local authoring, validation, exports, publication, and compilation. |
-| [Session](../app/os/app-session.tsx), [back](../app/os/app-back.ts), [buttons](../app/os/button-engine.tsx), [CSS](../app/os/os-app.css) | Shared UI infrastructure. |
-| [Legacy client](../app/os/circle-os-ai.ts), [server](../local-ai/server.mjs), [README](../local-ai/README.md) | Existing file-backed remote integration and preparation boundary. |
-| [PWA registration](../app/os/pwa-register.tsx), [worker](../public/os-sw.js), [manifest](../public/circle-os.webmanifest) | Installation and offline assets. |
-| [Public site](../app/page.tsx), [brand](../app/brand/page.tsx), [tokens](../app/brand-system.ts) | Circle's public identity and brand references. |
+| [Main model](../../../app/os/circle-os-model.js) | State creation/migration, Note answers, declarations, habits/tasks, days, legacy merge, Protocol, Dreamline, older analysis. |
+| [Shell/provider](../../../app/os/circle-os-shell.tsx) | Storage lifecycle, legacy sync, Today, shared chapter outcomes, Log/Week, writing actions. |
+| [Reflect](../../../app/os/mirror/page.tsx) | Declarations/history, current Athena reading, reply input, Quests, suggestions. |
+| [Main store](../../../app/os/circle-os-store.ts) | IndexedDB and localStorage copies. |
+| [Account scope](../../../app/os/account-scope.js) | Namespaces, scope lifecycle, guarded transactions. |
+| [Auth boundary](../../../app/os/auth/auth-boundary.tsx), [controller](../../../app/os/auth/auth-controller.js), [adapter](../../../app/os/auth/supabase-client.ts) | Account entry and session lifecycle. |
+| [Day One](../../../app/os/day-one-model.js), [Habit Building](../../../app/os/habit-building-model.js) | Shared completion projections and compatibility. |
+| [Goals](../../../app/os/goal-model.js), [Week](../../../app/os/week-app-model.js), [Protocol](../../../app/os/protocol-page.tsx) | Plans, shared task links, weekly records, and phase UI. |
+| [Thought prompts](../../../app/os/thought-prompt-model.js), [Deep Thoughts](../../../app/os/deep-thought-model.js) | Local/prepared question selection and feedback eligibility. |
+| [Memory](../../../app/os/athena-memory-model.js), [pricing](../../../app/os/athena-pricing-model.js), [alignment](../../../app/os/athena-alignment-model.js) | Fact capture, prepared observations/readings, and deterministic analysis utilities. |
+| [Chapter model](../../../app/os/chapters/chapter-model.js), [player](../../../app/os/chapters/chapter-player.tsx), [scheduler](../../../app/os/chapters/chapter-scheduler.js) | Versioned answers, journey interaction, and eligibility. |
+| [Publications](../../../app/os/chapters/chapter-publication-store.ts), [supply](../../../app/os/chapters/chapter-supply.ts) | Cached delivery and built-in content. |
+| [Workshop](../../../app/os/admin/chapter-editor.tsx), [authoring](../../../app/os/admin/chapter-authoring.js), [compiler](../../../scripts/chapter-compiler.mjs) | Local authoring, validation, exports, publication, and compilation. |
+| [Session](../../../app/os/app-session.tsx), [back](../../../app/os/app-back.ts), [buttons](../../../app/os/button-engine.tsx), [CSS](../../../app/os/os-app.css) | Shared UI infrastructure. |
+| [Legacy client](../../../app/os/circle-os-ai.ts), [server](../../../local-ai/server.mjs), [README](../../../local-ai/README.md) | Existing file-backed remote integration and preparation boundary. |
+| [PWA registration](../../../app/os/pwa-register.tsx), [worker](../../../public/os-sw.js), [manifest](../../../public/circle-os.webmanifest) | Installation and offline assets. |
+| [Public site](../../../app/page.tsx), [brand](../../../app/brand/page.tsx), [tokens](../../../app/brand-system.ts) | Circle's public identity and brand references. |
 
 This report preserves the distinction between evidence, inference, and plans. Its next use is a developer-led functionality review, beginning with the writing/history lifecycle, before committing to a database shape that assumes the current behavior is final.

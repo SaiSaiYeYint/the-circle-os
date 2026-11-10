@@ -171,7 +171,6 @@ test("Protocol home is the front at rest and one flip from a running phase", () 
   assert.match(source, /protocolBack\.flip\("phase"/);
   assert.match(source, /Start a phase/);
   assert.match(source, /Ended early/);
-  assert.match(source, /\{record\.keptDays\} of \{record\.days\} days kept/);
   assert.doesNotMatch(source, /streak|percentage|score|grade/i);
 });
 
@@ -239,7 +238,7 @@ test("the Phases Page does not name itself twice", () => {
 // said nothing about the phases behind it. Sai: "Can we add more to this
 // protocol screen?" This is not a reading back — it is the standing fact of
 // what he has kept, so the next phase starts in front of the last ones.
-test("the Page shows what has been kept, across every phase", () => {
+test("legacy standing arithmetic remains available without changing records", () => {
   assert.equal(protocolStanding([]), null, "a first phase has nothing to stand on");
   assert.equal(protocolStanding(undefined), null);
 
@@ -255,9 +254,6 @@ test("the Page shows what has been kept, across every phase", () => {
   assert.equal(standing.longestDays, 14);
   assert.equal(standing.longestName, "Deep Work");
 
-  const page = readFileSync("app/os/protocol-page.tsx", "utf8");
-  assert.match(page, /os-protocol-standing/);
-  assert.match(page, /protocolStanding\(phaseRecords\)/);
 });
 
 // Sai: "after i click ok start the phase and dont want to, i cant go back by top

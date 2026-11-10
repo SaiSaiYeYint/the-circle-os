@@ -4,13 +4,14 @@ import { useEffect, useId, useLayoutEffect, useRef, useState, type MouseEvent, t
 import { PageLayout } from "./app-session";
 import { useAppBack } from "./app-back";
 import { CreativeButton } from "./button-engine";
+import { RoutineHeaderButton } from "./routine-controls";
 import { sizeTextAreaToContent } from "./text-area-size";
 import type { TimeBlock } from "./circle-os-shell";
 import { logBlockSignature, logEntryWords, logHistoryWeekday, type logHistoryDays, type LogCorrection, type LogCorrectionRequest } from "./log-history.js";
 
 type Draft = { id: string; blockId: string; expected: string; title: string; moments: string; start: string; end: string };
 
-export function LogHistoryPage({ days, selectedDay, sourceDay, todayKey, onBack, onSelect, onSave }: {
+export function LogHistoryPage({ days, selectedDay, sourceDay, todayKey, onBack, onSelect, onSave, backLabel }: {
   days: ReturnType<typeof logHistoryDays>;
   selectedDay: string | null;
   sourceDay?: { title?: string; timeBlocks: TimeBlock[]; logCorrections?: Record<string, LogCorrection> };
@@ -18,6 +19,7 @@ export function LogHistoryPage({ days, selectedDay, sourceDay, todayKey, onBack,
   onBack: (event: MouseEvent<HTMLButtonElement>) => void;
   onSelect: (dateKey: string, source: HTMLButtonElement) => void;
   onSave: (request: LogCorrectionRequest) => void;
+  backLabel?: string;
 }) {
   const editor = useAppBack<"reading" | "editing">("reading");
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -75,9 +77,9 @@ export function LogHistoryPage({ days, selectedDay, sourceDay, todayKey, onBack,
   return (
     <PageLayout
       className={`os-log-page os-log-history-page ${editor.className}`}
-      headerLeft={<button className="os-card-label os-log-history-label" onClick={editing ? (event) => cancel(event.currentTarget) : onBack} type="button">
-        <span aria-hidden="true">‹</span> {editing ? "Cancel" : selectedDay ? "History" : "Log"}
-      </button>}
+      headerLeft={<RoutineHeaderButton reflectionDirection="back" className="os-card-label os-log-history-label" onClick={editing ? (event) => cancel(event.currentTarget) : onBack}>
+        <span aria-hidden="true">‹</span> {editing ? "Cancel" : backLabel || (selectedDay ? "History" : "Log")}
+      </RoutineHeaderButton>}
       heading={day ? <><h2>{day.title || logHistoryWeekday(day.dateKey)}</h2><p className="os-log-history-date">{day.dateKey}</p></> : <h2>History</h2>}
       footer={editing ? <CreativeButton key={draft.id} type="submit" form={formId} styleId="default" keepMountedOnSuccess disabled={pending || stale || editor.flipping}>Save changes</CreativeButton> : undefined}
       placement="content-flow"

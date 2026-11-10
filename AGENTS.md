@@ -9,6 +9,10 @@ This file governs the whole repository. Circle OS is the live product at
 - `docs/PRODUCT.md` owns the product direction; `docs/ROADMAP.md` owns the
   delivery sequence; `docs/DECISION_LOG.md` distinguishes decisions from open
   questions. `docs/PRODUCTION_ARCHITECTURE.md` owns the current/target system map.
+- `docs/ONBOARDING_SPEC.md` owns the planned replacement onboarding. The old
+  implemented flow and optional-action plan do not define that target.
+- `docs/PERSONAL_RECORDS_AND_ATHENA_PLAN.md` owns evidence/time/deletion/migration
+  contracts; `docs/ACCOUNT_WRITING_SYNC.md` owns the bounded writing protocol.
 - `DESIGN.md`, `app/os/APP_SESSION_STANDARD.md`, and `app/brand-system.ts` own
   the accessible design references. Record conflicts rather than guessing.
 - Never store secrets in product documents, test fixtures, or frontend code.
@@ -39,7 +43,9 @@ Then read the owning references for the task before proposing changes:
 | Task touches | Required references |
 | --- | --- |
 | Product behavior, Athena's role, or product scope/direction | Relevant sections of `docs/PRODUCT.md` |
-| Delivery order, release gates, dependencies, or new features | Current phase and relevant sections of `docs/ROADMAP.md` |
+| Delivery order, release gates, dependencies, or new features | Current delivery state and relevant sections of `docs/ROADMAP.md` |
+| Onboarding or Home setup | `docs/ONBOARDING_SPEC.md`; for Home visual/data mapping, `docs/PERSONAL_IMPRINT_HOME.md` |
+| Evidence, time, corrections, deletion or migration | Relevant sections of `docs/PERSONAL_RECORDS_AND_ATHENA_PLAN.md`; writing sync also uses `docs/ACCOUNT_WRITING_SYNC.md` |
 | Any area being changed | Search `docs/DECISION_LOG.md` and read applicable decisions, reasons, and open conflicts |
 | Profiles, persistence, auth, sync, or AI | Relevant sections of `docs/PRODUCTION_ARCHITECTURE.md` |
 | Layout, visual design, or interaction | Relevant sections of `DESIGN.md` and `app/brand-system.ts` |
@@ -55,8 +61,9 @@ unchanged material already available in the session.
 
 Inspect relevant source when the task touches profiles, persistence, Athena,
 schedules, or chapter generation. Supabase account entry and account-separated
-local storage exist. Supabase lifestyle sync remains planned; the file-based
-profile server serves legacy mode, not signed-in account evidence.
+local storage exist. Both writing migrations have bounded hosted verification;
+automatic product writing sync remains off. Other-domain sync remains planned.
+The file-based profile server serves legacy mode, not signed-in account evidence.
 
 Then inspect the relevant source and run `git status --short`. Existing changes
 belong to the user unless proven otherwise. Never discard or overwrite
@@ -96,6 +103,10 @@ if verification is blocked, record the gap and remind the developer.
 - Use simple language a fourth grader can understand.
 - Never invent evidence about a person. Mark inference as inference.
 - Preserve local-first behavior. Keep phone data safe before server sync.
+- The planned onboarding replaces the implemented flow. Preserve published old
+  versions, unfinished runs, completed access and records until the replacement's
+  reviewed implementation/migration. Public signup target does not authorize
+  activation or public rollout.
 - The current delivery goal is a web MVP for friends and family. iOS/Android
   and Supabase-backed personalized Athena are the long-term direction.
 - The invited friends-and-family web beta includes accounts, safe sync and
@@ -122,12 +133,14 @@ if verification is blocked, record the gap and remind the developer.
 - Main Body receives roughly two parts of body space; Sub Body receives one.
   On Cover, Note and Thoughts that weight is where the eye lands, not reserved
   space: an empty Sub Body costs nothing and the App Box stays at its default.
-- Every App Box has one shared default minimum size. Empty and short Pages rest
-  there; real content may grow the frame downward.
-- Only the Today Note/Thoughts session turns its pages automatically after the
-  shared idle dwell. Two-page facts and jokes on its Line side may also turn.
-  Other Apps stay on the chosen Page; journeys, Chapters, and pending
-  publications never rotate. Follow the Page standard's idle-rotation rules.
+- The six opened tools and their supporting views share one focused full-page
+  minimum and 24px content anchor, with natural downward growth. Other compact/
+  chapter contexts retain their existing shared minimum/tokens. Empty and short
+  Pages rest equally within their context; do not restore retired writing caps.
+- Opened tools stay on the chosen Page. The retained legacy Today Note/Thoughts
+  context may turn after its guarded idle dwell; two-page facts/jokes may turn
+  within a Line. Journeys, Chapters, histories and pending publications never
+  rotate. Follow the Page standard's scoped idle-rotation rules.
 - One Page has one main action. Do not add decorative controls or explanatory
   words without a clear purpose.
 - Motion is calm and meaningful. Existing page travel remains quick; only a
@@ -184,13 +197,14 @@ and the next action. Give a commit range only when commits were made.
 These were each established by finding a real defect. Changing one is allowed;
 changing one by accident is the failure mode.
 
-- **App Box geometry.** Every App Box has one shared default minimum size, and
-  `--os-label-gap` owns the forehead from the App Label to the first visible
-  content. Main begins at that anchor and grows downward; it does not centre as
-  its line count changes. After any geometry, type-scale or gap change, measure
-  the rendered heights and forehead gaps of Note, Thoughts, Habit and Protocol.
-  Empty and short Pages must be equal at rest; real Habit and Protocol rows may
-  grow downward without an inner scroll panel.
+- **App Box geometry.** Shared tokens own the minimum and forehead within each
+  current context. The six opened tools/supporting views use the focused
+  full-page floor and 24px anchor; compact/chapter contexts retain existing
+  shared rules. Main grows downward from its anchor, never centres by line
+  count. After geometry/type/gap changes, measure Note, Deep Thoughts, Habit
+  and Protocol heights and foreheads plus the cross-tool matrix. Empty/short
+  Pages match within their context; real content grows without a nested tool
+  scroller. Record deliberately replaced geometry and unchanged contexts.
 - **Give versus ask.** Content that gives is unrationed; content that asks stays
   rationed. A Line never acquires a run, version, cooldown or completion. Before
   raising any chapter budget, check supply rather than raising the number.

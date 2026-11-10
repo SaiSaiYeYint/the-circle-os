@@ -24,6 +24,28 @@ function recordedHabit() {
   return toggleHabitForDay(state, added.id, "2026-11-01");
 }
 
+test("one-click archive retains Habit evidence and Task wording through stale merge and reload", () => {
+  let state = recordedHabit();
+  state = circleModel.updateTask(circleModel.addTask(state, "clear-task").state, "clear-task", "Bring a book");
+  const stale = structuredClone(state);
+  stale.habits.definitions["history-walk"].updatedAt = "2026-01-01T00:00:00.000Z";
+  stale.tasks.items["clear-task"].updatedAt = "2026-01-01T00:00:00.000Z";
+  const evidence = structuredClone(state.habits.completions);
+  state = circleModel.archiveHabitDefinition(state, "history-walk");
+  state = circleModel.archiveTask(state, "clear-task");
+  assert.equal(state.habits.definitions["history-walk"].action, "Walk five minutes");
+  assert.equal(state.tasks.items["clear-task"].text, "Bring a book");
+  assert.deepEqual(state.habits.completions, evidence);
+  state = normalizeState(JSON.parse(JSON.stringify(circleModel.mergeServerState(state, stale))));
+  assert.equal(state.habits.definitions["history-walk"].status, "archived");
+  assert.equal(state.tasks.items["clear-task"].status, "archived");
+  assert.deepEqual(state.habits.completions, evidence);
+  assert.equal(circleModel.archiveTask(state, "clear-task"), state);
+  assert.equal(circleModel.archiveHabitDefinition(state, "missing"), state);
+  const completed = circleModel.completeTask(circleModel.addTask(state, "finished-task").state, "finished-task");
+  assert.equal(circleModel.archiveTask(completed, "finished-task"), completed);
+});
+
 test("Habit history keeps completion wording through rename, archive and reload", () => {
   let state = recordedHabit();
   const snapshot = structuredClone(state.habits.completions["2026-11-01:history-walk"].snapshot);
@@ -42,6 +64,7 @@ test("Habit history keeps completion wording through rename, archive and reload"
   assert.equal(record.habits.length, 1);
   assert.equal(record.habits[0].wordingSource, "snapshot");
   assert.equal(record.habits[0].text, snapshot.text);
+  assert.deepEqual(record.habits[0].parts, { action: snapshot.action, cue: snapshot.cue, identity: snapshot.identity });
   assert.deepEqual(state.habits.completions["2026-11-01:history-walk"].snapshot, snapshot);
 });
 
@@ -101,11 +124,29 @@ test("saved empty wording and missing definitions never borrow later wording", (
   let state = toggleHabitForDay(added.state, added.id, "2026-11-01");
   state = updateHabitDefinition(state, added.id, "Words added later");
   assert.deepEqual(circleModel.habitHistoryRecord(state, "2026-11-01").habits[0], {
-    id: added.id, text: "Habit", wordingSource: "snapshot",
+    id: added.id, text: "Habit", wordingSource: "snapshot", parts: { action: "", cue: "", identity: "" },
   });
   state = recordedHabit();
   delete state.habits.definitions["history-walk"];
   assert.match(circleModel.habitHistoryRecord(normalizeState(state), "2026-11-01").habits[0].text, /Walk five minutes/);
+});
+
+test("Record fields preserve raw saved parts without parsing legacy sentences or borrowing later words", () => {
+  let state = recordedHabit();
+  const completion = state.habits.completions["2026-11-01:history-walk"];
+  completion.snapshot = { text: "Stored compatibility wording", action: "10 push ups", cue: "evening", identity: "consistency > intensity" };
+  state = updateHabitDefinitionParts(state, "history-walk", { action: "A later name", cue: "morning", identity: "A later result" });
+  const before = JSON.stringify(state);
+  const row = circleModel.habitHistoryRecord(state, "2026-11-01").habits[0];
+  assert.deepEqual(row.parts, { action: "10 push ups", cue: "evening", identity: "consistency > intensity" });
+  row.parts.action = "Changed returned copy";
+  assert.equal(JSON.stringify(state), before, "reading/using the projection does not mutate evidence");
+  state.habits.completions["2026-11-01:history-walk"].snapshot = { text: "Unstructured old words" };
+  const legacy = circleModel.habitHistoryRecord(state, "2026-11-01").habits[0];
+  assert.equal(legacy.parts, null);
+  assert.equal(legacy.text, "Unstructured old words");
+  state.habits.completions["2026-11-01:history-walk"].snapshot = { text: "", action: "", cue: "", identity: "" };
+  assert.deepEqual(circleModel.habitHistoryRecord(state, "2026-11-01").habits[0].parts, { action: "", cue: "", identity: "" });
 });
 
 test("an unnamed new habit stays a recoverable draft until its action is committed", () => {
@@ -338,16 +379,6 @@ test("arriving on the Page is not an event the identity animates through", () =>
   // The identity is the way back to the habit behind it.
   assert.match(shell, /className="os-habit-identity-copy"[\s\S]*?onClick=/);
   assert.match(shell, /showIdentity=\{Boolean\([\s\S]*?editingHabitId !== habit\.id/);
-});
-
-test("an empty Routine leaves its shared Sub Body empty", () => {
-  const shell = readFileSync("app/os/circle-os-shell.tsx", "utf8");
-  const css = readFileSync("app/os/os-app.css", "utf8");
-
-  // Keep this wiring check alongside browser measurements: an empty wrapper
-  // with section labels prevents the shared :empty collapse rule from working.
-  assert.match(shell, /idleContent=\{habitMode !== "habit" \|\| \(habits\.length === 0 && oneTimeTasks\.length === 0\) \? undefined : \(/);
-  assert.match(css, /\.circle-os \.os-page-sub:empty\s*\{[^}]*display:\s*none/);
 });
 
 test("one gap separates Habits from Tasks, declared once", () => {

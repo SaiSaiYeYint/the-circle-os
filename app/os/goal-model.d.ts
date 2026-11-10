@@ -53,6 +53,7 @@ export function addGoalStep(
 export function removeGoalStep(state: unknown, stepId: string): never;
 export function mergeGoals(left: unknown, right: unknown): unknown;
 export function discardEmptyGoal(state: unknown, goalId: string): never;
+export function finishWeekGoalEdit(state: unknown, goalId: string, archiveTask: (state: unknown, taskId: string) => unknown, at?: string): never;
 export function discardEmptyStep(
   state: unknown,
   stepId: string,
@@ -84,4 +85,5 @@ export function setGoalStepDay(
   state: unknown,
   stepId: string,
   dateKey: string,
+  at?: string,
 ): never;

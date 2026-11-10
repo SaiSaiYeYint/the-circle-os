@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 
 import { PageLayout } from "./app-session";
+import { CheckboxFace } from "./checkbox-face";
 
 export type DreamlineCategory = "having" | "being" | "doing";
 /** A step's id. The ladder is open-ended, so these are no longer three names. */
@@ -164,7 +165,7 @@ function DreamlineStepRow({
         onClick={() => setError(onStep(lineId, item.step, !item.done))}
         type="button"
       >
-        <span aria-hidden="true">{index + 1}</span>
+        <CheckboxFace />
       </button>
     </li>
   );

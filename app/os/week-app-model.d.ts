@@ -8,6 +8,8 @@ export type WeekDaySummary = {
   isFuture: boolean;
   isPast: boolean;
   moments: { at: string; text: string }[];
+  activities: { id: string; at: string; title: string; moments: string[] }[];
+  writtenCount: number;
   kept: number;
   due: number;
   tasks: number;

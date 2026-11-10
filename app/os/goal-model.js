@@ -50,6 +50,8 @@ export function normalizeGoals(value) {
       completedAt: cleanId(goal?.completedAt) || null,
       createdAt: cleanId(goal?.createdAt) || "",
       updatedAt: cleanId(goal?.updatedAt) || "",
+      previousText: clean(goal?.previousText),
+      removedAt: cleanId(goal?.removedAt) || null,
     };
   }
   const steps = {};
@@ -68,6 +70,7 @@ export function normalizeGoals(value) {
       // Sai: "Goal of the week distill down in to days, that we can plan."
       dateKey: cleanId(step?.dateKey),
       createdAt: cleanId(step?.createdAt) || "",
+      updatedAt: cleanId(step?.updatedAt) || cleanId(step?.createdAt) || "",
     };
   }
   return { items, steps };
@@ -116,7 +119,7 @@ export function updateGoal(state, goalId, text, at = new Date().toISOString()) {
     ...goals,
     items: {
       ...goals.items,
-      [goal.id]: { ...goal, text: clean(text), updatedAt: at },
+      [goal.id]: { ...goal, text: clean(text), previousText: goal.previousText || goal.text || clean(text), updatedAt: at },
     },
   });
 }
@@ -372,6 +375,7 @@ export function addGoalStep(
           taskId: created.id,
           dateKey: cleanId(dateKey),
           createdAt: at,
+          updatedAt: at,
         },
       },
     }),
@@ -381,15 +385,25 @@ export function addGoalStep(
 }
 
 /** Move a step to the day it is meant to be taken. */
-export function setGoalStepDay(state, stepId, dateKey) {
+export function setGoalStepDay(state, stepId, dateKey, at = new Date().toISOString()) {
   const goals = normalizeGoals(state.goals);
   const step = goals.steps[cleanId(stepId)];
   if (!step) return state;
+  const key = cleanId(dateKey);
+  const date = new Date(`${key}T12:00:00Z`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(key) || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== key || key === step.dateKey) return state;
+  const goal = goals.items[step.goalId];
+  if (goal.scope === "week") {
+    const end = new Date(`${goal.dateKey}T12:00:00Z`);
+    if (!Number.isFinite(end.getTime())) return state;
+    end.setUTCDate(end.getUTCDate() + 6);
+    if (key < goal.dateKey || key > end.toISOString().slice(0, 10)) return state;
+  }
   return write(state, {
     ...goals,
     steps: {
       ...goals.steps,
-      [step.id]: { ...step, dateKey: cleanId(dateKey) },
+      [step.id]: { ...step, dateKey: key, updatedAt: at },
     },
   });
 }
@@ -420,6 +434,20 @@ export function discardEmptyGoal(state, goalId) {
   return removeGoal(state, goal.id);
 }
 
+/** A cleared, previously written goal and its tasks leave both live surfaces. */
+export function finishWeekGoalEdit(state, goalId, archiveTask, at = new Date().toISOString()) {
+  const goals = normalizeGoals(state.goals);
+  const goal = goals.items[cleanId(goalId)];
+  if (!goal) return state;
+  if (goal.text.trim()) return write(state, { ...goals, items: { ...goals.items, [goal.id]: { ...goal, previousText: goal.text } } });
+  if (!goal.previousText.trim() && !Object.values(goals.steps).some(step => step.goalId === goal.id)) return removeGoal(state, goalId);
+  let next = state;
+  for (const step of Object.values(goals.steps).filter(step => step.goalId === goal.id)) next = archiveTask(next, step.taskId);
+  return { ...next, goals: { ...goals, items: { ...goals.items, [goal.id]: {
+    ...goal, text: goal.previousText, status: "done", removedAt: at, completedAt: null, updatedAt: at,
+  } } } };
+}
+
 /**
  * The same for a step, which also takes its Routine task with it: the task was
  * created by opening the row, so an unwritten one was never work.
@@ -444,6 +472,10 @@ export function mergeGoals(left, right) {
       items[id] = goal;
     }
   }
-  const steps = { ...a.steps, ...b.steps };
+  const steps = { ...a.steps };
+  for (const [id, step] of Object.entries(b.steps)) {
+    const mine = steps[id];
+    if (!mine || String(step.updatedAt).localeCompare(String(mine.updatedAt)) > 0) steps[id] = step;
+  }
   return normalizeGoals({ items, steps });
 }

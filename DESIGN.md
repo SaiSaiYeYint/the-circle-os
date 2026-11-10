@@ -1,441 +1,166 @@
 # Circle Design Guide
 
-This is the repository design guide for The Circle website and Circle OS.
-Together with `app/os/APP_SESSION_STANDARD.md` and `app/brand-system.ts`, it
-replaces the requirement for unavailable external design notes. No missing
-note's contents have been inferred. Product direction and open design conflicts
-are recorded in `docs/PRODUCT.md` and `docs/DECISION_LOG.md`.
+Updated: 2026-11-11, Asia/Bangkok. This owns the visual contract.
+[Product](docs/PRODUCT.md) owns meaning; the
+[Page standard](app/os/APP_SESSION_STANDARD.md) owns interaction and motion.
+Earlier trials are [historical](docs/archive/2026-11-11-doc-cleanup/DESIGN.md).
 
-The live human-readable brand guide is `/brand`. The code tokens live in
-`app/brand-system.ts`; Circle OS behavior details live in
-`app/os/APP_SESSION_STANDARD.md`.
+## Identity
 
-## Core idea
+**Whole. Human. Alive.** Circle is a calm place to notice life, choose actions
+and reflect. It must not pressure someone through a score of their worth.
 
-**Whole. Human. Alive.**
+Use the exact palette and typefaces in [brand-system.ts](app/brand-system.ts).
 
-The interface should feel like a calm editorial object that happens to be
-useful. It is a mirror, not a dashboard. It should help a person notice life,
-not pressure them to optimize it.
-
-## Foundations
-
-- **Awareness:** show what is actually happening.
-- **Presence:** make today's life feel worth noticing now.
-- **Contribution:** invite honest input instead of extraction.
-- **Living culture:** keep the system adaptable and human.
-
-## Color
-
-| Token | Value | Use |
+| Token | Value | Role |
 | --- | --- | --- |
-| Bone | `#F1EFE8` | reading, openness, calm primary pages |
-| Ink | `#191813` | foundation, type, focused depth |
-| Orange | `#E36B37` | identity, action, living attention |
-| Charcoal | `#403E35` | structure, dividers, secondary text |
+| Bone | #F1EFE8 | Reading and primary wording |
+| Ink | #191813 | Foundation and focused depth |
+| Orange | #E36B37 | Action, identity and active state |
+| Charcoal | #403E35 | Structure and secondary information |
 
-Use solid surfaces. Avoid gradients and decorative color noise. The three App
-Box themes are Light, Orange, and Dark. Theme changes must preserve the same
-geometry and hierarchy.
+Geist owns every functional app surface. Cormorant Garamond is only for outer
+editorial headings. Use simple English. Do not shrink type to force a fit.
 
-## Type
+Solid Light/Orange/Dark themes remain available in existing compact/chapter
+contexts. The six opened tools use the approved dark glass family below.
+Glass reflections may derive from brand colors; decoration never implies data,
+progress or new evidence. Do not apply generic editorial motion to app controls.
 
-- **Geist:** all app labels, prompts, inputs, buttons, data, and functional UI.
-- **Cormorant Garamond:** outer editorial headings only, such as section or
-  route titles.
-- Main app text is bold, direct, and easy to read.
-- Supporting text is short and quieter, but never faint enough to feel broken.
-- Editable reading surfaces use 29px titles/questions and 18px
-  content/answers. This covers account Note/Deep Thoughts and opened history/trash
-  entries, Athena's reply editor, Vision declarations, Week goals/steps, and
-  Chapter short/long text questions with their matching Workshop preview.
-  Retain existing weights and line heights; use the shared spacing below.
-  Lists keep their compact row scale. Reading-only lessons, covers, Athena prose,
-  Quest descriptions, locked-app explanations and Protocol summaries retain
-  their existing typography. This developer-approved refinement supersedes
-  the shared Cover/Note/Chapter size statements below for these editable surfaces.
-- Do not shrink type to fit content. Let the body grow or scroll.
-- Write at a fourth-grade reading level whenever possible.
+## Shared tool contract - 2026-11-11
 
-## Layout
+Applies to Note, Deep Thoughts, Routine, Protocol, Log and Week, including
+History, Trash, Record, phases, details, corrections, confirmations and writing
+sync. Routine is the reference. Update this contract when a shared rule changes;
+do not prepend another conflicting feature override.
 
-- Saved copies/current Note refinement (2026-11-06): after resolution, show the
-  live current note above immutable retained Cloud/Device snapshots. Its history
-  reads the current ledger; archived histories keep their original words. New
-  notes remain in normal History. Hide scrollbar chrome across all bounded
-  writing Pages (Note, History, Trash, detail and Sync), retaining Body scrolling,
-  visible Header/Footer and the existing cap.
+| Role | Size / weight | Rule |
+| --- | --- | --- |
+| Heading | 28px / 700 | 1.2 leading, -0.015em tracking |
+| Primary wording and action labels | 18px / 700 | Compact task leading 1.3 |
+| Prose | 18px / 400 | 1.5 leading |
+| Header navigation | 16px / 700 | 1.4 leading, sentence case |
+| Supporting wording, time/location, cues | 16px / 400 | Week steps are supporting wording under bold goals |
+| Metadata and dates | 12px / 400 | Preserve readability |
 
-- Sync controls (2026-11-06): label the History action Sync, and show it only
-  for pending saved work, unresolved copies or recoverable errors. Drafts and
-  completed syncs alone do not keep it visible. Try again appears only after
-  an error and disappears while retrying or after recovery. Retained Cloud/
-  Device histories remain reachable through Saved copies on their Note History
-  row, independent of Sync visibility. Opening the Note itself still edits it.
+Only weights 400/700. Reading, editing and placeholders use matching role
+metrics. Text entry remains borderless, including focus, with a visible caret.
+Non-text controls keep visible keyboard focus.
 
-- Writing sync refinement (2026-11-06): match Note typography and borderless
-  content. Compare Cloud then Device with no explanatory heading, dates or
-  history buttons. Tapping a copy opens its dated read-only history through
-  shared App-back. Stack Note's default CreativeButton actions: Use Cloud above
-  Use Device. Hide only the scrollbar chrome; Body still scrolls and Footer
-  stays visible. Return silently to the list after confirmed success. Show
-  only brief pending/error text when action is needed. This supersedes the
-  earlier comparison presentation below; retained histories remain intact.
+### Spacing and geometry
 
-- Writing sync (2026-11-06): open a separate Writing sync Page from writing
-  History. Keep normal Note autosave silent and keep save/sync labels out of
-  the global header. Compare This device and Cloud copy vertically, show dates
-  and active/Trash state, and make the current-copy choice explicit. Retained
-  histories remain readable. Reuse shared App-back travel, Geist, orange actions,
-  44px targets and the existing bounded writing Body; the Footer stays visible.
+- Use shared four-pixel spacing tokens. Standard padding is 24px, measured
+  from the inside frame border to visible wording/glyph/rim edges.
+- Header-to-first-Heading/Body, Main-to-Sub and Body-to-Footer are 24px.
+  There is no 48px forehead exception in these six tools or supporting views.
+- Main begins at that anchor and grows downward; changing line count never
+  recentres it. Empty optional regions occupy no space.
+- Section/action-to-cue gap is 40px; cue wording-to-arrow gap is 4px.
+  App-to-App gap remains 16px where applicable.
+- Reference Routine rhythm: 4px within Habit fields, 8px between rows, 12px
+  list-to-creation-action and 40px between Habits and Tasks.
+- Cross glyphs begin at the 24px left anchor; Routine copy retains its 20px
+  indent. Visible completion rims meet the 24px right anchor. Invisible targets
+  may enter gutters but must not overlap adjacent targets.
+- Week columns: goal cross/Add goal plus at 24px; goal words/Add goal label
+  and task cross/Add step plus at 44px; task words/Add step label at 64px.
+  Goal-group gap is 24px, task/add gaps 8px and goal-to-task gap 12px.
+- One focused minimum is measured against bottom navigation and safe areas.
+  Short pages share it; real content grows downward with natural page scrolling.
+  The retired 480px/60dvh writing/history cap does not apply to opened tools.
+  Preserve frame width, top edge, radius and material during Page changes.
 
-- Account controls (2026-11-06): a three-dot button sits at the top right of
-  the existing Circle OS header. It opens Edit alias and Sign out in a menu
-  sized to its labels, with equal space around the longest label. The alias
-  editor retains enough width for its field. There is no
-  separate account row or Saved/Synced status in the header. Keep 44px targets,
-  keep the alias in the greeting and wrap long aliases there.
-  Account access remains reachable during full-screen onboarding.
-  Menu actions use Geist at the existing 650 control weight.
+### Frame and controls
 
-- Approved spacing refinement (2026-11-03): the shared label-to-content gap is
-  48px; Main-to-Sub and Body-to-Footer gaps are both 25px. This supersedes older
-  spacing statements for these values. Preserve the shared App Box minimum and
-  downward growth. Note/Deep Thoughts Trash detail omits “In Trash” and its
-  divider; Restore and Delete forever have a 4px layout gap and retain touch targets.
+The App Box owns border, background, shadow, clipping, radius and height change.
+Pages move inside it without another outer card. Reference frame radius is 36px,
+with quiet pale reflection, Bone rim, faint Orange depth and 24px backdrop blur,
+saturation 1.2. Controls have brighter silver reflections, 8px blur, Ink lower
+edges and faint Orange shadows. Verify vendor prefixes in compiled production CSS.
 
-- Mobile first, with 24px as the normal phone gutter.
-- Prefer centered containers and stable editorial alignment.
-- Desktop may use a two-column layout with a calm 2:1 visual weight when the
-  content benefits from it.
-- Respect the rule of thirds in composition without drawing a visible grid.
-- Minimum touch target: 44px.
+| Control | Current visual rule |
+| --- | --- |
+| Glass action | Shared 52px height, 12px radius, 18px/700 label, full width between 24px anchors |
+| Completion face | 28px Orange glass rim, 2px Ink gap, 22px Orange liquid |
+| Checkmark | Immediate white Geist ✓, 16px/400, matching Log's save mark |
+| Clear | 8px cross, 1.5px strokes, at least 44px target |
+| Every interactive control | At least 44px effective target and meaningful accessible name |
 
-## Chapter delivery
+Liquid rises over the shared 300ms completion response. Protocol word taps do
+nothing: only its checkbox toggles. Kept words remain visible and fill Orange
+with the same upward liquid clip, curve and 300ms duration, without strikethrough.
 
-- A published chapter cover appears directly inside its assigned App Box.
-- Note opens on its editable front. Its label flips the same App Box to a
-  Line (a quote, fact, or joke); it does not recall a Chapter. New deliveries
-  that previously belonged to Note use Deep Thoughts (internal `thoughts`). Preserve legacy immutable
-  Note publications, their versions, and saved records as required by the
-  [Page standard](app/os/APP_SESSION_STANDARD.md#state).
-- Thoughts, Habit, Log, Vision, Week Review, and Athena use one-time deliveries
-  in this testing release. After completion or dismissal, their ordinary App
-  content returns and the chapter is not recalled from the mode label.
-- Private publications stay on that browser and work offline. Public
-  publications use immutable Markdown sources through the connected Circle OS
-  server and are cached on the device.
-- A chapter id and version identify one immutable publication. Editing a
-  published chapter requires a new version.
-- Avoid nested cards. One visual surface should read as one object.
+Use the shared glass variables under .circle-os in app/os/os-app.css, including
+panel/action dimensions and blur. Keep the button engine and shared control
+components; Button Studio experiments are not defaults.
 
-## App Box
+### Motion and verification
 
-An **App Box** is the stable rounded frame. A **Page** is the sheet that moves
-inside it.
+The [shared interaction table](app/os/APP_SESSION_STANDARD.md#shared-tool-interaction-contract---2026-11-11)
+owns timing. Week no longer waits for a checkbox-first sequence or a three-second
+goal dwell. Evidence saves immediately; text responds over 300ms. Structural
+resize is 600ms; typing is immediate. Header reflection is 240ms inside letters;
+glass press/release is 150/400ms.
 
-```text
-Session
-  App Box
-    Header
-    Heading
-    Body
-      Main Body (about 2 parts)
-      Sub Body (about 1 part)
-    Footer
-```
+Reduced motion uses direct endpoints, reduced transparency removes glass/artwork,
+and forced colors preserve readable/announced states. Decoration never delays
+an action. Existing Page travel stays quick; staged arrival belongs only to a
+genuinely new cover.
 
-- The App Box owns radius, clipping, border, shadow, theme, and height change.
-- Pages never add a second outer card.
-- The App Box starts as a compact rounded rectangle and never contracts below
-  the shared default minimum. Empty and short Pages rest at that size. Real
-  content may grow the frame downward, including Routine rows and Protocol
-  terms. One set of tokens owns the minimum, padding, drop to the first line,
-  Main-to-Sub gap and Body-to-Footer gap; an App does not restate them.
-- Account Note and Deep Thoughts are the approved bounded-growth exception:
-  their writing, History and Trash Pages
-  grow from that minimum to a 480px App Box ceiling, reduced to 60% of the dynamic
-  viewport on short screens, never below the shared minimum. Only Body scrolls
-  past the ceiling; Header, Heading and Footer remain in place. Expanded
-  Protocol Past phases uses the same ceiling and Body scrolling. Routine and
-  draft/running Protocol keep their continuous downward growth.
-- Main content begins at the shared forehead anchor for every line count. It
-  never recentres as text changes; a fourth and every later line grows the Page
-  downward after the ordinary three-line height budget is used.
-- Optional Sub Body content hangs directly beneath Main's last line. It is not
-  part of Main's height budget and never moves Main.
-- One written line costs one line of App Box, and the gap between the last line
-  and the action stays the same as the box grows. On Cover, Note and Thoughts
-  the two-to-one weight of Main and Sub is where the eye lands, not a
-  reservation: an absent Sub Body takes no room at all.
-- Real added rows may extend a fluid App Box without colliding with the Footer.
-  Habit tasks stay visible in one continuous Sub Body rather than an inner
-  scrolling panel.
-- Draft and running Protocol terms follow the same continuous-page rule and
-  grow downward. Expanded Past phases is the approved history exception: its
-  Body scrolls at the same 480px/60dvh frame ceiling as Note, never below the
-  shared minimum. Header and Footer stay fixed. Past terms show compact counts
-  such as `1/7`, without white row dividers; each phase keeps its title, full
-  days-kept summary, dates and separation from other phases.
-- Repeated habits use that same continuous stack: one quiet divider and one row
-  rhythm per habit, with no nested card or doubled spacing.
-- Empty optional regions collapse cleanly and leave no dead gap.
-- A Page puts its content in Main Body and Sub Body. Loose children fall into
-  the Body tracks by position and get stretched by them.
-- Where an App carries its weight in Sub Body, as Habit and Protocol do, both
-  tracks size to their content instead of holding the two-to-one weight.
+Run the tool-consistency browser matrix and affected journeys using compiled
+production CSS. Measure visible edges, role typography, all Note/Deep Thoughts/
+Habit/Protocol reference frames, forehead gaps, long growth and intermediate
+motion. Token assertions alone do not establish visual consistency. Include
+focus/targets, preferences and relevant persistence with synthetic isolated data.
+Record actual results in the [journey record](docs/USER_JOURNEY_TESTING.md).
 
-## Reflect
+## Shared Page anatomy
 
-Reflect is where a person reads about their life. It has three parts: the life
-you want, the life you are living, and the space between. Athena's voice runs
-through all three rather than sitting beside them.
+Header, Heading, Main Body, Sub Body and Footer are the shared regions.
+Main/Sub carry roughly two-to-one visual weight, not reserved blank space on
+Cover or writing pages. Content-heavy Routine/Protocol tracks size to real rows.
+The frame stays still and paints one uninterrupted shape while Pages move.
 
-The wanted life has distinct records: Vision names the life, Character names
-who the person is becoming, Mission names how they intend to live, Typical
-Tuesday shows an ordinary day there, and Six months names a nearer milestone.
-Routine identity is a short daily focus and habit identity belongs to one
-habit. Neither silently replaces the versioned Character. Dreamline remains a
-separate finite plan.
+Compact/chapter contexts retain their shared default minimum and existing
+tokens unless explicitly adopted into the opened-tool contract. Do not copy the
+six-tool dimensions into Reflect, chapters or Admin as an unreviewed redesign.
+The [Page standard](app/os/APP_SESSION_STANDARD.md) distinguishes those contexts.
 
-The current Vision surface still shows Vision, Mission statement, and Typical
-Tuesday. Adding Character and Six months to that surface requires a separate
-review of their Pages; the data authority decision does not invent that UI.
+- **Cover:** one hook, optional subtitle, no Header label, never editable;
+  Swipe to begin / Swipe to see cue.
+- **Chapter:** progress at right only, one question/lesson and one interaction;
+  Continue/Confirm action. Short inputs do not manufacture extra height.
+  Existing editable short/long question and declaration contexts retain their
+  approved 29px main / 18px body scale until separately changed.
+- **Note:** full-page free writing, Back/History and New Note. Line is hidden.
+- **Deep Thoughts:** Quote/History, question/answer and Send or Save changes;
+  Next question is deliberate.
+- **Reading:** distinct authored prose and source evidence; no invented missing
+  words or borrowing current observations into an old edition.
 
-Her reading is published as dated editions that accumulate in state. Reflect
-keeps the current four-Page reading. The cover's Athena's Reading label opens
-read-only History through shared App-back in the cover slot, rather than
-adding another swipe Page. A dated list opens each edition's saved prose;
-missing parts stay empty rather than borrowing today's observations. Back
-returns to History then the current cover. History grows downward within the
-existing frame. A morning that says the same thing publishes nothing.
+## Navigation and materials
 
-The latest authored Reading may end with a real question and accept one reply
-as evidence. Week Review is local arithmetic: its seven Pages hold a cover, a
-recurring daily pattern, four distinct parts of the day, and what held or did
-not hold during the week. Its counts stay in local working except when a count
-is itself the point of the final week Page.
+The persistent bottom navigation covers Home, Today, Reflect and Explore,
+including opened tools; current /os entry remains Today. It may hide for the
+keyboard under the existing behavior. Home/Explore remain intentionally empty.
 
-## Page types
+Reuse PageLayout, SwipeSession, useAppBack, RoutineHeaderButton, RoutineSwipeCue
+and the button engine. Their legacy names do not restrict reuse to one tool.
+Manual pairs remain Note/Deep Thoughts, Routine/Protocol and Log/Week. Deep
+Thoughts' Note cue and Week's Log cue begin at the left anchor.
 
-### Cover Page
+The full-page thread background is decorative, shell-bounded and sharp. Honor
+reduced-transparency/motion preferences. Do not repurpose it as Home evidence.
 
-- No header labels.
-- One main hook.
-- One optional short subtitle.
-- Footer cue: `Swipe to begin` or `Swipe to see`.
-- Never editable.
-- Main text retains the shared Cover type token and top anchor. Editable Note
-  and Deep Thoughts share that anchor with their own 29px main-text size.
+## Future design boundaries
 
-### Chapter Page
+[Personal Imprint](docs/PERSONAL_IMPRINT_HOME.md) is the selected Home direction;
+its silhouette and source/brightness/fade formulas remain open.
+[Onboarding](docs/ONBOARDING_SPEC.md) is the replacement target, not implemented.
+The [Reflect proposal](docs/REFLECT_PAGE_POTENTIAL_IMPLEMENTATION.md) is saved
+for later; no new discovery-writing or declaration layout is adopted here.
 
-- Header has progress on the right only.
-- Main Body contains one question or lesson. Short/long text questions use 29px
-  main text and 18px supporting copy/answers; the Workshop preview matches.
-  Other types retain their existing scale. All retain the shared forehead anchor.
-  Confirm and Result keep their own closing anchor.
-- Sub Body contains one interaction: choice, slider, short input, or paragraph.
-- Footer contains the full-width Continue or Confirm action.
-- A choice, slider, or short answer stays at the default App Box height. Grow
-  only for real content such as a paragraph, never for empty form space.
-- Note, Thoughts, short Chapter, and empty Habit Pages share that same default
-  App Box height. A feature does not invent its own empty-state height.
-- Short and paragraph answers are borderless editable typography. Do not draw
-  a field box or underline around the answer.
-
-### Note Page
-
-- Account Note uses NOTE on the left and direct HISTORY navigation on the right.
-  Both labels share typography, baseline and 44px touch targets. Labels,
-  navigation and text actions use Circle Orange (`#E36B37`); authored title and
-  body stay Ink. Use Geist, the shared minimum and forehead, and 44px targets.
-- Main and Sub both take unlimited writing. Account Note scrolls its Body after
-  the shared Note ceiling; writing length itself is not limited.
-- Header shows the app label or app action.
-- Main text uses the same forehead anchor as a Cover Page. Optional Sub text
-  follows Main at the shared gap without moving it.
-- Text can be edited directly with its display typography.
-- Keep the borderless writing surface. Account Note saves after a short typing
-  pause and when leaving; it has no Save, Clear, Discard or Drafts controls or
-  draft messages. Writing fields have no focus outline or box; the text cursor
-  remains. Save silently, with failure alerts when needed. Local recovery
-  remains automatic behind the scenes.
-- HISTORY opens the list directly. Note has no Versions controls or screens.
-  History groups entries by Circle day, shows times, opens writing directly for
-  editing, and carries Trash in the header. The full-width New Note action lives
-  in the Note editor Footer and saves the current text before opening a blank Note.
-  Each editable local Note row has a Circle Orange trash-bin button on its right.
-  That button moves only its Note to Trash, without a Moved to Trash message.
-  There is no Note Undo action;
-  restoration happens from the Trash page.
-  Trash detail keeps the title/body hierarchy with Restore and Delete forever.
-- Selecting and deleting all text saves an empty correction of an existing Note;
-  internal revision records remain for save/conflict safety. Untouched empty
-  composers create no saved entry.
-  Thoughts and reading answers retain Send and their draft workflow. The legacy
-  single-Note editor remains separate pending migration. See the
-  [writing journeys](docs/PERSONAL_RECORDS_AND_ATHENA_PLAN.md#5-writing-journeys).
-
-### Deep Thoughts Page
-
-- Uses the Info Page geometry.
-- Inviting editable typography in the body.
-- Its question uses the same 29px size as Note Main text, with 18px answers.
-  Existing weights, line heights and forehead anchors remain.
-- Question in Main, answer in Sub, with a full-width black Send action.
-- Keep an accepted answer visible; Next question advances only on a deliberate
-  press. Corrections use Save changes and preserve the original question.
-- Recover unfinished answers silently. Omit routine saving/sent and
-  recovered/discarded messages and the Discard draft control. Clearing the answer
-  clears its recovery text; keep actual save errors visible.
-- Match Note's direct HISTORY/header baseline, orange navigation and row bins,
-  dated grouping/times, silent trashing, Trash/Restore and confirmed Delete forever.
-  Reuse its bounded Body scrolling and shared resting geometry. Internal revisions
-  remain; Versions UI and Undo are absent from this surface. Recovery stays local
-  and unsent rows are marked Unsent. Reading-answer embedded controls stay separate.
-- Its label flips to one quote from the managed catalog. Return to the same
-  question and answer, with existing Line swipe/reaction exits. Keep quote travel
-  on the shared App-back engine; quote reading has no timer or question advance.
-- Ordinary Thoughts is retained as a historical record kind, including correction;
-  it has no new-writing composer in Today. Legacy sources remain read only.
-
-### Blog Page
-
-- Title, divider, and short paragraph sections.
-- Athena Reading is the reference.
-- Reading rhythm matters more than packing information into one viewport.
-
-## Motion
-
-- Everyday page travel should respond quickly enough for consecutive swipes.
-- A new cover reveal is ceremonial: old page fades, solid surface settles, then
-  text appears in sequence.
-- In-place app mode changes reuse that reveal instead of swapping instantly.
-  Thoughts to Deep Thoughts is the reference transition.
-- Only newly updated content receives that reveal. Returning to a known Page
-  must not replay entrance animation.
-- Frame height eases only after a Page transition finishes.
-- Required-input feedback uses a brief, clear head shake of the text layer.
-- Respect reduced-motion preferences.
-- The page moves; the App Box does not.
-- Only the Today Note/Thoughts session turns its pages after the shared
-  `IDLE_PAGE_DWELL_MS` dwell. Two-page facts and jokes on its Line side may
-  also turn; a single-page quote has no next Page to turn to.
-- Routine, Protocol, Log, Vision, Week Review, and Athena stay on the chosen
-  Page. Journeys, Chapters, and pending publications never rotate.
-- The idle dwell restarts on touch or key input, waits out focus and a part
-  written Thought, and never runs in the background. See the
-  [Page standard](app/os/APP_SESSION_STANDARD.md#idle-rotation).
-- Every action runs through the button engine. A feature does not draw its own
-  button or its own checkbox.
-- Where an action cannot go through the engine, it is still the same key. See
-  **Buttons** below.
-- One style may break instead of pressing. Fractured Glass takes four strikes:
-  the first three only crack it, and the last one shatters the button and the
-  surface behind it. Breaking it is the action, never a delay before it.
-- A breaking button is a reward, not a toll. It appears when the person has
-  written a real sentence; a single word keeps the ordinary press.
-
-## Buttons
-
-Circle OS has one pressable object. A face raised on a solid leg, lit along its
-top edge, that drives flat onto the surface when pressed and comes back up a
-little slower. Row ticks, Protocol terms, the button engine's default style and
-every full-width Page action are the same key at different sizes.
-
-- The recipe is the `--os-key-*` tokens in `app/os/os-app.css`. A control names
-  its size and its leg colour and gets the rest. Nothing restates a shadow.
-- Sizes are lifts, not heights: 4px, 3px, 2px. The leg is exactly as tall as the
-  lift, so a press removes both and the face lands where the leg was.
-- Legs are never blurred. A blur reads as floating; these are seated in the box.
-- The top light is drawn only where it can be seen: strong on a light or orange
-  face, soft on Ink, absent on a Bone face. The absent value is a transparent
-  shadow, never `none` — `none` is legal only as a whole box-shadow and voids
-  the leg with it.
-- Down is near instant. Pressed and held states are sunk, so the light comes
-  from inside the hole rather than off the top edge.
-- A ghost control is not a key. A dotted invitation such as Add task stays flat,
-  because a control that presses like a commitment claims to be one.
-- The rotating bag of button styles belongs to Button Studio. The App sends with
-  the standard key.
-
-## Dreamline
-
-Hidden for v1 behind `SHOW_DREAMLINE` in `app/os/circle-os-shell.tsx`. The
-record, the model and the Pages are untouched, so returning to it is a flag
-rather than a migration.
-
-- Log currently has a daily timeline and a Week Page; neither idle-rotates.
-- Disabled Dreamline idle/sheet Pages are conditionally attached to the Routine
-  session in current source, not an enabled sequence behind Log. Older
-  Setup/Having/Being/Doing/Income and Now/Tomorrow/Day After layouts are historical,
-  not instructions to rebuild or enable them. Future placement needs review.
-- Being requires the Doing that proves it. Only starred lines receive steps
-  or enter the income calculation.
-- Dreamline is dated, costed and finite. Vision declarations remain separate
-  and timeless.
-
-## Content and AI
-
-- Ask one thing at a time.
-- Prefer one tap, one slide, or one clear text response per Page.
-- Do not repeat the same question in different words.
-- Athena reflects on evidence, expresses uncertainty, asks open questions, and
-  offers feedback and motivation tied to the person's own goals. The person
-  decides how to live. See `docs/PRODUCT.md` for the intended AI role and the
-  distinction between current prepared content and planned server-side AI.
-- Oscar may be playful later, but must not blur truth or consent.
-- Weekly views show real recorded life. AI interpretation belongs in Athena,
-  clearly separated from observed data.
-
-## Taste skills
-
-Project-local design skills live in `.agents/skills/`. Use them for critique,
-reference generation, and craft checks. Circle's own identity and the App Box
-standard always win when a generic skill recommends a conflicting layout,
-typeface, motion pattern, or interaction.
-
-## Admin previews use the production App Box contract
-
-- Runtime, Chapter Workshop, and Button Studio use one responsive width rule:
-  the bounded parent owns width and content may only grow the box downward.
-- Choice interactions use one full-width option per row so authoring preview
-  and published behavior cannot diverge on phones.
-- Button Studio uses the shared Page anatomy. Its `Background` control lives
-  in the Page Header, while the preview button stays mounted in the Footer.
-- Button motion prompts are local draft metadata exported for Codex. They do
-  not call AI or generate assets in this version.
-
-## App modes and publications
-
-- The top-left app label is a mode control, not navigation. Note opens its
-  Line back; Deep Thoughts opens a Quote; Habit
-  cycles Habit, Habit Record, and Habit Tracker.
-- A Line does not dismiss itself on a timer. Swipe backward past its first
-  Page to return to Note. Swiping forward past its last Page reveals reactions;
-  choosing a reaction or swiping forward past the end again returns to Note.
-  Its kind label is text, not a Note return button.
-- A publication version targets exactly one app and one audience. Private work
-  stays profile-scoped. Public/global work always requires explicit approval.
-- The visible product tab is **Reflect**. Vision remains the inner white app
-  about the life the person wants.
-- Page refresh choreography is Body, Header, Footer. The background never
-  blinks or remounts between those text layers.
-
-## Secret Admin and authoring library
-
-- Admin has no public tab, shortcut, or login page. A reserved phrase entered
-  through a fresh Deep Thoughts answer opens a password prompt in the same Page. The phrase is a
-  hidden doorway, not the password itself. The password lives only in the
-  server-side CIRCLE_OS_ADMIN_CODE environment setting; there is no fallback
-  password, and missing or too-short configuration keeps Admin locked.
-- The reserved phrase and admin password are intercepted before thought
-  persistence. Neither is saved as profile evidence or uploaded with normal
-  Thoughts.
-- A successful unlock uses an HttpOnly, SameSite=Strict browser-session cookie.
-  The signed session expires after eight hours, and direct unauthorized Admin
-  visits return quietly to Today.
-- Chapter Library groups follow the fixed authoring classification order:
-  Foundation, Short, Guided Learning, Reflection, then Information. Empty
-  groups stay hidden; free-form category metadata remains searchable.
+The developer decides visual language. Installed Taste skills can improve craft
+but cannot override Circle identity, this guide or the Page standard.
+Admin previews use the production frame/anatomy and bounded parent width;
+choice options remain one full-width row each. Preview metadata does not call AI.

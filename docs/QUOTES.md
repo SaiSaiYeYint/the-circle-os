@@ -1,8 +1,9 @@
 # Managed quote library
 
-Approved: 2026-11-03, Asia/Bangkok. Deep Thoughts opens a quote when its label
-is tapped. Note retains its existing mixed Line pool. Neither reading action
-requests Athena or submits writing.
+Approved: 2026-11-03; navigation aligned 2026-11-11, Asia/Bangkok.
+Deep Thoughts opens the catalog through its Quote Header action and returns to
+the same question/answer without sending it. Note's mixed Line pool is retained
+but its entry is temporarily hidden. Reading requests no Athena or writing save.
 
 ## Managing quotes
 

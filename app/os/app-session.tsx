@@ -119,6 +119,7 @@ export function SwipeSession({
   const previousActiveIndex = useRef(activeIndex);
   const boxHeight = useRef<number | null>(null);
   const growth = useRef<Animation | null>(null);
+  const typingTarget = useRef<EventTarget | null>(null);
 
   /**
    * Move the box's edge from where it was to where it now is.
@@ -133,13 +134,60 @@ export function SwipeSession({
       const from = boxHeight.current;
       boxHeight.current = nextHeight;
       if (!frame || frameHeight || from === null) return;
-      // A line of text appearing under the caret is not an expansion, and
-      // animating it would put the box behind the typing.
-      if (Math.abs(nextHeight - from) <= GROWTH_MIN_PX) return;
+      // A tool can tune growth without slowing other shared App Boxes.
+      const toolDuration = Number(getComputedStyle(frame).getPropertyValue("--os-growth-ms"));
+      const toolGrowth = Number.isFinite(toolDuration) && toolDuration > 0;
+      if (toolGrowth && frame.closest(".os-app-flip, .os-app-flip-hold")) {
+        growth.current?.cancel();
+        return;
+      }
+      if (toolGrowth && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        growth.current?.cancel();
+        return;
+      }
+      const distance = Math.abs(nextHeight - from);
+      const continuingGrowth = toolGrowth && growth.current?.playState === "running";
+      // Follow actual typing directly, rather than mistaking every small
+      // structural change (including crossing the floor) for typing.
+      const typing = toolGrowth && typingTarget.current === document.activeElement;
+      // A settling habit already supplies smoothly animated page geometry.
+      // Follow it directly instead of layering another height animation over it.
+      const rowIsSettling = toolGrowth && Array.from(
+        currentPageRef.current?.querySelectorAll(".os-habit-copy-swap") || [],
+      ).some((row) => row.getAnimations().some((animation) =>
+        "transitionProperty" in animation && animation.transitionProperty === "height" &&
+        animation.playState === "running" && typeof animation.currentTime === "number" &&
+        animation.currentTime >= Number(animation.effect?.getTiming().delay || 0),
+      ));
+      if (typing || rowIsSettling) {
+        // The content supplies this delta. Move the existing trajectory with
+        // it, preserving its clock and the expansion still left to travel.
+        // Cancelling here exposed the entire destination; restarting on every
+        // row transition frame kept the edge from ever catching up.
+        if (continuingGrowth && growth.current?.effect instanceof KeyframeEffect) {
+          const delta = nextHeight - from;
+          const frames = growth.current.effect.getKeyframes();
+          growth.current.effect.setKeyframes(frames.map((keyframe) => ({
+            ...keyframe,
+            height: `${parseFloat(String(keyframe.height)) + delta}px`,
+          })));
+        }
+        return;
+      }
+      if (distance < 0.5 || (!toolGrowth && distance <= GROWTH_MIN_PX && !continuingGrowth)) return;
+      // Retarget rapid additions from the edge currently on screen.
+      const visibleFrom = continuingGrowth
+        ? frame.getBoundingClientRect().height
+        : from;
       growth.current?.cancel();
       growth.current = frame.animate(
-        [{ height: `${from}px` }, { height: `${nextHeight}px` }],
-        { duration: GROWTH_MS, easing: GROWTH_EASE },
+        [{ height: `${visibleFrom}px` }, { height: `${nextHeight}px` }],
+        {
+          duration: toolGrowth ? toolDuration : GROWTH_MS,
+          easing: toolGrowth
+            ? getComputedStyle(frame).getPropertyValue("--os-growth-ease").trim() || GROWTH_EASE
+            : GROWTH_EASE,
+        },
       );
     },
     [frameHeight],
@@ -707,6 +755,9 @@ export function SwipeSession({
   return (
     <div
       aria-label={label}
+      onInputCapture={(event) => { typingTarget.current = event.target; }}
+      onPointerDownCapture={() => { typingTarget.current = null; }}
+      onBlurCapture={() => { typingTarget.current = null; }}
       className={`os-swipe-session ${className}${
         showingBlockedCue ? " required-nudge" : ""
       }`.trim()}
@@ -869,6 +920,7 @@ export function PageLayout({
   children,
   className = "",
   footer,
+  footerNavigation,
   heading,
   headerLeft,
   headerRight,
@@ -879,6 +931,7 @@ export function PageLayout({
   children: ReactNode;
   className?: string;
   footer?: ReactNode;
+  footerNavigation?: ReactNode;
   heading?: ReactNode;
   headerLeft?: ReactNode;
   headerRight?: ReactNode;
@@ -976,7 +1029,7 @@ export function PageLayout({
       window.cancelAnimationFrame(frame);
       window.removeEventListener("resize", measure);
     };
-  }, [children, footer, heading, headerLeft, headerRight, placement]);
+  }, [children, footer, footerNavigation, heading, headerLeft, headerRight, placement]);
 
   return (
     <div
@@ -1001,8 +1054,8 @@ export function PageLayout({
         *
         * Empty, it takes no room, and the box's own bottom padding is the
         * bottom edge — which is what that padding is for. */}
-      <div className={`os-page-footer${footer ? "" : " is-empty"}`}>
-        {footer ?? <span aria-hidden="true" className="os-info-page-spacer" />}
+      <div className={`os-page-footer${footer || footerNavigation ? "" : " is-empty"}`}>
+        {footerNavigation ? <div className="os-page-footer-navigation">{footer}{footerNavigation}</div> : footer ?? <span aria-hidden="true" className="os-info-page-spacer" />}
       </div>
     </div>
   );

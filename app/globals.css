@@ -1932,7 +1932,7 @@ footer small {
   height: 72px;
   justify-content: space-between;
   left: 0;
-  padding: 0 var(--space-6);
+  padding: 0 clamp(1.5rem, 5vw, 4.5rem);
   position: fixed;
   right: 0;
   top: 0;
@@ -1943,21 +1943,21 @@ footer small {
   align-items: center;
   display: inline-flex;
   font-size: var(--text-sm);
-  font-weight: var(--os-weight-bold);
-  gap: var(--space-3);
+  font-weight: 650;
+  gap: 0.75rem;
   letter-spacing: 0.16em;
 }
 
 .os-nav {
   align-items: center;
   display: flex;
-  gap: var(--space-9);
+  gap: 2.2rem;
 }
 
 .os-nav a {
   color: var(--os-muted);
   font-size: var(--text-sm);
-  font-weight: var(--os-weight-bold);
+  font-weight: 600;
   letter-spacing: 0.11em;
   position: relative;
   text-transform: uppercase;
@@ -1990,13 +1990,13 @@ footer small {
 .os-mirror {
   margin: 0 auto;
   max-width: 1120px;
-  padding: var(--space-18) var(--space-6) var(--space-32);
+  padding: 72px clamp(1.5rem, 5vw, 4.5rem) 8rem;
 }
 
 .os-eyebrow {
   color: var(--os-orange);
   font-size: var(--text-xs);
-  font-weight: var(--os-weight-bold);
+  font-weight: 650;
   letter-spacing: 0.13em;
   margin: 0;
   text-transform: uppercase;
@@ -2007,7 +2007,7 @@ footer small {
   flex-direction: column;
   justify-content: center;
   min-height: min(760px, calc(100svh - 72px));
-  padding: var(--space-18) 0 var(--space-20);
+  padding: 4.5rem 0 5rem;
 }
 
 .os-context-row {
@@ -2027,7 +2027,7 @@ footer small {
   border-bottom: 1px solid var(--os-line);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  margin: var(--space-9) 0 var(--space-12);
+  margin: 2.25rem 0 clamp(3rem, 8vh, 6rem);
 }
 
 .os-period-tabs button {
@@ -2038,11 +2038,11 @@ footer small {
   cursor: pointer;
   display: flex;
   font-size: var(--text-sm);
-  font-weight: var(--os-weight-bold);
+  font-weight: 600;
   justify-content: space-between;
   letter-spacing: 0.08em;
   min-height: 48px;
-  padding: 0 var(--space-5) var(--space-3) 0;
+  padding: 0 1.25rem 0.85rem 0;
   position: relative;
   text-transform: uppercase;
 }
@@ -2084,14 +2084,14 @@ footer small {
   color: var(--os-muted);
   font-size: var(--text-xs);
   letter-spacing: 0.11em;
-  margin: 0 0 var(--space-5);
+  margin: 0 0 1.25rem;
   text-transform: uppercase;
 }
 
 .os-checkin h1 {
-  font-family: var(--font-sans), Arial, sans-serif;
-  font-size: var(--os-type-heading);
-  font-weight: var(--os-weight-normal);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(3.2rem, 7vw, 6.25rem);
+  font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 0.95;
   margin: 0;
@@ -2100,8 +2100,8 @@ footer small {
 
 .os-energy-scale {
   display: flex;
-  gap: var(--space-3);
-  margin-top: var(--space-11);
+  gap: clamp(0.75rem, 2.4vw, 1.5rem);
+  margin-top: clamp(2.8rem, 6vh, 4.5rem);
 }
 
 .os-energy-scale button {
@@ -2148,7 +2148,7 @@ footer small {
 
 .os-energy-scale button span {
   font-size: var(--text-md);
-  font-weight: var(--os-weight-bold);
+  font-weight: 650;
 }
 
 .os-scale-labels {
@@ -2157,7 +2157,7 @@ footer small {
   font-size: var(--text-2xs);
   justify-content: space-between;
   letter-spacing: 0.05em;
-  margin-top: var(--space-3);
+  margin-top: 0.75rem;
   max-width: min(100%, 438px);
 }
 
@@ -2165,10 +2165,10 @@ footer small {
   align-items: center;
   border-top: 1px solid var(--os-line);
   display: grid;
-  gap: var(--space-8);
+  gap: 2rem;
   grid-template-columns: minmax(180px, 0.7fr) 1.7fr;
-  margin-top: var(--space-12);
-  padding-top: var(--space-6);
+  margin-top: clamp(3rem, 8vh, 5.5rem);
+  padding-top: 1.5rem;
 }
 
 .os-mood-row > p {
@@ -2180,7 +2180,7 @@ footer small {
 .os-mood-row > div {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: 0.55rem;
   justify-content: flex-end;
 }
 
@@ -2192,7 +2192,7 @@ footer small {
   cursor: pointer;
   font-size: var(--text-sm);
   min-height: 44px;
-  padding: var(--space-2) var(--space-4);
+  padding: 0.55rem 1rem;
   transition:
     border-color 200ms ease,
     color 200ms ease,
@@ -2214,24 +2214,24 @@ footer small {
   border-bottom: 1px solid var(--os-line);
   border-top: 1px solid var(--os-line);
   display: grid;
-  gap: var(--space-12);
+  gap: 3rem;
   grid-template-columns: 1fr auto;
-  padding: var(--space-14) 0;
+  padding: clamp(3.5rem, 7vw, 6rem) 0;
 }
 
 .os-mission h2,
 .os-section-heading h2,
 .mirror-heading-row h2,
 .identity-layout h2 {
-  font-family: var(--font-sans), Arial, sans-serif;
-  font-weight: var(--os-weight-normal);
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 400;
   letter-spacing: -0.035em;
 }
 
 .os-mission h2 {
-  font-size: var(--os-type-heading);
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
   line-height: 1.02;
-  margin: var(--space-4) 0 var(--space-3);
+  margin: 1rem 0 0.85rem;
   max-width: 760px;
 }
 
@@ -2248,10 +2248,10 @@ footer small {
   cursor: pointer;
   display: inline-flex;
   font-size: var(--text-sm);
-  font-weight: var(--os-weight-bold);
-  gap: var(--space-3);
+  font-weight: 650;
+  gap: 0.75rem;
   min-height: 52px;
-  padding: var(--space-3) var(--space-5);
+  padding: 0.85rem 1.25rem;
   text-transform: uppercase;
   transition:
     background 220ms ease,
@@ -2271,22 +2271,22 @@ footer small {
 }
 
 .os-day {
-  padding: var(--space-20) 0 var(--space-8);
+  padding: clamp(5rem, 10vw, 9rem) 0 2rem;
 }
 
 .os-section-heading,
 .mirror-heading-row {
   align-items: end;
   display: flex;
-  gap: var(--space-8);
+  gap: 2rem;
   justify-content: space-between;
 }
 
 .os-section-heading h2,
 .mirror-heading-row h2 {
-  font-size: var(--os-type-heading);
+  font-size: clamp(3rem, 6vw, 5.4rem);
   line-height: 0.95;
-  margin: var(--space-3) 0 0;
+  margin: 0.75rem 0 0;
 }
 
 .os-add-time {
@@ -2297,8 +2297,8 @@ footer small {
   cursor: pointer;
   display: inline-flex;
   font-size: var(--text-sm);
-  font-weight: var(--os-weight-bold);
-  gap: var(--space-4);
+  font-weight: 650;
+  gap: 0.9rem;
   letter-spacing: 0.08em;
   min-height: 48px;
   text-transform: uppercase;
@@ -2323,9 +2323,9 @@ footer small {
   color: var(--os-bone);
   cursor: pointer;
   font-size: var(--text-xs);
-  font-weight: var(--os-weight-bold);
+  font-weight: 650;
   min-height: 44px;
-  padding: var(--space-3) var(--space-4);
+  padding: 0.65rem 1rem;
   text-transform: uppercase;
 }
 
@@ -2338,17 +2338,17 @@ footer small {
 
 .os-timeline {
   border-top: 1px solid var(--os-line);
-  margin-top: var(--space-12);
+  margin-top: 3rem;
 }
 
 .os-timeline article {
   align-items: center;
   border-bottom: 1px solid var(--os-line);
   display: grid;
-  gap: var(--space-6);
+  gap: 1.5rem;
   grid-template-columns: 110px 1fr auto;
   min-height: 94px;
-  padding: var(--space-5) 0;
+  padding: 1.15rem 0;
 }
 
 .os-time-range {
@@ -2358,7 +2358,7 @@ footer small {
 
 .os-time-range strong {
   font-size: var(--text-md);
-  font-weight: var(--os-weight-normal);
+  font-weight: 550;
 }
 
 .os-time-range span {
@@ -2378,7 +2378,7 @@ footer small {
 
 .os-log-actions {
   display: flex;
-  gap: var(--space-2);
+  gap: 0.4rem;
 }
 
 .os-log-actions button {
@@ -2388,7 +2388,7 @@ footer small {
   cursor: pointer;
   font-size: var(--text-2xs);
   min-height: 44px;
-  padding: var(--space-2);
+  padding: 0.5rem;
 }
 
 .os-log-actions button:hover {
@@ -2418,16 +2418,16 @@ footer small {
 .os-day-coverage {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  margin-top: var(--space-12);
+  margin-top: 3rem;
 }
 
 .os-day-coverage div {
   border-left: 1px solid var(--os-line);
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 0.65rem;
   min-height: 100px;
-  padding: 0 var(--space-5);
+  padding: 0 1.25rem;
 }
 
 .os-day-coverage div:last-child {
@@ -2443,7 +2443,7 @@ footer small {
 
 .os-day-coverage strong {
   font-size: var(--text-sm);
-  font-weight: var(--os-weight-normal);
+  font-weight: 500;
 }
 
 /* Mirror */
@@ -2451,30 +2451,30 @@ footer small {
 .mirror-intro {
   align-items: end;
   display: grid;
-  gap: var(--space-16);
+  gap: 4rem;
   grid-template-columns: 1.35fr 0.65fr;
   min-height: 560px;
-  padding: var(--space-24) 0;
+  padding: 6rem 0;
 }
 
 .mirror-intro h1 {
-  font-family: var(--font-sans), Arial, sans-serif;
-  font-size: var(--os-type-heading);
-  font-weight: var(--os-weight-normal);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(4.5rem, 10vw, 9rem);
+  font-weight: 400;
   letter-spacing: -0.055em;
   line-height: 0.76;
-  margin: var(--space-5) 0 0;
+  margin: 1.25rem 0 0;
 }
 
 .mirror-intro-copy {
-  padding-bottom: var(--space-2);
+  padding-bottom: 0.5rem;
 }
 
 .mirror-intro-copy p {
   color: var(--os-muted);
   font-size: var(--text-md);
   line-height: 1.65;
-  margin: 0 0 var(--space-6);
+  margin: 0 0 1.5rem;
 }
 
 .mirror-intro-copy button {
@@ -2484,9 +2484,9 @@ footer small {
   color: var(--os-bone);
   cursor: pointer;
   font-size: var(--text-xs);
-  font-weight: var(--os-weight-bold);
+  font-weight: 600;
   letter-spacing: 0.08em;
-  padding: var(--space-2) 0;
+  padding: 0.4rem 0;
   text-transform: uppercase;
 }
 
@@ -2495,27 +2495,27 @@ footer small {
   color: var(--os-bone);
   display: flex;
   font-size: var(--text-sm);
-  gap: var(--space-6);
-  margin-bottom: var(--space-8);
-  padding: var(--space-3) var(--space-4);
+  gap: 1.4rem;
+  margin-bottom: 2rem;
+  padding: 0.8rem 1rem;
 }
 
 .mirror-sample-note span {
-  font-weight: var(--os-weight-bold);
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .os-mirror > section:not(.mirror-reflection) {
   border-top: 1px solid var(--os-line);
-  padding: var(--space-18) 0;
+  padding: clamp(4.5rem, 9vw, 8rem) 0;
 }
 
 .mirror-section-label {
   align-items: center;
   display: flex;
-  gap: var(--space-5);
-  margin-bottom: var(--space-14);
+  gap: 1.25rem;
+  margin-bottom: clamp(3.5rem, 7vw, 6.5rem);
 }
 
 .mirror-section-label span {
@@ -2525,7 +2525,7 @@ footer small {
 
 .mirror-section-label p {
   font-size: var(--text-xs);
-  font-weight: var(--os-weight-bold);
+  font-weight: 650;
   letter-spacing: 0.11em;
   margin: 0;
   text-transform: uppercase;
@@ -2541,7 +2541,7 @@ footer small {
   display: flex;
   flex-direction: column;
   min-height: 190px;
-  padding: 0 var(--space-5);
+  padding: 0 1.15rem;
 }
 
 .week-ribbon article:last-child {
@@ -2557,7 +2557,7 @@ footer small {
 .week-ribbon article > div {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 0.55rem;
   margin: auto 0;
 }
 
@@ -2582,15 +2582,15 @@ footer small {
   align-items: end;
   border-top: 1px solid var(--os-line);
   display: flex;
-  gap: var(--space-6);
-  margin-top: var(--space-8);
-  padding-top: var(--space-6);
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
 }
 
 .coverage-statement > strong {
-  font-family: var(--font-sans), Arial, sans-serif;
+  font-family: var(--font-display), Georgia, serif;
   font-size: var(--text-7xl);
-  font-weight: var(--os-weight-normal);
+  font-weight: 400;
   line-height: 0.75;
 }
 
@@ -2606,7 +2606,7 @@ footer small {
 }
 
 .mirror-heading-row {
-  margin-bottom: var(--space-16);
+  margin-bottom: 4rem;
 }
 
 .mirror-heading-row > p {
@@ -2653,24 +2653,24 @@ footer small {
   display: grid;
   gap: 0;
   grid-template-columns: repeat(2, 1fr);
-  margin-top: var(--space-12);
+  margin-top: 3rem;
 }
 
 .time-allocation > div {
   align-items: center;
   border-bottom: 1px solid var(--os-line);
   display: grid;
-  gap: var(--space-3);
+  gap: 0.75rem;
   grid-template-columns: 10px 1fr auto;
   min-height: 54px;
 }
 
 .time-allocation > div:nth-child(odd) {
-  margin-right: var(--space-6);
+  margin-right: 1.5rem;
 }
 
 .time-allocation > div:nth-child(even) {
-  margin-left: var(--space-6);
+  margin-left: 1.5rem;
 }
 
 .time-allocation span {
@@ -2685,7 +2685,7 @@ footer small {
 }
 
 .time-allocation strong {
-  font-weight: var(--os-weight-normal);
+  font-weight: 500;
 }
 
 .energy-chart {
@@ -2698,7 +2698,7 @@ footer small {
   border-left: 1px solid var(--os-line);
   display: grid;
   grid-template-rows: 250px auto auto auto;
-  padding: 0 var(--space-5) var(--space-5);
+  padding: 0 1.25rem 1.25rem;
 }
 
 .energy-chart > div:last-child {
@@ -2708,7 +2708,7 @@ footer small {
 .energy-plot {
   align-items: end;
   display: flex;
-  padding-bottom: var(--space-5);
+  padding-bottom: 1.25rem;
 }
 
 .energy-plot i {
@@ -2737,15 +2737,15 @@ footer small {
 }
 
 .energy-chart strong {
-  font-family: var(--font-sans), Arial, sans-serif;
+  font-family: var(--font-display), Georgia, serif;
   font-size: var(--text-4xl);
-  font-weight: var(--os-weight-normal);
+  font-weight: 400;
   line-height: 1;
 }
 
 .energy-chart span {
   font-size: var(--text-xs);
-  margin-top: var(--space-2);
+  margin-top: 0.6rem;
 }
 
 .energy-chart small {
@@ -2757,7 +2757,7 @@ footer small {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-6);
+  gap: 1.5rem;
   justify-content: center;
   min-height: 340px;
 }
@@ -2779,9 +2779,9 @@ footer small {
 }
 
 .mood-field strong {
-  font-family: var(--font-sans), Arial, sans-serif;
-  font-size: var(--os-type-body);
-  font-weight: var(--os-weight-normal);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.2rem, 2.4vw, 2rem);
+  font-weight: 400;
 }
 
 .mood-field span {
@@ -2792,7 +2792,7 @@ footer small {
 .identity-layout {
   align-items: center;
   display: grid;
-  gap: var(--space-12);
+  gap: clamp(3rem, 8vw, 8rem);
   grid-template-columns: minmax(250px, 0.7fr) 1.3fr;
 }
 
@@ -2818,15 +2818,15 @@ footer small {
 }
 
 .identity-mark span {
-  font-family: var(--font-sans), Arial, sans-serif;
-  font-size: var(--os-type-heading);
-  font-weight: var(--os-weight-normal);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(4rem, 10vw, 8rem);
+  font-weight: 400;
 }
 
 .identity-layout h2 {
-  font-size: var(--os-type-heading);
+  font-size: clamp(3rem, 6vw, 5.5rem);
   line-height: 0.95;
-  margin: var(--space-4) 0 var(--space-12);
+  margin: 1rem 0 3rem;
 }
 
 .identity-lines {
@@ -2838,68 +2838,68 @@ footer small {
   border-bottom: 1px solid var(--os-line);
   display: flex;
   font-size: var(--text-sm);
-  gap: var(--space-6);
+  gap: 1.4rem;
   margin: 0;
   min-height: 62px;
 }
 
 .identity-lines strong {
   color: var(--os-orange);
-  font-family: var(--font-sans), Arial, sans-serif;
+  font-family: var(--font-display), Georgia, serif;
   font-size: var(--text-4xl);
-  font-weight: var(--os-weight-normal);
+  font-weight: 400;
   min-width: 30px;
 }
 
 .identity-note {
   color: var(--os-muted);
   font-size: var(--text-xs);
-  margin: var(--space-5) 0 0;
+  margin: 1.2rem 0 0;
 }
 
 .mirror-reflection {
   border-top: 1px solid var(--os-line);
   min-height: 620px;
-  padding: var(--space-24) 0;
+  padding: clamp(6rem, 12vw, 11rem) 0;
 }
 
 .mirror-reflection h2 {
-  font-family: var(--font-sans), Arial, sans-serif;
-  font-size: var(--os-type-heading);
-  font-weight: var(--os-weight-normal);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 0.96;
-  margin: var(--space-8) 0 var(--space-16);
+  margin: 2rem 0 clamp(4rem, 9vw, 7rem);
   max-width: 980px;
 }
 
 .mirror-reflection > div {
   border-left: 2px solid var(--os-orange);
   max-width: 660px;
-  padding-left: var(--space-6);
+  padding-left: 1.5rem;
 }
 
 .mirror-reflection > div span {
   color: var(--os-orange);
   font-size: var(--text-2xs);
-  font-weight: var(--os-weight-bold);
+  font-weight: 650;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .mirror-reflection > div p {
   font-size: var(--text-base);
-  margin: var(--space-2) 0 0;
+  margin: 0.6rem 0 0;
 }
 
 .mirror-reflection > a {
   border-bottom: 1px solid var(--os-orange);
   display: inline-flex;
   font-size: var(--text-sm);
-  font-weight: var(--os-weight-bold);
-  gap: var(--space-4);
-  margin-top: var(--space-14);
-  padding-bottom: var(--space-2);
+  font-weight: 600;
+  gap: 1rem;
+  margin-top: 3.5rem;
+  padding-bottom: 0.4rem;
   text-transform: uppercase;
 }
 
@@ -2910,7 +2910,7 @@ footer small {
 @media (max-width: 820px) {
   .os-header {
     height: 64px;
-    padding: 0 var(--space-6);
+    padding: 0 1.5rem;
   }
 
   .os-nav {
@@ -2919,16 +2919,16 @@ footer small {
 
   .os-today,
   .os-mirror {
-    padding: var(--space-16) var(--space-6) var(--space-28);
+    padding: 64px 1.5rem 7rem;
   }
 
   .os-checkin {
     min-height: calc(100svh - 128px);
-    padding: var(--space-14) 0;
+    padding: 3.5rem 0;
   }
 
   .os-period-tabs {
-    margin-bottom: var(--space-14);
+    margin-bottom: 3.5rem;
     overflow-x: auto;
   }
 
@@ -2962,9 +2962,9 @@ footer small {
   }
 
   .mirror-intro {
-    gap: var(--space-12);
+    gap: 3rem;
     min-height: auto;
-    padding: var(--space-28) 0 var(--space-20);
+    padding: 7rem 0 5rem;
   }
 
   .mirror-intro-copy {
@@ -2990,14 +2990,14 @@ footer small {
   .os-context-row {
     align-items: start;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 0.35rem;
   }
 
   .os-period-tabs {
     grid-template-columns: repeat(4, minmax(88px, 1fr));
-    margin-left: calc(-1 * var(--space-6));
-    margin-right: calc(-1 * var(--space-6));
-    padding-left: var(--space-6);
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    padding-left: 1.5rem;
     scrollbar-width: none;
   }
 
@@ -3006,7 +3006,7 @@ footer small {
   }
 
   .os-checkin h1 {
-    font-size: var(--os-type-heading);
+    font-size: clamp(3.1rem, 15vw, 4.5rem);
   }
 
   .os-energy-scale {
@@ -3019,7 +3019,7 @@ footer small {
   }
 
   .os-mood-row {
-    gap: var(--space-5);
+    gap: 1.25rem;
   }
 
   .os-mood-row > div {
@@ -3038,7 +3038,7 @@ footer small {
   }
 
   .os-timeline article {
-    gap: var(--space-4);
+    gap: 1rem;
     grid-template-columns: 70px 1fr;
   }
 
@@ -3048,7 +3048,7 @@ footer small {
 
   .os-day-coverage {
     grid-template-columns: repeat(2, 1fr);
-    row-gap: var(--space-8);
+    row-gap: 2rem;
   }
 
   .os-day-coverage div:nth-child(3) {
@@ -3060,18 +3060,18 @@ footer small {
   }
 
   .mirror-intro h1 {
-    font-size: var(--os-type-heading);
+    font-size: 24vw;
   }
 
   .mirror-sample-note {
     align-items: start;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 0.25rem;
   }
 
   .week-ribbon {
     overflow-x: auto;
-    padding-bottom: var(--space-4);
+    padding-bottom: 1rem;
   }
 
   .week-ribbon article {
@@ -3089,7 +3089,7 @@ footer small {
 
   .energy-chart {
     grid-template-columns: repeat(2, 1fr);
-    row-gap: var(--space-8);
+    row-gap: 2rem;
   }
 
   .energy-chart > div {
@@ -3101,7 +3101,7 @@ footer small {
   }
 
   .mood-field {
-    gap: var(--space-3);
+    gap: 0.8rem;
   }
 
   .mirror-reflection {

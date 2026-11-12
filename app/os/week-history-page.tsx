@@ -2,45 +2,32 @@
 
 import type { MouseEvent } from "react";
 import { PageLayout } from "./app-session";
-import { RoutineHeaderButton } from "./routine-controls";
-import { groupWeekActivity } from "./week-history.js";
 import type { weekHistory } from "./week-history.js";
 
-export function WeekHistoryPage({ weeks, selectedWeek, onBack, onSelect, activity = [] }: {
-  activity?: { id: string; text: string; at: string; kind: string; goalId?: string; goalText?: string }[];
+export function WeekHistoryPage({ weeks, selectedWeek, onBack, onSelect }: {
   weeks: ReturnType<typeof weekHistory>;
   selectedWeek: string | null;
   onBack: (event: MouseEvent<HTMLButtonElement>) => void;
   onSelect: (weekKey: string, source: HTMLButtonElement) => void;
 }) {
   const week = weeks.find(item => item.weekKey === selectedWeek);
-  const days = groupWeekActivity(activity);
   return <PageLayout
     className="os-log-page os-week-history-page"
-    headerLeft={<RoutineHeaderButton reflectionDirection="back" className="os-card-label os-log-history-label" onClick={onBack}>
+    headerLeft={<button className="os-card-label os-log-history-label" type="button" onClick={onBack}>
       <span aria-hidden="true">‹</span> {selectedWeek ? "History" : "Week"}
-    </RoutineHeaderButton>}
+    </button>}
     heading={<h2>{selectedWeek ? `Week of ${selectedWeek}` : "History"}</h2>}
     placement="content-flow" theme="dark"
   >
-    {!selectedWeek && activity.length ? <div className="os-week-activity-history" aria-label="Finished goals and tasks">
-      {days.map(day => <details className="os-week-history-day" key={day.dateKey} aria-label={`Records for ${day.dateKey || 'unknown day'}`}>
-        <summary><span>{day.dateKey ? new Date(`${day.dateKey}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) : 'Date not recorded'}<span className="os-week-inline-arrow" aria-hidden="true">▾</span></span></summary>
-        <div className="os-week-history-day-goals">{day.goals.map(goal => <details className="os-week-history-goal" key={goal.id}>
-          <summary><span>{goal.text || 'Goal not recorded'}<span className="os-week-inline-arrow" aria-hidden="true">▾</span></span></summary>
-          {goal.tasks.length ? <ul>{goal.tasks.map(task => <li key={task.id}>{task.text}</li>)}</ul> : <p>No tasks recorded on this day.</p>}
-        </details>)}</div>
-      </details>)}
-    </div> : null}
     {selectedWeek ? week ? <div className="os-week-history-detail" aria-label={`Saved week ${week.weekKey}`}>
       <section aria-label="Saved goals"><h3>Goals</h3>
-        {week.goals.length ? week.goals.map(goal => <details className="os-week-history-goal" key={goal.id}>
-          <summary><span>{goal.text || "Untitled goal"}<span className="os-week-inline-arrow" aria-hidden="true">▾</span></span></summary><p className="os-log-history-date">{goal.removed ? "Removed" : goal.done ? "Completed" : "Open"}</p>
+        {week.goals.length ? week.goals.map(goal => <article key={goal.id}>
+          <p>{goal.text || "Untitled goal"}</p><p className="os-log-history-date">{goal.done ? "Completed" : "Open"}</p>
           {goal.steps.length ? <ul>{goal.steps.map(step => <li key={step.id}>
             <p>{step.text || "Step unavailable"}</p>
             <p className="os-log-history-date">{step.dateKey || "Date not recorded"} · {step.status === "completed" ? "Completed" : step.status === "archived" ? "Archived" : step.status === "missing" ? "Task unavailable" : "Open"}</p>
           </li>)}</ul> : null}
-        </details>) : <p>No goals saved.</p>}
+        </article>) : <p>No goals saved.</p>}
       </section>
       <section aria-label="Saved review"><h3>Review</h3>
         {week.review ? <>
@@ -52,10 +39,10 @@ export function WeekHistoryPage({ weeks, selectedWeek, onBack, onSelect, activit
           ].map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value || "Not recorded"}</dd></div>)}</dl>
         </> : <p>No review saved.</p>}
       </section>
-    </div> : <p>This week has no saved records.</p> : <details className="os-week-saved-weeks"><summary><span>Saved weeks<span className="os-week-inline-arrow" aria-hidden="true">▾</span></span></summary><div className="os-log-history-list" aria-label="Recorded weeks">
+    </div> : <p>This week has no saved records.</p> : <div className="os-log-history-list" aria-label="Recorded weeks">
       {weeks.length ? weeks.map(item => <button type="button" key={item.weekKey} onClick={event => onSelect(item.weekKey, event.currentTarget)}>
         <span>Week of {item.weekKey}</span>
       </button>) : <p>No past weeks recorded yet.</p>}
-    </div></details>}
+    </div>}
   </PageLayout>;
 }

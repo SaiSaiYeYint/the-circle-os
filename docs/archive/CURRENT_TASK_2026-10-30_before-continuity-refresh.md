@@ -36,20 +36,20 @@ Complete: interaction-rule decisions (step 5 of the reviewed sequence).
 Broader runtime verification and stabilization remain open.
 Roadmap: [Phase 1 — stabilize existing behavior](../ROADMAP.md).
 Idle rotation's documentation conflict is resolved by the developer-approved
-[limited-rotation decision](2026-11-11-doc-cleanup/DECISION_LOG.md#2026-10-30--limited-idle-rotation-confirmed).
+[limited-rotation decision](../DECISION_LOG.md#2026-10-30--limited-idle-rotation-confirmed).
 Note opening and Line exits are also resolved by the approved
-[Note and Line decision](2026-11-11-doc-cleanup/DECISION_LOG.md#2026-10-30--note-and-line-confirmed).
+[Note and Line decision](../DECISION_LOG.md#2026-10-30--note-and-line-confirmed).
 The geometry measurement pass and approved empty-Routine fix are complete.
 Protocol content growth is resolved by the approved
-[Protocol sizing decision](2026-11-11-doc-cleanup/DECISION_LOG.md#2026-10-30--protocol-grows-to-show-its-terms).
+[Protocol sizing decision](../DECISION_LOG.md#2026-10-30--protocol-grows-to-show-its-terms).
 Main placement is resolved by the approved
-[forehead decision](2026-11-11-doc-cleanup/DECISION_LOG.md#2026-10-30--main-content-keeps-the-forehead-anchor).
+[forehead decision](../DECISION_LOG.md#2026-10-30--main-content-keeps-the-forehead-anchor).
 Character authority is resolved by the approved
-[Character decision](2026-11-11-doc-cleanup/DECISION_LOG.md#2026-10-30--character-is-authoritative).
+[Character decision](../DECISION_LOG.md#2026-10-30--character-is-authoritative).
 Its alignment implementation and labelled fallbacks are verified. The earlier
 rotation and Line-exit paths were not retested.
 The final gate conflict is resolved by the developer-approved
-[setup chapter decision](2026-11-11-doc-cleanup/DECISION_LOG.md#2026-10-30--setup-chapters-control-app-access).
+[setup chapter decision](../DECISION_LOG.md#2026-10-30--setup-chapters-control-app-access).
 Protocol opens after Day One; Week opens after Week setup. Existing automatic
 offer timing is preserved. Comments were clarified without changing behavior.
 Focused gate tests passed 4/4; these paths were not freshly browser-tested.

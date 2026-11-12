@@ -2154,18 +2154,6 @@ export function updateHabitDefinitionParts(state, id, parts) {
 // survives the merge and the habit returns on the next sync. Archiving leaves a
 // record with a newer updatedAt, which the merge honours, and the app already
 // lists only active habits.
-export function archiveHabitDefinition(state, id) {
-  const current = state.habits.definitions[id];
-  if (!current || current.status === "archived") return state;
-  return queueProfileUpdate({
-    ...state,
-    habits: { ...state.habits, definitions: {
-      ...state.habits.definitions,
-      [id]: { ...current, status: "archived", updatedAt: new Date().toISOString() },
-    } },
-  }, "habit");
-}
-
 export function discardEmptyHabit(state, id) {
   const current = state.habits.definitions[id];
   if (!current || current.text.trim() || current.status === "archived" || current.status === "draft") {
@@ -2261,7 +2249,7 @@ export function updateTask(state, id, text) {
       ...state.tasks,
       items: {
         ...state.tasks.items,
-        [id]: { ...current, text: cleanText, previousText: current.previousText || current.text || cleanText, updatedAt: new Date().toISOString() },
+        [id]: { ...current, text: cleanText, updatedAt: new Date().toISOString() },
       },
     },
   };
@@ -2271,23 +2259,8 @@ export function updateTask(state, id, text) {
 // Archived rather than removed, for the same reason as a habit: a record the
 // phone deletes has nothing left for the server merge to compare against, so
 // the server copy wins and the task comes back. The Page lists open tasks only.
-export function archiveTask(state, id) {
-  const current = state.tasks.items[id];
-  // A just-completed row can still be leaving Routine. Its completed status
-  // owns the Record entry, so clearing that visible row only ends its exit.
-  if (!current || current.status === "archived" || current.status === "completed") return state;
-  return queueProfileUpdate({
-    ...state,
-    tasks: { ...state.tasks, items: {
-      ...state.tasks.items,
-      [id]: { ...current, status: "archived", updatedAt: new Date().toISOString() },
-    } },
-  }, "task");
-}
-
 export function discardEmptyTask(state, id) {
   const current = state.tasks.items[id];
-  if (current?.text.trim()) return { ...state, tasks: { ...state.tasks, items: { ...state.tasks.items, [id]: { ...current, previousText: current.text } } } };
   if (!current || current.text.trim() || current.status === "archived") {
     return state;
   }
@@ -2300,7 +2273,6 @@ export function discardEmptyTask(state, id) {
         [id]: {
           ...current,
           status: "archived",
-          text: current.previousText || current.text,
           updatedAt: new Date().toISOString(),
         },
       },
@@ -3779,19 +3751,10 @@ export function habitHistoryRecord(state, dateKey) {
       const hasSnapshot = typeof completion.snapshot?.text === "string";
       const snapshotText = hasSnapshot ? completion.snapshot.text.trim() : "";
       const currentText = state.habits.definitions[completion.habitId]?.text?.trim();
-      // Structured snapshot fields are the person's words, not sentence slots.
-      // A text-only snapshot must never borrow fields from a later definition.
-      const wording = hasSnapshot ? completion.snapshot : state.habits.definitions[completion.habitId];
-      const hasParts = ["action", "cue", "identity"].some((key) => typeof wording?.[key] === "string");
       return {
         id: completion.habitId,
         text: (hasSnapshot ? snapshotText : currentText) || "Habit",
         wordingSource: hasSnapshot ? "snapshot" : currentText ? "current" : "unknown",
-        parts: hasParts ? {
-          action: typeof wording.action === "string" ? wording.action : "",
-          cue: typeof wording.cue === "string" ? wording.cue : "",
-          identity: typeof wording.identity === "string" ? wording.identity : "",
-        } : null,
       };
     });
   // Tasks remain their existing records, with their existing date semantics.

@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { useAccountIdentity, type AccountIdentity } from "./account-context";
-import { AdminMenuLink } from '../admin/admin-menu-link';
 
 export function AccountMenu({ floating = false }: { floating?: boolean }) {
   const account = useAccountIdentity();
@@ -61,7 +60,6 @@ function AccountControl({ account, floating }: { account: AccountIdentity; float
           <button type="button" disabled={account.busy} onClick={close}>Cancel</button>
         </div>
       </form> : <>
-        <AdminMenuLink />
         <button type="button" disabled={account.busy} onClick={() => { setAlias(account.alias); setEditing(true); }}>Edit alias</button>
         <button type="button" disabled={account.busy} onClick={() => { void account.signOut(); }}>Sign out</button>
       </>}

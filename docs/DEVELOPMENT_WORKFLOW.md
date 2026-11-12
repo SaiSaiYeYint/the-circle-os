@@ -4,10 +4,8 @@ The developer requires:
 
 **code -> test -> fix bugs -> verify -> optimize -> test and verify again**
 
-Fix critical data-safety and blocked launch journeys before dependent work.
-Optimize only a named measured problem; broad optimization is deferred, not a
-blanket prerequisite for every feature. [Roadmap](ROADMAP.md) owns delivery
-states/dependencies and [Work plan](WORK_PLAN.md) owns the queue.
+Existing features and system behavior must be fixed and optimized before new
+features are added. The [roadmap](ROADMAP.md) identifies the current phase.
 
 ## Document responsibilities
 
@@ -16,10 +14,6 @@ states/dependencies and [Work plan](WORK_PLAN.md) owns the queue.
 | [AGENTS.md](../AGENTS.md) | Standing approval, clarification, verification, product, safety, and invariant rules |
 | This workflow | Shared session checklists, implementation cycle, and check selection |
 | [Product](PRODUCT.md) | Purpose, intended experience, and current/target scope |
-| [Onboarding](ONBOARDING_SPEC.md) | Planned replacement flow, distinct from current immutable runs |
-| [Record contract](PERSONAL_RECORDS_AND_ATHENA_PLAN.md) | Evidence, revisions, time, correction, deletion and migration |
-| [Writing sync](ACCOUNT_WRITING_SYNC.md) | Implemented writing protocol, bounded evidence and activation gates |
-| [Work plan](WORK_PLAN.md) | Ordered next work under Roadmap's dependencies |
 | [Roadmap](ROADMAP.md) | Phases, dependencies, and exit criteria |
 | [Decision log](DECISION_LOG.md) | Confirmed decisions, open questions, and known conflicts |
 | [Current task](CURRENT_TASK.md) | One active job, its status, scope, acceptance criteria, and next action |
@@ -32,18 +26,13 @@ states/dependencies and [Work plan](WORK_PLAN.md) owns the queue.
 
 Keep detailed results in their owning record and link to them from the current
 task. A newer handoff does not silently override product decisions or grant
-edit approval. Consolidate changes into the owning rule rather than prepending
-another competing dated rule. Current Task is one job; Handoff is a short
-snapshot. Archive unique completed evidence and repair links when moving it.
-Keep implemented behavior, confirmed targets, proposals and open choices distinct.
+edit approval.
 
 ## Session start
 
 1. Read `AGENTS.md`, this workflow, and `docs/CURRENT_TASK.md`.
 2. Read the current snapshot in `docs/SESSION_HANDOFF.md`. Open archived
    handoffs only when relevant or linked; do not load the history by default.
-   The [document map](../README.md#project-documents) identifies active owners;
-   retired plans belong in the archive, not a parallel current specification.
 3. Apply the task-specific reference table in `AGENTS.md`. Search first and
    read relevant sections, including applicable decisions and bug/verification
    evidence. Carry forward unresolved warnings from the current task and handoff.
@@ -52,9 +41,8 @@ Keep implemented behavior, confirmed targets, proposals and open choices distinc
    `git log --oneline -10`. Inspect changes relevant to the task and preserve them.
 5. Give a short startup update: the task and intended outcome, relevant existing
    work or unresolved warnings, and the next action. Use the current task and
-   handoff for the recorded delivery state; consult the roadmap when its
-   reference trigger applies or those records conflict. Check agreement with
-   applicable decisions.
+   handoff for the recorded phase; consult the roadmap when its reference trigger
+   applies or those records conflict. Check agreement with applicable decisions.
 6. Resolve missing context with focused questions. Explain the proposed file
    changes, purpose, intended result, and verification in simple terms; obtain
    manual review and explicit approval before editing. Existing approval covers
@@ -96,15 +84,8 @@ and leave the result explicitly unverified rather than declaring it complete.
 
 - Model changes: focused behavioral tests, including correction/migration cases.
 - App interaction: focused tests and browser reproduction; mobile first.
-- Typography, layout or interaction in Note, Deep Thoughts, Routine, Protocol,
-  Log or Week (including supporting views): follow DESIGN.md's shared tool
-  contract and run the `tool consistency` matrix in `tests/writing.browser.mjs`
-  along with the affected journey. Measure visible edges, header/content gaps,
-  role typography and applicable intermediate motion; token checks alone do
-  not establish consistency. Use compiled production CSS for final verification.
 - Persistence/sync: reload, offline/retry, merge, clearing edits, and recovery.
-- Geometry/type changes: measure Note, Deep Thoughts, Habit and Protocol at rest;
-  distinguish the shared full-page tools from retained compact/chapter contexts.
+- Geometry/type changes: measure Note, Thoughts, Habit, and Protocol at rest.
 - Chapter changes: `npm run chapters:check`, preserving published versions.
 - Risk-appropriate lint and build. `npm test` runs the Vinext build before the
   test suite; `npm run build:vercel` checks the separate Next.js build target.

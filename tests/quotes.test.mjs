@@ -34,7 +34,7 @@ const accessUrl = compile("../app/os/admin/admin-access.ts");
 const access = await import(accessUrl);
 const routeUrl = compile("../app/os/admin/quotes/route.ts", [
   ['import { cookies } from "next/headers";', 'const cookies = async () => ({get: () => globalThis.quoteTestCookie ? {value: globalThis.quoteTestCookie} : undefined});'],
-  ["../admin-access", accessUrl], ["../../quotes/quote-server", serverUrl], ["../account-admin-server", compile('../app/os/admin/account-admin-server.ts')],
+  ["../admin-access", accessUrl], ["../../quotes/quote-server", serverUrl],
 ]);
 const routes = await import(routeUrl);
 const originalFetch = globalThis.fetch;

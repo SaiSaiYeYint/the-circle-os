@@ -36,7 +36,6 @@ import {
 } from "./chapter-authoring.js";
 import { readChapterDrafts, removeChapterDraft, writeChapterDraft } from "./chapter-draft-store";
 import { QuoteEditor } from "./quote-editor";
-import { ContentImagePicker } from "./content-media";
 import { CHAPTER_COMPLETION_MODES } from "../chapters/chapter-capabilities.js";
 import { CHAPTER_APPS, CHAPTER_KINDS } from "../chapters/chapter-scheduler.js";
 
@@ -199,7 +198,7 @@ function ButtonStudio() {
   );
 }
 
-export function ChapterEditor({ repository, adminRequest = fetch, accountCatalog = false }: { repository?: { read(): Promise<ChapterDraft[]>; write(draft: ChapterDraft): Promise<unknown>; remove(id: string): Promise<unknown>; recover?(draft: ChapterDraft): void }; adminRequest?: typeof fetch; accountCatalog?: boolean }) {
+export function ChapterEditor() {
   const [module, setModule] = useState<AdminModule>("chapters");
   const [view, setView] = useState<ChapterView>("library");
   const [drafts, setDrafts] = useState<ChapterDraft[]>([]);
@@ -220,10 +219,6 @@ export function ChapterEditor({ repository, adminRequest = fetch, accountCatalog
   const preview = useMemo(() => chapterDraftToPreview(draft), [draft]);
   const [previewRun, setPreviewRun] = useState<ChapterRun>(() => createChapterRun(chapterDraftToPreview(createChapterDraft())));
   const errors = useMemo(() => validateChapterDraft(draft), [draft]);
-  useEffect(() => {
-    if (!ready || !repository?.recover) return;
-    try { repository.recover(draft); } catch { queueMicrotask(() => setSaveState('Device recovery is unavailable. Save online before leaving.')); }
-  }, [draft, ready, repository]);
   const page = draft.chapter.pages[Math.min(selectedPage, draft.chapter.pages.length - 1)] || draft.chapter.pages[0];
   const previewPageIndex = Math.max(0, preview.pages.findIndex((item) => item.id === previewRun.currentPageId));
 
@@ -277,11 +272,11 @@ export function ChapterEditor({ repository, adminRequest = fetch, accountCatalog
   }, [libraryItems]);
 
   useEffect(() => {
-    (repository ? repository.read() : readChapterDrafts()).then((stored) => {
+    readChapterDrafts().then((stored) => {
       if (stored.length) { setDrafts(stored); setDraft(stored[0]); return; }
-      const first = createChapterDraft(); setDrafts([first]); setDraft(first); return accountCatalog ? undefined : writeChapterDraft(first);
-    }).catch(() => { const first = createChapterDraft(); setDrafts([first]); setDraft(first); setSaveState('Could not open shared drafts. Existing device copies are retained.'); }).finally(() => setReady(true));
-  }, [accountCatalog, repository]);
+      const first = createChapterDraft(); setDrafts([first]); setDraft(first); return writeChapterDraft(first);
+    }).catch(() => { const first = createChapterDraft(); setDrafts([first]); setDraft(first); }).finally(() => setReady(true));
+  }, []);
 
   function updateDraft(change: (current: ChapterDraft) => ChapterDraft) {
     setSaveState("Unsaved changes");
@@ -314,20 +309,16 @@ export function ChapterEditor({ repository, adminRequest = fetch, accountCatalog
   }
 
   async function persistDraft(next: ChapterDraft) {
-    const started = JSON.stringify(draft);
-    await (repository ? repository.write(next) : writeChapterDraft(next)); setDraft(current => JSON.stringify(current) === started ? next : current); setDrafts((current) => [next, ...current.filter((item) => item.draftId !== next.draftId)]); setActiveKind("draft");
+    await writeChapterDraft(next); setDraft(next); setDrafts((current) => [next, ...current.filter((item) => item.draftId !== next.draftId)]); setActiveKind("draft");
   }
 
   async function saveDraft(workflowStatus = draft.workflowStatus) {
-    try {
     const next = { ...structuredClone(draft), workflowStatus, updatedAt: new Date().toISOString() };
-    await persistDraft(next); setSaveState(accountCatalog ? "Saved online" : workflowStatus === "ready" ? "Ready for approval" : "Saved on this device");
+    await persistDraft(next); setSaveState(workflowStatus === "ready" ? "Ready for approval" : "Saved on this device");
     setLastAction(workflowStatus === "ready" ? "ready" : "saved");
-    } catch(error) { setSaveState(error instanceof Error ? error.message : 'Could not save.'); }
   }
 
   async function publishChapter(scope: "private" | "public") {
-    if (accountCatalog) { setPublishState('Save your draft online, then open Catalog publishing above to review and publish its next version.'); return; }
     if (errors.length || publishing) return;
     const targetApp = draft.appSpaces[0] as AppTarget | undefined;
     if (!targetApp || !APP_TARGETS.some((item) => item.value === targetApp)) {
@@ -414,7 +405,6 @@ export function ChapterEditor({ repository, adminRequest = fetch, accountCatalog
    * running day one again does not give him a second character.
    */
   async function runChapterAgain(source: ChapterDraft) {
-    if (accountCatalog) return;
     const id = source.chapter.id;
     if (!window.confirm(`Offer “${source.chapter.title}” again on this device?`)) return;
     const accountScope = getAccountScope();
@@ -437,14 +427,13 @@ export function ChapterEditor({ repository, adminRequest = fetch, accountCatalog
    * never become a door somebody is stuck behind.
    */
   function showInTheDoor(kind: DayDoorKind) {
-    if (accountCatalog) return;
     writePinnedDoor(kind);
     window.location.assign("/os");
   }
 
-  async function newDraft() { const next = createChapterDraft(); if (!accountCatalog) await persistDraft(next); openWorkshop(next, "draft"); }
-  async function createFromStarter(source: ChapterDraft) { const next = createFirstUseChapterDraft(source.appSpaces[0]); next.chapter.theme = source.chapter.theme; if (!accountCatalog) await persistDraft(next); openWorkshop(next, "draft"); }
-  async function newPublishedVersion(source: ChapterDraft) { const next = createNextVersionDraft(source); if (!accountCatalog) await persistDraft(next); openWorkshop(next, "draft"); }
+  async function newDraft() { const next = createChapterDraft(); await persistDraft(next); openWorkshop(next, "draft"); }
+  async function createFromStarter(source: ChapterDraft) { const next = createFirstUseChapterDraft(source.appSpaces[0]); next.chapter.theme = source.chapter.theme; await persistDraft(next); openWorkshop(next, "draft"); }
+  async function newPublishedVersion(source: ChapterDraft) { const next = createNextVersionDraft(source); await persistDraft(next); openWorkshop(next, "draft"); }
 
   /**
    * Open a chapter to work on, whatever kind it is.
@@ -465,11 +454,10 @@ export function ChapterEditor({ repository, adminRequest = fetch, accountCatalog
     if (kind === "starter") return createFromStarter(source);
     return openWorkshop(source, "draft");
   }
-  async function copyDraft(source: ChapterDraft) { const next = duplicateChapterDraft(source); if (!accountCatalog) await persistDraft(next); openWorkshop(next, "draft"); }
+  async function copyDraft(source: ChapterDraft) { const next = duplicateChapterDraft(source); await persistDraft(next); openWorkshop(next, "draft"); }
 
   async function deleteDraft(source: ChapterDraft) {
     if (!window.confirm(`Delete “${source.chapter.title}” from this device?`)) return;
-    if (accountCatalog) { setSaveState('Shared drafts are retained. Removal is not enabled yet.'); return; }
     await removeChapterDraft(source.draftId);
     const remaining = drafts.filter((item) => item.draftId !== source.draftId);
     if (!remaining.length) { const first = createChapterDraft(); await writeChapterDraft(first); setDrafts([first]); setDraft(first); return; }
@@ -551,11 +539,9 @@ export function ChapterEditor({ repository, adminRequest = fetch, accountCatalog
 
   if (!ready) return <main className="os-admin"><p className="os-admin-loading">Opening chapter library…</p></main>;
 
-  const displayedSaveState = accountCatalog && saveState === 'Saved online' && JSON.stringify(drafts.find(item => item.draftId === draft.draftId)) !== JSON.stringify(draft) ? 'New changes on this device' : saveState;
-
   return (
     <main className="os-admin">
-      <header className="os-admin-head"><div><p>Admin mode</p><h1>{module === "chapters" ? "Chapter Workshop" : module === "quotes" ? "Quotes" : "Button Studio"}</h1></div><span>{module === "chapters" ? displayedSaveState : module === "quotes" ? "Shared library" : "Safe preview"}</span></header>
+      <header className="os-admin-head"><div><p>Admin mode</p><h1>{module === "chapters" ? "Chapter Workshop" : module === "quotes" ? "Quotes" : "Button Studio"}</h1></div><span>{module === "chapters" ? saveState : module === "quotes" ? "Shared library" : "Safe preview"}</span></header>
       <div className="os-admin-modules" role="tablist" aria-label="Admin tools">
         <button aria-selected={module === "chapters"} role="tab" type="button" onClick={() => setModule("chapters")}>Chapters</button>
         <button aria-selected={module === "buttons"} role="tab" type="button" onClick={() => setModule("buttons")}>Button Studio</button>
@@ -563,7 +549,7 @@ export function ChapterEditor({ repository, adminRequest = fetch, accountCatalog
       </div>
 
       {module === "buttons" ? <ButtonStudio /> : null}
-      {module === "quotes" ? <QuoteEditor adminRequest={adminRequest} /> : null}
+      {module === "quotes" ? <QuoteEditor /> : null}
 
       {module === "chapters" && view === "library" ? (
         <section className="os-admin-library" aria-label="Chapter library">
@@ -627,7 +613,6 @@ export function ChapterEditor({ repository, adminRequest = fetch, accountCatalog
             <details className="os-admin-panel" open><summary>Page settings · {pageLabel(page.type)}</summary><div className="os-admin-fields two">
               <Field label="Page type"><select disabled={selectedPage === 0 || selectedPage === draft.chapter.pages.length - 1} value={page.type} onChange={(event) => changePageType(event.target.value as ChapterPageType)}>{AUTHORABLE_PAGE_TYPES.map((item) => <option key={item} value={item}>{pageLabel(item)}</option>)}</select></Field><Field label="Page ID"><input value={page.id} onChange={(event) => updatePage("id", chapterSlug(event.target.value))} /></Field>{INPUT_TYPES.has(page.type) ? <><Field label="Answer key"><input value={page.answerKey || ""} onChange={(event) => updatePage("answerKey", chapterSlug(event.target.value))} /></Field><label className="os-admin-check"><input checked={Boolean(page.required)} type="checkbox" onChange={(event) => updatePage("required", event.target.checked)} /><span>Answer required</span></label></> : null}{INPUT_TYPES.has(page.type) ? <Field label="Why this matters"><input value={page.why || ""} onChange={(event) => updatePage("why", event.target.value)} /></Field> : null}{["short-text", "long-text"].includes(page.type) ? <Field label="Placeholder"><input value={page.placeholder || ""} onChange={(event) => updatePage("placeholder", event.target.value)} /></Field> : null}{CUSTOM_FOOTER_TYPES.has(page.type) ? <Field label="Button text"><input value={page.button || ""} onChange={(event) => updatePage("button", event.target.value)} /></Field> : null}
             </div>{["single-choice", "multi-choice"].includes(page.type) ? <div className="os-admin-options"><h3>Choices</h3>{(page.options || []).map((option, index) => <div key={`${option.id}-${index}`}><input aria-label={`Option ${index + 1} ID`} value={option.id} onChange={(event) => updateDraft((next) => { next.chapter.pages[selectedPage].options![index].id = chapterSlug(event.target.value); return next; })} /><input aria-label={`Option ${index + 1} label`} value={option.label} onChange={(event) => updateDraft((next) => { next.chapter.pages[selectedPage].options![index].label = event.target.value; return next; })} /><button aria-label={`Remove option ${index + 1}`} type="button" onClick={() => updateDraft((next) => { next.chapter.pages[selectedPage].options!.splice(index, 1); return next; })}>×</button></div>)}<button type="button" onClick={() => updateDraft((next) => { const options = next.chapter.pages[selectedPage].options ||= []; options.push({ id: `option-${options.length + 1}`, label: `Option ${options.length + 1}` }); return next; })}>Add choice</button></div> : null}<div className="os-admin-page-actions"><button disabled={selectedPage === 0 || selectedPage === draft.chapter.pages.length - 1} type="button" onClick={duplicatePage}>Duplicate page</button><button disabled={selectedPage === 0 || selectedPage >= draft.chapter.pages.length - 1} type="button" onClick={deletePage}>Delete page</button><button disabled={selectedPage <= 1} type="button" onClick={() => movePage(-1)}>Move earlier</button><button disabled={selectedPage === 0 || selectedPage >= draft.chapter.pages.length - 2} type="button" onClick={() => movePage(1)}>Move later</button></div></details>
-            {accountCatalog ? <ContentImagePicker value={page.image} onChange={image => updatePage("image", image)} /> : null}
             <div className="os-admin-panel os-admin-publish-settings">
               <Field label="Destination app"><select value={draft.appSpaces[0] || ""} onChange={(event) => updateDraft((next) => { const app = event.target.value as AppTarget; next.appSpaces = app ? [app] : []; next.chapter.app = app || undefined; return next; })}><option value="">Choose an app</option>{APP_TARGETS.map((target) => <option key={target.value} value={target.value}>{target.label}</option>)}</select></Field>
               <label className="os-admin-check"><input checked={draft.chapter.showPageNumbers !== false} type="checkbox" onChange={(event) => updateChapter("showPageNumbers", event.target.checked)} /><span>Show page numbers</span></label>

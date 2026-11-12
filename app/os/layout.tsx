@@ -3,7 +3,6 @@ import { CircleStateProvider, OSFrame } from "./circle-os-shell";
 import { CircleOSPwa } from "./pwa-register";
 import { CircleAuthBoundary } from "./auth/auth-boundary";
 import "./os-app.css";
-import "./content-glass.css";
 
 export const metadata: Metadata = {
   title: "The Circle OS — See how you live",

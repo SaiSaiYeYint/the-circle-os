@@ -94,8 +94,8 @@ export function SyncCheckClient() {
       report(`STOP: ${error instanceof SyntaxError ? "Invalid witness JSON." : error instanceof Error ? error.message : "Check failed."}`);
     } finally { lock.current = false; setBusy(false); }
   }
-  const control = { minHeight: 44, padding: "var(--space-2) var(--space-3)", border: "1px solid currentColor", borderRadius: 4 };
-  return <section style={{ padding: "var(--space-6)", maxWidth: 900, margin: "auto", color: "#191813", background: "#F1EFE8", fontFamily: "Geist, sans-serif" }}>
+  const control = { minHeight: 44, padding: "8px 12px", border: "1px solid currentColor", borderRadius: 4 };
+  return <section style={{ padding: 24, maxWidth: 900, margin: "auto", color: "#191813", background: "#F1EFE8", fontFamily: "Geist, sans-serif" }}>
     <h1>Hosted writing checks</h1>
     <p>Development only. Use disposable accounts. Synthetic saved writing is sent to Supabase. One synthetic archive stays until Recheck original account; recheck both windows to delete it. Body-free receipts and deletion markers remain. Automatic writing sync stays off.</p>
     <label htmlFor="other-witness">Other account’s witness (leave empty for the first account)</label>

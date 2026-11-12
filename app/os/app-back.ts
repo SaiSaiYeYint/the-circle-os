@@ -28,7 +28,6 @@ export function useAppBack<Side extends string>(initialSide: Side) {
   const releaseFrameFour = useRef<number | null>(null);
   const releaseFrameTimer = useRef<number | null>(null);
   const heldSession = useRef<HTMLElement | null>(null);
-  const resizeDuration = useRef(APP_FLIP_RESIZE_MS);
 
   useEffect(() => {
     sideRef.current = side;
@@ -73,7 +72,6 @@ export function useAppBack<Side extends string>(initialSide: Side) {
     const session = source?.closest<HTMLElement>(".os-swipe-session") || null;
     const frame = session?.querySelector<HTMLElement>(".os-app-window") || null;
     if (!session || !frame) return;
-    resizeDuration.current = Number(getComputedStyle(frame).getPropertyValue("--os-growth-ms")) || APP_FLIP_RESIZE_MS;
     session.style.setProperty(
       "--os-app-flip-height",
       `${frame.getBoundingClientRect().height}px`,
@@ -113,7 +111,7 @@ export function useAppBack<Side extends string>(initialSide: Side) {
             releaseFrameTimer.current = window.setTimeout(() => {
               releaseFrame();
               releaseFrameTimer.current = null;
-            }, resizeDuration.current);
+            }, APP_FLIP_RESIZE_MS);
             releaseFrameFour.current = null;
           });
           releaseFrameOne.current = null;
@@ -154,7 +152,7 @@ export function useAppBack<Side extends string>(initialSide: Side) {
       setPhase("idle");
       releaseFrame();
       settleTimer.current = null;
-    }, APP_FLIP_TOTAL_MS + Math.max(0, resizeDuration.current - APP_FLIP_RESIZE_MS));
+    }, APP_FLIP_TOTAL_MS);
   }
 
   function reset(nextSide: Side) {

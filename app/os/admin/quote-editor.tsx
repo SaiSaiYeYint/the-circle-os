@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { QUOTE_TEXT_LIMIT, quoteCatalog, type Quote } from "../quotes/quote-model.js";
 
-export function QuoteEditor({ adminRequest = fetch }: { adminRequest?: typeof fetch }) {
+export function QuoteEditor() {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [text, setText] = useState("");
   const [author, setAuthor] = useState("");
@@ -11,21 +11,21 @@ export function QuoteEditor({ adminRequest = fetch }: { adminRequest?: typeof fe
   const [busy, setBusy] = useState(true);
   const [loaded, setLoaded] = useState(false);
   const [removing, setRemoving] = useState<string | null>(null);
-  const load = useCallback(async (signal?: AbortSignal) => {
-    const response = await adminRequest("/os/admin/quotes", { cache: "no-store", signal });
+  async function load(signal?: AbortSignal) {
+    const response = await fetch("/os/admin/quotes", { cache: "no-store", signal });
     const value = await response.json();
     if (!response.ok) throw new Error(value.error || "Could not open quotes.");
     return quoteCatalog(value);
-  }, [adminRequest]);
+  }
   useEffect(() => {
     const controller = new AbortController();
     void load(controller.signal).then(value => { setQuotes(value); setLoaded(true); }).catch(cause => { if (!controller.signal.aborted) setError(cause.message); }).finally(() => { if (!controller.signal.aborted) setBusy(false); });
     return () => controller.abort();
-  }, [load]);
+  }, []);
   async function change(method: "POST" | "DELETE", value: unknown) {
     setBusy(true); setError("");
     try {
-      const response = await adminRequest("/os/admin/quotes", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(value) });
+      const response = await fetch("/os/admin/quotes", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(value) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Could not save quotes.");
       // Accepted mutations are reflected immediately, even if a later refresh fails.

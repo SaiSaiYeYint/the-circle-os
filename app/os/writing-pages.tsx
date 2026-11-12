@@ -8,7 +8,6 @@ import { isDeepThoughtRewardEligible } from "./deep-thought-model.js";
 import { sizeTextAreaToContent } from "./text-area-size";
 import { useWriting, type WritingContextValue } from "./writing-provider";
 import { WritingSyncPage } from "./writing-sync-page";
-import { RoutineHeaderButton } from "./routine-controls";
 import { useWritingSync } from "./writing-sync-provider";
 import { QuotePage, type QuoteNavigation } from "./quotes/quote-page";
 import type { Quote } from "./quotes/quote-model.js";
@@ -21,8 +20,6 @@ type Props = {
   source?: WritingSource;
   placeholder?: string;
   onLabel?: (source: HTMLElement) => void;
-  onExit?: () => void;
-  navigation?: ReactNode;
   onBusyChange?: (busy: boolean) => void;
   onSent?: () => void;
   onAdmin?: () => void;
@@ -50,7 +47,7 @@ function TrashIcon() {
 
 /** The live buffer is independent of provider refreshes. Commands are queued per
  * editor; only this editor's accepted Save may advance its optimistic base. */
-function WritingPage({ writing, kind, source = null, placeholder = "Write what comes up...", onLabel, onExit, navigation, onBusyChange, onSent, onAdmin, onClear, embedded = false, onNextQuestion, nextQuote, onQuoteNavigation, onQuoteReaction }: Props & { writing: WritingContextValue }) {
+function WritingPage({ writing, kind, source = null, placeholder = "Write what comes up...", onLabel, onBusyChange, onSent, onAdmin, onClear, embedded = false, onNextQuestion, nextQuote, onQuoteNavigation, onQuoteReaction }: Props & { writing: WritingContextValue }) {
   const back = useAppBack<Page>("editor");
   const sync = useWritingSync();
   const noteNavigation = isNote(kind) || (kind === "deep-thought" && !embedded);
@@ -392,7 +389,7 @@ function WritingPage({ writing, kind, source = null, placeholder = "Write what c
   let body: ReactNode;
   let footer: ReactNode;
   let heading = "";
-  if (back.side === "sync" || back.side === "copies") return <WritingSyncPage initialEntryId={back.side === "copies" ? selected || undefined : undefined} notes={isNote(kind)} className={`${isNote(kind) ? "os-note-page" : kind === "deep-thought" ? "os-thoughts-page os-deep-thoughts-page" : "os-thoughts-page"} ${back.className}`} onBack={() => {
+  if (back.side === "sync" || back.side === "copies") return <WritingSyncPage initialEntryId={back.side === "copies" ? selected || undefined : undefined} notes={isNote(kind)} className={`${isNote(kind) ? "os-note-page" : "os-thoughts-page"} ${back.className}`} onBack={() => {
     const target = live.current;
     const latest = [...writing.history, ...writing.trash].find(entry => entry.id === target?.draft.entryId);
     // A reviewed cloud choice may replace this editor's already-saved copy.
@@ -477,12 +474,11 @@ function WritingPage({ writing, kind, source = null, placeholder = "Write what c
   const menuButton = <div className="os-writing-menu"><button className="os-card-label" type="button" aria-label="Writing options" aria-expanded={menu} onClick={() => setMenu(!menu)}>More</button>{menu ? <div className="os-writing-menu-items">{<Action text={"History"} click={() => go("history")} disabled={disabled} />}{<Action text={"Drafts"} click={() => go("drafts")} disabled={disabled} />}{<Action text={"Trash"} click={() => go("trash")} disabled={disabled} />}{dirty ? <>{<Action text={"Clear"} click={() => { change("title", ""); change("body", ""); onClear?.(); setMenu(false); }} disabled={disabled} />}{<Action text={"Discard draft"} click={discard} disabled={disabled} />}</> : null}</div> : null}</div>;
   if (kind === "deep-thought" && back.side === "quote" && quote) return <QuotePage className={back.className} quote={quote} feedback={quoteFeedback} onReact={reaction => { onQuoteReaction?.(quote, reaction); closeQuote(); }} />;
   if (noteNavigation) {
-    const HeaderButton = RoutineHeaderButton;
     const returnPage: Page = back.side === "delete" ? "trash-detail" : back.side === "trash-detail" ? "trash" : back.side === "trash" ? "history" : "editor";
     const returnLabel = returnPage === "trash" || returnPage === "trash-detail" ? "Trash" : returnPage === "history" ? "History" : labelFor(kind);
-    const left = back.side === "editor" ? <HeaderButton className="os-card-label" type="button" data-os-note-header-text aria-label={isNote(kind) ? "Show a Line" : "Show a Quote"} disabled={!ready || openingQuote || (isNote(kind) ? !onLabel : !nextQuote)} onClick={event => { const element = event.currentTarget; if (!isNote(kind)) { void openQuote(element); return; } void save().then(accepted => { if (accepted && mounted.current) onLabel?.(element); }); }}>{isNote(kind) ? labelFor(kind) : "Quote"}</HeaderButton> : <HeaderButton reflectionDirection="back" className="os-card-label os-writing-back" type="button" onClick={event => go(returnPage, event.currentTarget)}><span aria-hidden="true">‹</span> {returnLabel}</HeaderButton>;
-    const right = back.side === "history" ? <HeaderButton className="os-card-label" type="button" onClick={event => go("trash", event.currentTarget)} disabled={disabled}>Trash</HeaderButton> : back.side === "editor" ? <HeaderButton className="os-card-label" type="button" data-os-note-header-text onClick={event => go("history", event.currentTarget)} disabled={!ready || openingQuote}>History</HeaderButton> : undefined;
-    return <InfoPage className={`os-writing-page os-writing-bounded ${isNote(kind) ? "os-note-page" : "os-thoughts-page os-deep-thoughts-page"} ${back.className}`} header={back.side === "editor" && isNote(kind) && onExit ? <RoutineHeaderButton className="os-card-label" onClick={onExit}>Back</RoutineHeaderButton> : left} headerAction={right} heading={heading ? <h2 className="os-writing-heading">{heading}</h2> : undefined} footer={back.side === "editor" && navigation ? <div className="os-writing-footer-navigation">{footer}{navigation}</div> : footer}><div className="os-note-content" ref={noteContent}>{body}</div></InfoPage>;
+    const left = back.side === "editor" ? <button className="os-card-label" type="button" data-os-note-header-text aria-label={isNote(kind) ? "Show a Line" : "Show a Quote"} disabled={!ready || openingQuote || (isNote(kind) ? !onLabel : !nextQuote)} onClick={event => { const element = event.currentTarget; if (!isNote(kind)) { void openQuote(element); return; } void save().then(accepted => { if (accepted && mounted.current) onLabel?.(element); }); }}>{labelFor(kind)}</button> : <button className="os-card-label os-writing-back" type="button" onClick={event => go(returnPage, event.currentTarget)}><span aria-hidden="true">‹</span> {returnLabel}</button>;
+    const right = back.side === "history" ? <button className="os-card-label" type="button" onClick={event => go("trash", event.currentTarget)} disabled={disabled}>Trash</button> : back.side === "editor" ? <button className="os-card-label" type="button" data-os-note-header-text onClick={event => go("history", event.currentTarget)} disabled={!ready || openingQuote}>History</button> : undefined;
+    return <InfoPage className={`os-writing-page os-writing-bounded ${isNote(kind) ? "os-note-page" : "os-thoughts-page os-deep-thoughts-page"} ${back.className}`} header={left} headerAction={right} heading={heading ? <h2 className="os-writing-heading">{heading}</h2> : undefined} footer={footer}><div className="os-note-content" ref={noteContent}>{body}</div></InfoPage>;
   }
   if (embedded) return <section className="athena-reading-reply-form os-writing-embedded" aria-label="Reading answer"><div className="os-writing-embedded-header">{headerLeft}{menuButton}</div>{heading ? <h3>{heading}</h3> : null}{body}{footer}</section>;
   return <InfoPage className={`os-writing-page ${isNote(kind) ? "os-note-page" : "os-thoughts-page"} ${back.className}`} header={headerLeft} headerAction={menuButton} heading={heading || undefined} footer={footer}>{body}</InfoPage>;

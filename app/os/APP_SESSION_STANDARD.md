@@ -1,292 +1,780 @@
 # Circle OS App Box and Page Standard
 
-Updated: 2026-11-11, Asia/Bangkok. This owns Page structure, gestures, navigation,
-motion and immutable session behavior. [Design](../../DESIGN.md) owns visual
-values; [Product](../../docs/PRODUCT.md) owns meaning. The earlier trials and
-their measurements are [historical](../../docs/archive/2026-11-11-doc-cleanup/APP_SESSION_STANDARD.md).
+## Terms
 
-## Shared tool interaction contract - 2026-11-11
+Approved spacing refinement (2026-11-03): the shared label gap is 48px;
+Main-to-Sub and Body-to-Footer gaps are both 25px. These values supersede older
+spacing statements and historical 80px measurements below. Preserve the shared
+minimum and top anchor. Note/Deep Thoughts Trash detail omits “In Trash” and its
+divider, with a 4px Restore-to-Delete layout gap and at least 44px touch targets.
 
-Applies to the six opened tools and every supporting History, Trash, Record,
-phase, detail, correction, confirmation and writing-sync view.
+Editable typography refinement (2026-11-03): use 29px main and 18px body text
+on Note/Deep Thoughts editors and opened history/trash entries, the embedded
+Athena reply editor, Vision declarations, Week goals/steps, and Chapter short/long
+text questions with their Workshop preview. List rows keep their compact scale.
+Reading-only type, weights and line heights retain their existing rules;
+use the shared spacing above. This supersedes shared type-size statements
+below for the named editable surfaces.
 
-| Interaction | Shared rule |
-| --- | --- |
-| Header reflection | RoutineHeaderButton; immediate 240ms light inside letters; no action wait |
-| Structural growth/shrink | SwipeSession; 600ms, cubic-bezier(0.42, 0, 0.28, 1); typing follows directly |
-| Supporting-view side change | useAppBack; 260ms leave, 600ms measured resize, 1000ms complete handoff, shared 500ms arrival |
-| Ordinary Page swipe | Existing shared gesture/settle engine; no feature timer or repeated new-content reveal |
-| Task/Week goal completion | Save directly; text and checkbox respond together, release row after 300ms |
-| Habit result | Existing 300ms entrance/exit, 600ms settling; no overlapping wording |
-| Glass press/release | Shared 150ms/400ms |
-| Creation/clear | Existing 500ms reveal after 100ms lead / 300ms clear |
-| Preferences | Reduced motion: direct endpoints; reduced transparency: no glass/artwork; forced colors: readable and announced state |
+Latest writing flow (2026-11-03): Note and Deep Thoughts are the Today writing
+Pages. Ordinary Thoughts remains a historical kind, without a new composer.
+Deep Thoughts shares Note's direct HISTORY, dated rows/times, orange saved-row
+bins, silent trashing, Trash/Restore/confirmed Delete forever and bounded Body
+scrolling. It keeps Send/Save changes and unsent recovery. The saved answer stays
+visible with Next question; source/question links and internal revisions remain.
+Deep Thoughts recovers silently, without routine saving/sent, recovered/discarded
+messages or a Discard draft control. Clearing the answer clears its recovery text;
+save errors remain visible.
+No Versions UI or Undo on these account writing surfaces. Its label opens one
+managed Quote, returning to the same question/draft through existing Line exits.
+Reading answers keep their embedded controls; legacy sources are not migrated.
+This supersedes the Note-only sizing exception and Thoughts mode/navigation
+descriptions in the dated snapshots below. See [the current contract](../../docs/PERSONAL_RECORDS_AND_ATHENA_PLAN.md#1412-note-deep-thoughts-and-quotes---2026-11-03).
 
-All six tools and supporting views use Design's 24px anchors, shared full-page
-floor and natural growth. No checkbox-first or three-second goal delay remains.
-Completion faces share the Orange glass rim/liquid and immediate white Log ✓.
-Protocol uses a separate checkbox; passive kept words fill Orange in the same
-300ms liquid response without striking through. Word taps perform no action.
-Do not flatten Protocol editing, next-day agreement or authored day-seal behavior
-into ordinary task completion.
+Latest Note sizing/action refinement (2026-11-03): New Note belongs in the Note
+editor Footer. Account Note, History and Trash share a 480px App Box ceiling,
+reduced to 60% of the dynamic viewport but never below the shared minimum.
+Only Body scrolls beyond that ceiling; Header, Heading and Footer stay visible.
+This is a Note-only exception to natural growth below. Trashing a Note is silent.
 
-Reuse existing Page, header, gesture, button and App-back engines. Retire
-unreachable branches/unused selectors when an approved change supersedes them.
-Keep meaningful behavioral tests; run the compiled-CSS tool-consistency matrix,
-affected journeys and intermediate-motion checks for later visual/interaction work.
+Later Note controls refinement (2026-11-03): direct HISTORY replaces the ellipsis
+and aligns with NOTE. Note saves silently, has borderless focused writing, and
+has no Versions UI or Undo. Each local History row carries an orange trash-bin
+button; restoration remains in the separate Trash page. Internal revisions stay
+for save safety. This supersedes Note controls in the dated snapshots below.
 
-## Terms and Page anatomy
+Account Note refinement (2026-11-03): Note autosaves after a short typing pause
+and on departure, with automatic local recovery and no Save, Clear, Discard,
+Drafts or draft messages. Orange navigation, History/New Note, Versions and
+Trash/Restore stay in the shared App Box. Thoughts and reading answers keep
+Send and their existing draft workflow. This supersedes Note controls in the
+dated connection snapshot below; see the current Note section.
 
-- **App Box:** stable frame owning background, border, radius, clipping, shadow,
-  minimum size and height transition.
-- **Page:** a visual sheet within that frame, never a second outer card.
-- **Session:** selected Page, position/progress and permitted navigation.
-- **Cover:** non-editable opening hook with optional supporting words and cue.
-- **Journey:** questions/teaching/setup with saved draft answers and a deliberate end.
-- **Library:** existing readable Pages with retained selection.
-- **Line:** content that gives and collects no answer; no Chapter/run lifecycle.
-- **Edition:** a dated immutable authored Athena reading.
+Account writing connection (2026-11-02): Note, Thoughts and reading-answer
+editors use the existing Page and App Box. Save/Send accepts writing on this
+device before showing success or letting text depart. More opens History,
+Drafts and Trash; Versions and deletion confirmation stay inside the same
+frame. Reading answers remain embedded in the existing reading Page. History
+does not rotate. Header actions keep 44px targets outside the label's layout
+flow, so `--os-label-gap` still owns the forehead. Older writing stays read only
+pending migration review. See the [runtime evidence](../../docs/USER_JOURNEY_TESTING.md#account-writing-ui-2026-11-02).
 
-Every Page reuses Header, Heading, Main Body, Sub Body and Footer.
-Cover Header is empty; Chapter Header has right-side progress only. Main/Sub
-carry roughly two-to-one visual weight, not compulsory empty tracks. An absent
-Sub Body costs no space. Content begins at the shared forehead anchor and grows
-downward as lines are added; it never recentres according to text length.
+- **App Box**: the stable, rounded container. It owns the theme, clipping,
+  border, radius, shadow, minimum size, and height transition.
+- **Page**: one swipeable visual inside an App Box. Pages never own a second
+  outer card.
+- **Info Page**: the shared solid-background page template. Gestures, update
+  reveals, and head-shake feedback move its text layer while the App Box stays
+  still.
+- **Cover Page**: an Info Page with a main line, optional sub line, and one
+  `Swipe to begin` cue. It is never editable.
+- **Note Page**: an editable Info Page with an app action label, main line, and
+  optional sub line. It has no swipe cue.
+- **Thoughts Page**: an Info Page for free writing with one black Save or Send
+  action.
+- **Blog Page**: a reading page with title, divider, and short paragraph
+  sections. Athena Reading is the reference implementation.
+- **App Label**: the small upper-left name shown only when a Page is itself an
+  app surface. A non-app Page omits it.
 
-An App Label that is a button resets native button additions without restating
-role typography. Header wording aligns to the header line, not the centre of
-its invisible 44px target. Shared label line-height and gap tokens own alignment.
-Do not add a second heading spacer or feature-specific minimum.
+## Page anatomy
+
+Every Cover, Chapter, and App Page uses the same five regions.
+
+1. **Header** stays at the top.
+   - App Page: left App Label; optional right app action.
+   - Chapter Page: no left label; right progress only.
+   - Cover Page: empty. A Cover never shows an App Label.
+2. **Heading** sits below the Header. It may be a small section title or a
+   large title. It may be empty without leaving a gap.
+3. **Body** stays in the middle and has two parts:
+   - **Main Body** receives about two parts of the available body space. It is
+     the large bold prompt, primary thought, or main habit.
+   - **Sub Body** receives about one part. It holds an optional subtitle,
+     typography input, choices, sliders, or added tasks. It may expand without
+     shrinking the type.
+4. **Footer** stays at the bottom.
+   - Cover Page: right-aligned `Swipe to begin` or `Swipe to see` cue.
+   - Chapter Page: full-width Continue or Confirm actions, stacked if needed.
+   - App Page: the app's lasting action, such as Add task.
 
 ## App Box size
 
-There are two existing contexts, not competing global height rules:
+- The default App Box is a compact rounded rectangle and the shared minimum
+  everywhere. Empty and short Note, Thoughts, Habit, Protocol, Chapter, Cover,
+  Vision, Athena and Gap Pages rest at exactly one height. Real content may grow
+  the frame downward.
+- One foundation owns that size and the space inside it. `--os-app-box-min-height`
+  is the height, `--os-app-box-padding-*` the inset,
+  `--os-label-gap` the forehead from Label to first visible content,
+  `--os-main-sub-gap` the space between Main and Sub, and
+  `--os-body-footer-gap` the space between the last line of Body and the Footer.
+  An App does not restate any of them.
+- Main Body begins at the forehead for every line count. One, two and three
+  lines use the ordinary Body budget without changing that top anchor. At four
+  lines the App Box grows down by every added line.
+- Two lines was not enough. A Note title is usually two lines but the Thoughts
+  placeholder is sometimes three, so two Pages of one App Box sat at different
+  heights and the frame resized on the swipe between them. The reserve is what
+  keeps Pages of one App identical, so it must cover the longest ordinary Page,
+  not the shortest.
+- A fluid App Box may grow for its content and ease back down, but never below
+  the shared default minimum.
+- The App Box does not jump when adjacent Pages have different heights.
+- An App Box grows downward only. The top edge, width, radius, Header and Main
+  forehead anchor stay where they are; the bottom edge is the only edge that
+  travels.
+- One written line costs one line of App Box. Main and Sub are two real rows
+  that take the room they need. Written instead as a two-parts-to-one-part
+  split of the Body, an absent Sub Body still claimed half of whatever Main
+  took, so every line written added one and a half lines of box and opened a
+  growing field of empty colour above the action. The two-to-one proportion
+  describes where the eye should land, not a grid that reserves space nobody
+  asked for.
+- Real added rows may extend a fluid App Box while the Footer remains below
+  them. Habit tasks stay visible in one continuous Sub Body; they do not move
+  into an inner scrolling panel.
+- Draft and running Protocol terms remain visible as the App Box grows downward.
+  Expanded Past phases is the approved exception: the frame uses Note's
+  480px/60dvh ceiling, never below the shared minimum, with only Body scrolling
+  and Header/Footer fixed. Collapsed, empty and short history rests naturally.
+- A fluid App Box commits its first measured height only after child editors
+  have sized and the font state has settled. It remeasures when fonts finish or
+  fail and when an in-Page side changes; the CSS minimum carries first paint.
+- Routine declares its editable identity as Main text, so it begins at the
+  shared forehead. Record and Protocol home are content Pages and must never be
+  measured from nested row text. An App-back handoff may reuse a surface, but
+  it may not reuse the previous side's height.
+- A content-heavy App grows for real content while keeping the shared default
+  minimum. It does not introduce its own minimum to reserve empty space.
 
-- The six **opened full-page tools** share the focused viewport/safe-area-aware
-  minimum, natural downward growth and Design's 24px content anchor. Their
-  supporting views do not reinstate compact 480px/60dvh inner scrolling.
-- **Other compact/chapter/reading contexts** retain the existing shared default
-  minimum and context tokens. Empty and short Pages rest equally within that
-  context. Real content may grow downward; optional empty space does not.
+## Structure
 
-The full-page adoption does not globally restyle Reflect, chapter players,
-legacy surfaces or previews. Measure deliberate replacements and unchanged
-contexts separately. A fixed-height reading/chart session may keep its existing
-scroll owner; do not turn a fluid tool into a nested scroll panel.
+```text
+Route
+  Session: the stable place
+    App window: owns radius, border, edge color, and shadow
+      App page: a flat sheet that moves inside the window
+```
 
-The outer frame stays in place during swipes and resize. Only its content moves.
-A swipe settles before state changes; hold old height through travel, then use
-the shared measured resize. Never expose a gap, flash or duplicate rounded face.
+## Two app behaviors
 
-## Interaction
+### Journey
 
-- A tap never becomes a swipe; swiping never focuses a text field.
-- Every swipe has a button or keyboard path.
-- Keep the active Page in the navigation map as access/progress changes; never
-  silently fall back by array position.
-- Required first-use covers have a hard right boundary. An optional Check-in
-  cover may swipe right to its idle app as Later.
-- Incoming content is promoted in place; its entrance does not replay at commit.
-- Side changes use useAppBack; features supply content, not competing timers/classes.
-- Existing Page travel remains quick. Only a genuinely new cover stages arrival.
-  Its surface precedes words and travel stays locked until that reveal finishes.
-- Refresh arrives Body, Header, Footer. Background never blinks/remounts.
-  Labels have no separate late arrival. Saving does not empty/replay the box.
-- The existing lifted-key recipe remains for contexts that use it; opened-tool
-  glass/completion controls use the shared current contract above. Button Studio
-  variants never silently replace product defaults.
+Used for questions, teaching, setup, and habit creation.
 
-AppPagePlacement declares balanced, identity-stack or content-flow. Reuse the
-shared placement rather than borrowing another feature's selector.
+- A new chapter or server question begins with one cover.
+- Answered pages remain available while the chapter is an open draft.
+- Before confirmation, the person may move backward and edit any answer.
+- The last question leads to a separate completion page.
+- Every Result or Confirm Page has the same terminal interaction. For its first
+  1.2 seconds, forward travel is closed and backward travel stays open. Then a
+  quiet `Swipe when ready` cue appears and one deliberate forward swipe either
+  reaches the chapter's Idle Page or gives the App back. It never fades itself.
+- The old `dwell` and `swipe` declarations still validate the immutable Page
+  anatomy and destination of published chapters; they no longer produce two
+  different gestures. An unknown or conflicting ending still fails the build,
+  and Session names never choose the ending.
+- Page numbers appear only when there is more than one page to count. A chapter
+  with one question showed "1/1", which is not progress.
+- After completion, the draft pages retire and only the useful idle app
+  remains.
+- A new immutable chapter version creates a new journey and cover.
+- Only a genuinely new cover receives the staged update reveal. Its solid
+  surface appears before its words, and the cover cannot be swiped until that
+  reveal is complete.
 
-## Journeys and completion
+### Library
 
-An open Journey keeps answers editable by backward travel until confirmation.
-Right-swipe-back remains the developer's chosen behavior. Progress is shown
-only when there is more than one Page to count.
+Used for charts, weekly views, and other things worth reading again.
 
-Every Result/Confirm has the same protected ending: forward travel is closed
-for 1.2 seconds, backward travel stays open, then Swipe when ready appears.
-One deliberate forward swipe reaches Idle or returns the App. It never dismisses
-itself. Reduced motion removes decorative arrival, not the accidental-swipe guard.
+- Pages may move in both directions.
+- The frame keeps one stable height.
+- The selected page survives route changes and reloads.
+- New server data may create a new cover once.
 
-Published dwell/swipe declarations still validate immutable anatomy/destination;
-they do not create different terminal gestures. Unknown/conflicting endings fail
-the build; session names never select an ending. The new onboarding's final
-terminal placement still requires review against its longer screen sequence.
+## Reflect
 
-Published id@version content is immutable. New wording requires a new version;
-unfinished old runs and completed answer readers retain their original definition.
-Current Day One is to be replaced through the planned onboarding, not edited in place.
+- Reflect has three parts and no more: **the life you want**, **the life you
+  are living**, and **the space between**. Athena's voice runs through all
+  three; it is not a fourth part.
+- The gap belongs inside the space between. It was its own section asking the
+  same question as the reading, which made two App Boxes out of one idea.
+- Reflect is for reading. Chapters ask a question and collect an answer, so
+  they belong to Today. A publication assigned to Vision or Athena still
+  delivers into its App Box, but Reflect never grows its own questionnaire.
+- Character is the authoritative answer to who the person is becoming. Routine
+  identity is the short daily focus; a habit identity belongs to one habit;
+  Mission says how the person intends to live. When Character is absent, Athena
+  may use Routine identity and then Mission only as labelled fallbacks.
+- Vision, Character, Mission statement, Typical Tuesday, and Six months are
+  distinct wanted-life records. Dreamline remains a separate finite plan.
 
-## Navigation and entry
+## Lines
 
-- Four roots: /os/home, /os (Today), /os/mirror (Reflect), /os/explore.
-  Bottom navigation persists in tools under its current keyboard behavior.
-  Home/Explore intentionally contain no placeholder content.
-- Opened pairs are Note/Deep Thoughts, Routine/Protocol and Log/Week.
-  Manual swipes and tappable cues use the shared session engine.
-- After any completed Day One, enter directly. Week/Log setup, weekly review
-  and daily greeting do not interrupt entry. A genuinely unfinished Day One
-  may appear. A newer version alone does not interrupt an older completion.
-- Planned onboarding ends at Home. Existing-user transition and replacement
-  delivery need review; this documentation does not change entry behavior.
+- A **Line** is one-beat content that gives and collects nothing: a quote, a
+  joke, a small fact. It is not a Chapter. There is no run, no version, no
+  cooldown and no completion, because all of that machinery exists to keep an
+  answer and a Line never asks for one.
+- Content that gives is unrationed. Content that asks stays rationed. Being
+  asked constantly is what stops a person answering honestly, and honest
+  answers are the whole input to Athena; a quote costs nothing to see.
+- Deep Thoughts' label opens a single Quote from the Admin-managed Supabase
+  catalog, using the same App Box and existing Line exits/reactions. The Quote
+  stays until dismissed, never advances the question and never saves its draft.
+  A valid public catalog is cached for offline reading; an authoritative empty
+  catalog has no bundled fallback. This does not change Note's mixed Line pool.
+- The Note label flips the same App Box to its Line back. It never summons a
+  Chapter. Chapters arrive on their own in Thoughts and return to Thoughts when
+  completed or dismissed.
+- A quote is one Line Page. A fact or joke keeps setup and reveal as two
+  adjacent Pages. Those Pages may rotate through the shared idle dwell; a Line
+  never dismisses itself on a timer.
+- The Line face has a text kind label, not a Note return button. Swiping
+  backward past its first Page returns to Note. Swiping forward past its last
+  Page first reveals reactions; choosing a reaction records feedback and
+  returns to Note. Swiping forward past the end again returns without requiring
+  a reaction. Reactions are optional feedback, not Chapter answers or completion.
+- The neutral inset edge says that the arriving Page is not the person's Note.
+  The top-right `FACT`, `JOKE`, or `QUOTE` label says what kind it is; colour
+  does not encode kind.
+- Lines are white. The App Box paints Bone and owns that surface; the Page
+  declares no colour of its own.
+- Facts and jokes keep their reveal shape. Jokes are exactly setup and
+  punchline; a Line with a third clause is removed rather than padded out.
+
+## Chapter History and Quest completion
+
+- Finished steps and a completed Quest's View history open the shared reader
+  through App-back. There is no separate Chapter History control beside the
+  catalogue counter. Version labels stay out of the reader; original version
+  references remain internal so saved questions/answers stay correct. Back
+  returns through History to the same Quest. Content grows downward without
+  an inner scroller. A broader all-chapter archive is deferred.
+- Read saved question/display snapshots first. Missing question snapshots may
+  use only the exact original chapter version. Missing/conflicting definitions
+  never borrow newer wording. Keep the answer visible with an unavailable
+  question/title marker when necessary; unknown dates remain unknown.
+- An unfinished Quest keeps View steps / Hide steps using the shared reusable
+  button setting. Finished steps open read-only answers, never the player.
+  A complete Quest offers View history, listing each completed/setup step.
+- A named active Habit, both saved Log wake/sleep answers, a matching completed
+  first-use publication, or the corresponding saved declaration may satisfy
+  its own setup step. Show Already set up when no run of that chapter was
+  completed. This is derived UI status, not permission to manufacture answers,
+  completion times or completed runs. App access alone satisfies nothing;
+  ordinary reflections and Week setup/reviews still require their own runs.
+- The Habit/Log setup surfaces use this same evidence and suppress duplicate
+  setup deliveries. Stale Quest pins to completed/satisfied steps are cleared
+  without replay. A genuine unfinished step still opens its chapter. Workshop
+  reruns and named weekly review entry remain separate existing paths.
+- Entry after any completed Day One goes directly into the app (2026-11-06).
+  Week/Log setup, weekly review and daily greetings never open automatically.
+  Keep explicit Quest, Week and Workshop entry and the same saved players/runs.
+  An unfinished Day One may still open on entry; a newer version does not
+  interrupt someone who completed an older version. No saved completion or
+  access gate is rewritten by this entry rule.
+- Browsing never applies outcomes or requests AI. The chapter reader has no
+  correction/submit controls. A step with setup evidence but no saved answers
+  says so without inventing a chapter record.
+
+## Editions
+
+- Athena's reading is published as **editions**: dated, immutable, and
+  accumulating. A reading that is overwritten every morning can never be new,
+  never be unread, and never be read back.
+- An edition is identified by its own words, not merely by a preparation date.
+  Unchanged prose does not claim a new edition.
+- Daily preparation describes the legacy prepared-content integration, whose
+  external scheduler is not certified by this standard. The planned paid beta
+  runs interpretation only on an explicit reading/reply request; saving or
+  correcting a record starts no generation. A requested result appears when
+  ready without a second reveal request. Preserve existing prepared content
+  until its separately reviewed migration; request accounting remains open.
+- Only authored prose is published. The derived observations that stand in for
+  a page Athena has not written are a fallback for display, never a
+  publication.
+- An edition never mixes with another day. A part Athena did not write in a
+  past edition says so, rather than borrowing today's profile text.
+- Editions merge as a union. A phone syncing from a copy that predates an
+  edition never loses it.
+- The phone carries a bounded archive; the vault keeps the full history.
+- The Athena's Reading cover label opens read-only History using shared
+  App-back inside the cover slot. It lists locally retained editions newest
+  first with their publication dates, or Date not recorded. Opening an edition
+  reads its cover and all three parts using only that edition's prose. Missing
+  parts say No saved words for this part. Back returns to History then the
+  current cover; History does not add a fifth swipe Page. Outer swipes stay
+  locked to the cover while History is open. Long history/detail grows downward
+  without an inner scroll panel. No reply editor or publication handler runs in
+  the archive. Current reading/reply behavior and the 60-edition retention bound
+  remain unchanged; older server paging is separate work.
+
+## Note
+
+2026-11-06 current-copy refinement: Saved copies shows the current saved Note
+first, then retained Cloud/Device histories unchanged. Current-note history reads
+the live ledger. New entries belong to normal History. All bounded writing Body
+scroll areas hide scrollbar chrome, retaining wheel/touch/keyboard scrolling.
+
+2026-11-06 conditional Sync controls: History shows Sync only for saved work
+awaiting sync, conflicts or recoverable errors. Empty/draft-only/completed states
+have no Sync action. Try again appears only after an error, not while retrying
+or after success. Retained histories open through Saved copies on the owning
+Note History row. The normal row continues to open the editor.
+
+2026-11-06 sync refinement: Cloud and Device show only their authored content
+and any necessary Trash marker. Tap either copy for dated read-only history;
+Back returns to comparison. Use the Note default CreativeButton, stacked Use
+Cloud then Use Device. Hide scrollbar chrome while retaining bounded Body
+scrolling. Confirmed choice returns silently to the list; pending/error/retry
+remain visible only when relevant. No persistent success message or history
+expander. Normal Note History still opens its editor. This supersedes the
+initial sync presentation below.
+
+2026-11-06 writing-sync addition: History opens a separate Writing sync Page.
+Status and conflict controls live there, not in the silent Note editor or global
+header. Review vertically stacked This device and Cloud copy with dates/Trash
+state; explicitly choose the current copy while preserving both histories. Keep
+the shared App-back engine, bounded writing Body and visible Footer. Changed
+copies require renewed review. No draft upload or automatic winner is implied.
+
+The developer approved the account Note refinement on 2026-11-03. It supersedes
+the earlier explicit-Save/draft controls for Note only. See the
+[writing journeys](../../docs/PERSONAL_RECORDS_AND_ATHENA_PLAN.md#5-writing-journeys).
+
+- Note takes as much writing as a person wants in Main Body and Sub Body.
+  Account Note views grow from the shared minimum to a 480px App Box ceiling,
+  reduced to 60% of the dynamic viewport on short phones, never below that
+  minimum. Note, History, Trash and opened Trash content scroll only Body past
+  the ceiling. Header, Heading and Footer remain outside the scroll area.
+  Routine and draft/running Protocol retain natural downward growth; expanded
+  Protocol Past phases shares this history ceiling.
+- Note saves after a short typing pause and when leaving the editor. Text
+  composition finishes before autosave. Focus keeps idle rotation paused.
+- There is no Save, Clear, Discard, Drafts, Versions, Undo or save-status UI.
+  Recovery/revisions remain internal; failure keeps text available and offers
+  Try again. Do not show Saving/Saved on this device for Note.
+- NOTE and HISTORY use matching typography and a measured equal baseline in
+  the header, preserving 44px targets and the shared forehead. Focused title/body
+  fields keep the caret without an outline, border or box; button focus remains.
+- Note/header/text actions use `#E36B37`; title/body remain Ink. History
+  has a Note back action, Trash in its header and grouped dated entries with times.
+  One full-width New Note action lives in the Note editor Footer. It finishes
+  saving current text before opening a blank Note; failure keeps the text open.
+  Opening a saved Note edits it directly.
+  A separate 44px orange trash-bin button sits at the right of each editable
+  local row. It moves that Note to Trash silently, without opening it. Restore from the
+  Trash page; there is no Undo shortcut. Read-only legacy sources stay read only.
+- Existing Notes can be emptied by ordinary text selection/deletion. Save that
+  as an empty version; do not remove the value or recover old wording. An empty
+  new composer creates no saved entry. Internal revisions and Trash/Restore remain.
+- An empty Note shows one short phrase from the separate Note placeholder pool.
+  Placeholder words never become saved evidence and never use Line runs,
+  cooldowns, or completion. The Note label retains its Line action.
+- The older legacy single-Note editor is not migrated by this refinement.
+  Thoughts, Deep Thoughts and reading answers retain Send/Save changes and
+  their existing draft/history rules.
+
+## Protocol
+
+- Routine is the first Page of its App Box and Protocol is one swipe across.
+  The current Protocol phase is its front; `Phases` opens Protocol home on the
+  shared App back.
+- A running protocol can be changed through the explicit `Edit phase` action.
+  Its App-back label names the visible side and never doubles as an editor.
+  A block is the button that keeps a term, so it cannot also be the way to
+  rewrite one.
+- An edited term keeps its id, so the days already marked against it stay
+  attached. A term taken out is archived, never deleted.
+- Term edits, additions and removals apply from the next local Circle day at
+  06:00. The editor shows the pending words; the daily front keeps today's
+  agreement. Editing never reticks a day or rewrites a seal. Past phases groups
+  wording by applicable date interval, with counts over that interval. Missing
+  original legacy wording is labelled Earlier wording unavailable.
+- Length is the one thing a running protocol cannot change. The day counter and
+  the ending are arithmetic on it, and a run that can be shortened when it gets
+  hard is not a protocol.
+- Protocol carries its weight in Sub Body. The terms are the page; the name and
+  the duration are one Main Body line above them. The two-parts-to-one rule is
+  wrong here, so both tracks size to their content the way Habit's do once it
+  has rows.
+- A Page must put its content in Main Body and Sub Body. Loose children fall
+  into the Body tracks by position, which is how the Protocol name alone came
+  to be stretched to fill the Main track.
+- Keep the five current duration choices: **1, 3, 7, 14 and 21 days**, confirmed
+  by the developer on 2026-11-02. Keep the existing shared choice presentation.
+  Any layout change requires a reviewed UI scope with readable phone labels
+  and 44px targets; correcting this count does not authorize a layout change.
+- Ending a run early lives inside the editor reached by `Edit phase` and asks
+  once. The terms were agreed before the run began and the days do not come
+  back, so the action states what the next press does and the question expires
+  rather than waiting all day. The running front keeps one Footer action.
+  Closing a run that has already finished asks nothing; there is nothing left
+  to lose.
 
 ## Idle rotation
 
-Opened full-page tools stay on the selected Page: the writing session is paused
-while opened, and histories, libraries, journeys and pending publications never
-rotate. This is the current focused-tool behavior.
+- The Today check-in session is the only App session that turns its own Page.
+  Note and Deep Thoughts turn between themselves after one
+  `IDLE_PAGE_DWELL_MS` dwell.
+- Routine, Protocol, Log, Vision, Week Review, and Athena stay on the Page the
+  person chose. A hidden action is a placement defect, not a reason to turn a
+  working App while the person is reading it.
+- Turning never interrupts. The dwell restarts on any touch or key inside the
+  box, it waits while anything inside the box has focus, it holds while a
+  thought is part written, and it does not run while the app is in the
+  background.
+- A turned Page arrives with the ordinary quick page travel, not the ceremonial
+  update reveal. Nothing new has arrived; the box is only showing what it holds.
+- A journey, a Chapter and a pending publication never rotate.
 
-The retained legacy Today Note/Thoughts check-in policy permits one
-IDLE_PAGE_DWELL_MS dwell (30 seconds) between its pages when that context is
-actually available. Two-page fact/joke Lines may turn between setup/reveal.
-Do not apply that legacy permission to the manually opened tools.
+## Interaction
 
-Any permitted dwell restarts on touch/key, waits for focus or unfinished writing,
-and stops in the background. It uses ordinary Page travel, never a new-content
-reveal. A Line never dismisses itself on a timer.
+- The outer session frame stays still.
+- The window is one uninterrupted shape. Moving pages never carry their own
+  rounded outer corners, borders, or shadows.
+- Only the inner page follows the finger.
+- A swipe completes inside the clipped frame before state changes.
+- Ordinary page travel stays quick enough for consecutive swipes. Ceremonial
+  update motion never slows browsing through an existing app stack.
+- Every in-place App side change uses the shared App-back controller. Feature
+  code supplies only its two sides and never supplies another transition class,
+  timer or height ease.
+- The active page is always kept in the navigation map while permissions or
+  saved progress change. It never falls back to the cover by position.
+- A required first-use cover has a hard right boundary. An optional Check-in
+  cover may swipe right into its idle app to mean `Later`.
+- The incoming page is promoted in place after the swipe. Its horizontal
+  entrance never replays during the state change.
+- When pages have different heights, the frame keeps its old height until the
+  swipe completes, then eases to the new page height.
+- A tap never becomes a swipe.
+- Text fields never focus because of a swipe.
+- Every swipe also has a button or keyboard path.
 
-## Writing and Lines
+## Visual rules
 
-Note autosaves silently with recoverable buffers; Deep Thoughts uses
-Send/Save changes and deliberate Next question. History/Trash/Restore/Delete
-and conflict-copy review keep the same frame and shared navigation.
-[Product](../../docs/PRODUCT.md#current-daily-tools) owns their action semantics;
-the [record contract](../../docs/PERSONAL_RECORDS_AND_ATHENA_PLAN.md) owns data.
+- White: primary reflection.
+- Orange: identity and active change.
+- Dark: practical tools and evidence.
+- Radius, border, background, and shadow belong to the stable frame whenever
+  pages share a theme.
+- Fixed-height chart sessions scroll inside themselves when needed. They never
+  push the whole route while changing pages.
+- Fluid-height sessions use the shared frame resize. Reduced-motion settings
+  make the resize immediate.
+- All app interiors use Geist. Cormorant remains an outer editorial typeface.
+- Pages of the same type reuse one component and typography scale. Do not make
+  a one-off Cover, Note, Thoughts, or Blog visual inside a feature.
+- Every Page keeps Header, Heading, Main Body, Sub Body, and Footer. Empty
+  optional text does not move those anchors.
+- **The forehead is one number for every App.** The space between the App Label
+  and whatever comes under it is `--os-label-gap`, currently `48px`, and it
+  hangs off the Label rather than off the Heading track. Sai set Routine as the
+  reference first — *"i want the forehead size of the routine app to apply
+  everywhere"* — and originally set the number: **80px** (reduced to **48px** on 2026-11-03). Every App matches it: Note,
+  Thoughts, Routine, Protocol, Log, Dreamline, Vision, Week Review, Athena's
+  Reading, Suggestion. Earlier 80px measurements covered **every Page**, not one per session:
+  five Apps on Today at `80.9px`, and all twenty Pages on Reflect at `80px` or
+  `80.9px` — the three Vision declarations, the nine Week Review Pages, the four
+  Athena Pages and Suggestion. At phone width the App Box still sits on its
+  `344px` floor with the Footer 22px inside it and nothing clipped: the forehead
+  comes out of the Body's spare height, not out of the frame.
+- **Body does not centre.** It begins at the forehead in every placement.
+  Centring is what made a balanced Page put its first line wherever the text
+  length left it: a short Note measured `105px` under its Label against
+  Routine's `24px`. An App Box that holds less text is shorter; it does not move
+  its first line.
+- **Three things break the forehead, and all three have.** A Label that restates
+  its own type (`line-height: 1` gave the Note Label a 10px box against every
+  other Label's 17.2px, and 4px of extra forehead under it). A Label that
+  animates from an offset (`translate3d(0, -4px, 0)` held the Thoughts Label
+  above its own line). An App Box built outside the contract (Athena's Reading
+  carried its own `330px` floor and a `0.85rem` gap; Suggestion had `22px`
+  padding and no forehead at all; Athena's cover centred its heading in a `1fr`
+  row, so its forehead was whatever the row left over). Check those before
+  adding a rule, and measure every Page of a session rather than the one that
+  happens to be showing — the Athena cover was the only Page of twenty that was
+  wrong, and only walking all of them found it.
+- **A Label that is also a button resets what the button adds and nothing
+  more.** It never restates font, size, weight, tracking or line height — those
+  come from `.os-card-label`, whose line height is `--os-card-label-line-height`
+  so that a `<p>`, a `<button>` and a `<span>` share one box. This exact fault
+  has shipped four times: the Habit toggle, the Protocol toggle, the Vision
+  label, and New habit.
+- **A header action sits on the header's line, not in the middle of its touch
+  target.** New habit kept a 44px target but centred its text inside it, so it
+  hung roughly 17px below the App Label opposite. The target stays; the word
+  goes to the top of it.
+- Main Body begins at the forehead and grows downward. Sub Body follows
+  directly beneath Main and may grow without moving it. Main used to centre
+  through three lines and pin at four; that is what made the forehead differ
+  from App to App, and it was removed on 2026-08-20.
+- A Page has four regions in one column: Header, Heading, Body, Footer. Body is
+  the only one that flexes. Written with Heading flexible instead, spare height
+  collects above the words, so a short thought sits low and jumps upward the
+  moment it gains a second line.
+- On Cover, Note, Thoughts and Vision declaration Pages, Main begins at the
+  forehead and Sub hangs from its last line at the shared gap.
+- Cover Main text and editable reading surfaces share the forehead anchor and
+  remain left-aligned. Cover retains its existing scale; the editable surfaces
+  named above use 29px main and 18px body text.
+- **A label is dimmed by choosing a lighter step, never by using the surface's
+  own text colour on the wrong surface.** Section labels on a dark App Box use
+  a neutral step that clears 4.5:1 against it. The Dreamline shipped its section
+  labels in Ink on `--c-neutral-950`, which measures 1.13:1 — invisible rather
+  than quiet. `--c-neutral-400` on that surface is 6.42:1 and reads as the quiet
+  signpost the label is meant to be.
+- A Note Page keeps its Main text at the same forehead anchor as a Cover Page.
+  Optional Sub text begins beneath Main without moving it.
+- Routine App Pages place the editable app identity in Main Body, habits then
+  Tasks in one continuous Sub Body, and Add task in Footer.
+- Habit Record keeps Today so far with its existing Undo controls. Its top-right
+  History label opens a separate read-only Page using the shared App back.
+  History groups completions by day, newest first, showing Yesterday without
+  its date and dates for older days. It has no picker, wording notices or dark
+  divider. Provenance remains internal; missing original wording is never
+  invented. The History body alone scrolls at the same 480px/60dvh frame ceiling
+  as writing; its header stays fixed. The header's Record action returns to
+  today's completions. Routine and draft/running Protocol retain natural
+  downward growth; expanded Protocol Past phases also uses the history ceiling.
+  See [the refinement checks](../../docs/USER_JOURNEY_TESTING.md#habit-history-page-and-flexible-entry-2026-11-03).
+- New habit shows action, time/location and identity together, accepting any
+  field first. Its action is required to become an active visible Habit.
+  Unnamed work remains a recoverable draft and is hidden on leaving the row;
+  New habit reopens it, including after reload. Moving between fields does not
+  discard it. A saved Habit cleared deliberately retains the existing archive
+  behavior. The Routine focus/title remains a separate editable field.
+- Repeated habits form one continuous Sub Body stack. Each habit uses one
+  quiet divider and one row rhythm; it never creates a nested card or double gap.
+- Routine is the first Page and Protocol is one swipe across. Their Headers are
+  equal and their editable identities begin on the same line.
+- Their title box, title-to-first-label gap and Footer action outer height are
+  equal too. A feature-specific Footer or duplicate content gap must not move
+  one identity below the other.
+- When Routine has no rows, the empty Sub Body collapses and the Page rests at
+  the shared default height.
+- Full-width actions use the same black button language across apps.
+- Text answers use borderless editable typography, not a separate form-box or
+  underline visual. The App Box grows for a paragraph; the text does not shrink.
+- Choice, slider, and short-answer Chapter Pages remain at the default App Box
+  height. Empty form geometry must never make a short page taller.
+- Note, Thoughts, short Chapter, empty Routine and resting Protocol Pages all
+  use the same default App Box height. Only real added content may request a
+  larger stable height.
+- Draft and running Protocol Pages grow downward for their real terms, with no
+  inner terms scroller. Expanded Past phases instead shares Note's bounded
+  Body scrolling, retaining the same default minimum.
 
-Line access from Note is currently hidden; content and immutable publications
-remain preserved. Deep Thoughts' Quote opens the managed public catalog through
-existing Line exits, keeping the same question/draft. Cached valid data supports
-offline reading; an authoritative empty catalog has no bundled fallback.
+## State
 
-A Line is one-beat content, unrationed, with no run, version, cooldown or
-completion. A quote uses one Page; facts/jokes use setup and reveal.
-Backward beyond the first Page returns; forward beyond the last first reveals
-optional reactions, then returns on reaction or another forward swipe.
-Reactions are feedback, never Chapter answers/completion. Preserve the legacy
-Note/Line behavior for retained contexts; do not restore its hidden entry.
+- Journey progress is stored by chapter id and immutable version.
+- Library position is stored by session id and data version.
+- Note opens on its editable front and its label flips to a Line. New chapters
+  target Thoughts and arrive there on their own. Legacy immutable publications
+  already assigned to Note remain readable, but authoring and compilation no
+  longer create new Note deliveries.
+- A private published chapter is immutable by id and version in this browser
+  and remains available offline. A public published chapter is written as an
+  immutable Markdown source through the connected Circle OS server, then
+  cached locally for offline use.
+- Every immutable publication names one destination app, one audience profile,
+  visibility, delivery mode, source, and publication time. Publishing the same
+  chapter elsewhere creates another immutable publication version.
+- Admin publications default to manual delivery. Athena publications default to
+  on-view delivery. Public publication always needs explicit approval.
+- A pending Thoughts publication visits the whole App Box rather than becoming
+  a Thoughts or Deep Thoughts face. Completion or dismissal restores the
+  Thoughts front. Habit, Log, Vision, Seven Days, and Athena publications are
+  likewise one-time journeys that retire back to their normal App.
+  Dismissal, when that App offers it, also retires the delivery rather than
+  adding it to a recall queue.
+- Closing a kept Protocol day writes a dated seal. A running day's ordinary
+  ticks remain editable. Finished-phase rows are read only, with no last-day
+  correction action or editor. The developer removed that feature on 2026-11-03.
+  Any already-saved correction receipts remain intact for persistence and merge.
+  The factual kept-day Page is
+  transient, occupies the Protocol slot, pauses idle rotation, and one swipe
+  removes it without adding a stack or chapter run.
 
-Automatic writing Sparks are paused. New authoring does not target Note;
-existing immutable Note publications and saved progress remain readable.
-Public/private publication, cache and delivery use the existing shared engines.
+## The key
 
-## Routine and Protocol
+Every pressable thing in Circle OS is one object, described once in the
+`--os-key-*` tokens and consumed everywhere: a face raised on a solid leg, lit
+along its top edge, that drives flat onto the surface when pressed and comes
+back up a little slower.
 
-Routine Record shows today with Undo and read-only older completions in one
-view. Saved name, cue and result remain distinct. Missing original wording is
-not reconstructed. New habit accepts fields in any order; an action is required
-to become an active visible habit. Unnamed work remains a recoverable draft;
-leaving hides it and New habit reopens it. Deliberate clear archives saved work.
+- A control names its size and its leg colour. It never restates a shadow.
+- Sizes are lifts, not heights — `--os-key-lift-lg / -md / -sm`, 4px / 3px /
+  2px — so one recipe fits a 30px task tick and a 52px footer action. The leg is
+  exactly as tall as the lift, so a press removes both and the face lands where
+  the leg was.
+- A leg is never blurred. A blur reads as floating; a key is seated in the box.
+- The top light is drawn only where it can be seen: `--os-key-light` on a light
+  or orange face, `--os-key-light-soft` on Ink, `--os-key-unlit` on a Bone face
+  that is already the lightest thing on the Page. The unlit value is a
+  transparent shadow, never `none` — `none` is legal only as a whole box-shadow
+  and voids the leg with it, leaving a face floating above nothing.
+- Down is `--os-key-press-ms` (40ms). Anything slower reads as lag rather than
+  contact. Pressed and held states are sunk, so the light comes from inside the
+  hole rather than off the top edge.
+- Row ticks, Protocol terms, the button engine's default style and every plain
+  full-width Page action are built from this, and so is anything added later.
+- A ghost control is not a key. `.os-add-habit-row` stays flat, because a dotted
+  invitation that presses like a commitment claims to be one.
+- The rotating bag of button styles belongs to Button Studio. The App's own
+  actions use the standard key.
 
-Protocol shows the running phase, or home when none runs; Phases is its back.
-Start phase reuses one draft, not a navigation-created duplicate. Durations
-remain 1/3/7/14/21 days. Separate editing changes wording from the next local
-06:00 Circle day; old dates keep their original terms. Closing a kept day seals
-dated evidence. Ordinary current-day ticks remain editable until the seal.
-Keep the authored day-seal reward.
+## Page arrival
 
-Past phases/terms are read only; no last-day correction editor returns.
-Preserve older correction receipts. Past presentation retains outcome, period,
-wording and compact counts; it omits the retired days-kept sentence and repeated
-term dates. Remove archives only finished/early-ended runs with a newer timestamp;
-draft/running phases cannot be archived. Browsing writes no completion.
+- Leaving is one flat content-layer fade. The App Box background stays stable.
+- New or refreshed content enters Body first, Header second, Footer last.
+- Ordinary swipes remain quick and never replay the refresh sequence.
+- **An App Box never empties and replays its arrival to confirm an action.**
+  That is what it does when a Page changes for any other reason, so it answers
+  "something happened" rather than "that went". A send is signalled by the thing
+  that was sent leaving: the written words lift and fade while the frame, the
+  Label and the Footer hold still and the action holds on its completed word.
+  Where a Page carries a question and an answer, only the answer travels.
+- **An App Label has no arrival of its own.** It is present with its Page. A
+  word that names where you are may not be the last thing on the Page to settle.
+- A terminal Page never fades itself. After its protected pause, the person's
+  deliberate swipe uses ordinary Page travel. Reduced-motion removes the cue's
+  small arrival animation but not the 1.2-second accidental-swipe guard.
 
-## Log, Week and histories
+## App back
 
-Log/Week share a persisted manual pair. Log grows with the natural page scroll;
-History and opened day/correction remain inside the daily slot, with outer Week
-travel locked while reading a supporting view. History includes saved titles,
-activities or moments, not automatically empty days/future plans. Past views use
-their original blocks, never today's suggestions.
+- An optional App back is a side change inside the same stable App Box. Its
+  front is what is needed today; its back is what the App holds.
+- Note / Line, Deep Thoughts / Quote, Routine / Record and Protocol / Phases
+  use the same controller and timings: 260ms to leave, a 500ms calm arrival and
+  840ms for the complete handoff.
+- The controller holds the old measured height through the leave, then eases
+  the frame to the fully measured incoming Page over 440ms while that Page
+  arrives. Copy and geometry settle together instead of flashing first and
+  resizing afterwards. Reduced-motion mode changes sides immediately.
+- A mode label names the visible side. It is never an edit or completion
+  action. Returning to an already known side does not replay a staged arrival.
 
-Past activity/moment text correction preserves ID, attributed day, time range
-and first-recorded time. Save changes creates immutable before/after evidence with
-actual correction time; unchanged Save writes nothing. Stale edits are rejected.
-Clearing writes a dated empty value and removes active evidence without stale
-restoration. Cancel writes nothing; reload/account changes close unsaved editors.
-New past entries and time/date changes remain separately reviewed work.
+## Named placement
 
-Week goals and Routine steps share records. Day tabs filter steps, not open
-goals. Current task creation is today/future only. History groups by event day,
-then goal; old calendar weeks/reviews remain available separately.
-Completed reviews stay read only. Browsing never replays next-week/Protocol
-outcomes or manufactures answers. Missing links/old wording stay unavailable.
+- `AppPagePlacement` is the Page placement contract. A Page declares
+  `balanced`, `identity-stack` or `content-flow`; feature CSS does not borrow
+  another App's placement class.
+- `identity-stack` owns one Header track, an optional absolute right action,
+  the shared `.os-app-page-heading`, labelled `.os-app-page-stacks`, and the
+  direct Footer action geometry.
+- Routine and a running Protocol both declare `identity-stack`. Log, Record and
+  Protocol home declare `content-flow`. Moving a shared heading or Footer rule
+  moves every Page that names the contract.
+- A Vision declaration versions only through `Save declaration`. Blur, route
+  reload and ordinary typing never create a declaration. The current front
+  shows three kinds: Vision, Mission statement, and Typical Tuesday. Tapping a
+  declaration's top-left kind label flips to superseded immutable records on
+  the shared App back. On that back, `History` is a passive top-right state
+  label rather than a second action. Character and Six months already exist as
+  versioned records; their front-Page design remains a separate review.
 
-## Reflect, declarations and editions
+## Athena Reading replies
 
-The existing Reflect meaning is wanted life, actual life and the space between;
-Athena is not a fourth part. Its saved replacement proposal remains deferred.
-Chapters collect answers through existing delivery paths; do not add an
-unreviewed Reflect questionnaire or direct-discovery editor.
+These bullets describe the current answer-as-evidence flow on prepared readings.
+The planned paid service separately supports explicitly requested AI follow-ups;
+saving an answer requests no AI reply. Exact new controls remain under review.
 
-Vision, Character, Mission, Typical Tuesday and Six months are distinct records.
-Character is authoritative; Routine identity then Mission are labelled fallbacks.
-Current visible Vision fronts remain Vision/Mission/Typical Tuesday.
-Only Save declaration creates a version; blur/reload/typing do not. History
-uses the shared App-back and never borrows newer wording.
+- An authored Reading paragraph may end with one real question. Only the
+  latest Reading can be replied to; an older immutable edition stays read-only.
+- `Reply` opens one textarea on that Reading Page. Sending uses the shared
+  survey and evidence queue with kind `athena-reading`; it does not create a
+  score, count, reaction, or separate feedback store.
 
-Current Athena keeps its four-Page reading. The cover label opens read-only
-History in the cover slot, not a fifth swipe Page. History locks outer travel,
-lists retained editions newest first and opens only that edition's prose.
-Missing parts stay missing. Back returns via History to the cover.
-No reply editor or publication side effect runs in an archive.
+## Fixed evidence Apps
 
-An edition is dated/immutable and identified by authored prose, not preparation
-date. Same prose publishes nothing; derived observations are display fallback
-only. Editions merge by union. Current browser retention is 60 editions; vault
-history is a legacy integration, not proof of Supabase archive/paging.
+- The Week label opens read-only History through shared App-back, inside the
+  Week slot. Past calendar weeks with saved weekly goals or a review appear
+  newest first. Opening one reads saved goal status, linked task words/status,
+  assigned step dates and review answers/recording time. Missing links stay
+  visibly unavailable; no old wording is invented. Back returns to History,
+  then the current Week. History locks outer swiping to its own slot and grows
+  downward without an inner scroller. Browsing never writes or replays a review,
+  creates next-week goals/tasks, or ends/starts a Protocol phase. Weekly review
+  corrections/versioning remain separate work.
+- Log uses the shared Page and frame rather than a route-level heading above a
+  free-standing timeline. Its evidence surface remains dark.
+- A long Log timeline grows the App Box downward, using the natural page
+  scroll. It does not create an inner Body scroller. This corrects the older
+  fixed-scroller description to match existing CSS and verification.
+- The App Box owns background, border, radius, clipping and shadow. Until its
+  second App exists, Log shows no back control.
+- Log owns one persisted outer `SwipeSession` and never rotates itself. Its
+  Pages are the daily timeline and Week. Dreamline is disabled behind
+  `SHOW_DREAMLINE`; current source conditionally attaches its idle/sheet Pages
+  to Routine, not to Log. Older multi-Page Dreamline layouts are historical.
+  Preserve hidden records and keep the flag off; future placement needs review.
+- The Log label opens History through the shared App-back engine.
+  History lists every past day with a saved title, activity or moment, newest
+  first. Empty automatically created days and future plans are not Log history.
+  Opening a day reads its assigned date, saved title and original time blocks,
+  including legacy moments; today's routine suggestions never fill old days.
+  Back returns to History, then today's Log. History/day reading stays inside
+  the daily slot, without swiping into Week; Week remains available from today.
+  Browsing does not write records, queue evidence or trigger chapter outcomes.
+  Both the list and day grow downward.
+- Tap a saved past activity/moment to open its text editor through shared
+  App-back. Save changes accepts the activity and moments; Cancel returns to
+  the day without saving. The original date, time range, ID and first-recorded
+  time stay fixed. Stale entries cannot be saved over a newer change.
+  A changed save retains immutable before/after words with actual correction
+  time. An unchanged save writes nothing. Clearing keeps a dated empty value
+  in that receipt and removes the block from active day evidence; older copies
+  cannot restore it on merge. Time/date changes and new past entries remain
+  separate work. Reload/account changes close unsaved Log editors.
+- A Dreamline is separate from Vision declarations. It is dated, costed and
+  finite; a concluded record remains immutable and readable while a new
+  Dreamline begins with a new id.
 
-Only the latest prepared Reading can accept its current answer-as-evidence.
-That save makes no AI call. Planned paid replies need a separate explicit request;
-requested results appear when ready. Preserve existing prepared content until
-separately migrated.
+## Protocol home
 
-## Chapter History, Quests and publications
-
-Finished Quest steps open the shared read-only answer reader. A completed Quest
-offers View history; unfinished Quests keep View steps / Hide steps.
-No version badge is needed in UI; original version references remain internal.
-
-Use saved question/display snapshots first, otherwise only the exact original
-version. Missing/conflicting definitions never borrow newer questions; keep
-answers with truthful unavailable markers and unknown dates.
-
-A named active Habit, saved Log wake/sleep pair, matching completed first-use
-publication or corresponding declaration can satisfy its own setup step.
-Already set up is derived UI status, never fabricated answers or a completed run.
-App access alone satisfies nothing; ordinary reflections and Week reviews need
-their own runs. Suppress duplicate setup offers/clear stale pins without replay.
-
-A publication names one app, audience, visibility, delivery mode, source and
-time. Changing destination/audience creates another immutable publication
-version. Private publication stays browser/profile scoped; public publication
-uses immutable server sources cached locally and needs explicit approval.
-Admin defaults manual, Athena on-view. Pending delivery occupies the whole
-App Box and restores normal content on completion/dismissal; it is not another
-rotating writing face. Library position uses session/data version; Journey
-progress uses chapter/version.
+- With no running phase, Protocol home is front. With a running phase, the
+  phase is front and home is the `Phases` back.
+- Home reads completed and early-ended runs from existing local records. It
+  stores no aggregate and presents only within-phase counts, dates and terms.
+- Past terms cannot be ticked while browsing. There is no past-day correction
+  control. Dated term snapshots preserve prospective changes. Protocol term
+  inputs hide native scrollbar chrome while wrapped text grows downward.
+- Opening Past phases allows the frame to grow to Note's 480px/60dvh ceiling,
+  never below the shared minimum. Beyond that only Body scrolls; Header and
+  Footer stay fixed. Closing removes this bound. Active phase editing/running
+  Pages retain natural downward growth.
+- Each past phase retains its full `1 of 7 days kept` summary under the title.
+  Individual term counts use `1/7` and `0/7`; term rows have no white dividers.
+  Dividers between different phases remain.
+- Past terms are read-only text and reserve no 44px control height. Use the
+  existing 0.65rem rhythm between term rows and before Remove. Remove retains
+  at least a 44x44px target, with its label aligned at the top of that target.
+- Starting from home uses the existing one-run draft path. A second draft is
+  never created to satisfy navigation.
+- Removing a finished or early-ended record archives its run with a newer
+  timestamp. Archived runs stay out of the Page and its read models but remain
+  present for local-first merge. A draft or running phase cannot be archived.
+- Phase records and their dividers fill the Body width. Their name, outcome,
+  kept days, dates and term counts stay grouped as one reading rhythm rather
+  than being pushed to opposite edges.
 
 ## Admin previews and access
 
-Newly created Chapters and Articles adopt the current glass Page design. Chapter
-definitions persist `designVersion: glass-v1`; missing markers retain the existing
-renderer. New independent copies use glass; revisions of existing chapters retain
-their design. Existing definitions, drafts and saved runs are not converted.
-The glass frame uses the shared focused minimum, 24px anchors and natural growth;
-Chapter navigation and the protected terminal swipe remain unchanged.
-
-Workshop and Button Studio use production Page anatomy and parent-bounded width.
-Choice rows stack full-width. Button Studio keeps its preview action mounted;
-Background changes the preview surface, not button lifecycle.
-
-Admin has no public tab/login link. The reserved phrase in Deep Thoughts opens
-the account-checked Admin route in account mode. A permission-checked Admin
-entry also appears in that account's menu. Legacy mode retains the password
-prompt; only a server-checked password unlocks that legacy session.
-Phrase/password are intercepted before persistence. Missing/invalid server
-configuration stays locked; unauthorized account visits show a locked state
-with a return to Today, while unauthorized legacy visits return directly.
-Library group order is Foundation, Short, Guided Learning, Reflection, Information;
-hide empty groups. Matching preview versions restore position; a new one starts
-at page zero. No preview metadata calls an AI provider.
+- Chapter Workshop and Button Studio render the production App Box and Page
+  anatomy. The bounded parent owns width; content can grow only downward.
+- Choice options stack one full-width row at a time and wrap naturally.
+- Button Studio keeps its preview action mounted. The `Background` toggle
+  changes only the preview surface, never the button lifecycle.
+- Admin is intentionally absent from public navigation. Entering `admin`
+  (ignoring surrounding spaces and letter case) in Thoughts opens the password
+  prompt; only a valid server-checked password unlocks the protected browser
+  session. The phrase and password are intercepted before Thoughts persistence.
+  Missing/invalid server configuration stays locked. Unauthorized direct visits
+  return to Today; entering the phrase alone grants no access.
+- Chapter Library groups by Foundation, Short, Guided Learning, Reflection,
+  and Information in that order, with empty groups hidden.
+- A matching version restores the saved page.
+- A new version returns to page zero.

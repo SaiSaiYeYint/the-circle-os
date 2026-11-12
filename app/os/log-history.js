@@ -67,7 +67,7 @@ function validDay(value) {
 }
 
 /** @param {string} value */
-export function circleMinutes(value) {
+function circleMinutes(value) {
   const [hour, minute] = value.split(":").map(Number);
   return (hour < CIRCLE_DAY_START_HOUR ? hour + 24 : hour) * 60 + minute;
 }

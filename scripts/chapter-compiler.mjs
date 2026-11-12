@@ -102,9 +102,6 @@ function parsePage(id, source, filename) {
         type: "type",
         title: "title",
         body: "body",
-        image: "imageId",
-        image_alt: "imageAlt",
-        image_caption: "imageCaption",
         question: "question",
         button: "button",
         answer: "answerKey",
@@ -142,8 +139,6 @@ function parsePage(id, source, filename) {
     throw new Error(`${filename} / ${page.id}: cannot read "${line}"`);
   }
   if (!page.options.length) delete page.options;
-  if (page.imageId) page.image = { assetId: page.imageId, alt: page.imageAlt || "", ...(page.imageCaption ? { caption: page.imageCaption } : {}) };
-  delete page.imageId; delete page.imageAlt; delete page.imageCaption;
   if (page.type === "info" && page.question) {
     page.title = page.question;
     delete page.question;
@@ -287,7 +282,6 @@ export function parseChapterMarkdown(source, filename = "chapter.md") {
     ...(values.kind ? { kind: values.kind } : {}),
     ...(values.completion ? { completion: values.completion } : {}),
     theme: values.theme,
-    ...(values.design ? { designVersion: values.design } : {}),
     title: values.title,
     purpose: values.purpose,
     estimatedMinutes: Number(values.estimated_minutes),
@@ -297,7 +291,6 @@ export function parseChapterMarkdown(source, filename = "chapter.md") {
 
 export function validateChapter(chapter, filename = "chapter.md") {
   const errors = [];
-  if (chapter.designVersion && chapter.designVersion !== "glass-v1") errors.push("Unknown design version");
   if (!ID_PATTERN.test(chapter.id || "")) errors.push("id must use lowercase words and hyphens");
   if (!Number.isInteger(chapter.version) || chapter.version < 1) errors.push("version must be a positive whole number");
   if (!["draft", "published"].includes(chapter.status)) errors.push("status must be draft or published");
@@ -327,7 +320,6 @@ export function validateChapter(chapter, filename = "chapter.md") {
   }
   for (const page of chapter.pages) {
     const prefix = `page ${page.id || "(missing id)"}`;
-    if (page.image && (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(page.image.assetId || "") || !page.image.alt?.trim())) errors.push(`${prefix}: image needs a valid asset reference and alternative text`);
     if (!ID_PATTERN.test(page.id || "")) errors.push(`${prefix}: invalid id`);
     if (!PAGE_TYPES.has(page.type)) errors.push(`${prefix}: unknown type`);
     if (INPUT_TYPES.has(page.type) && !ID_PATTERN.test(page.answerKey || "")) {

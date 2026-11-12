@@ -20,7 +20,6 @@ import {
   getDateKey,
   previousDateKey,
 } from "./circle-os-model.js";
-import { circleMinutes, logEntryWords } from "./log-history.js";
 
 /** The Circle week runs Monday to Sunday. */
 export const WEEK_DAY_LETTERS = Object.freeze([
@@ -137,7 +136,7 @@ function loggedHours(state, dateKey) {
  * happened. A block's title is what the hour was; its moments are what happened
  * inside it. Both are his words, so both belong here and neither is summarised.
  */
-function dayMoments(state, dateKey) {
+function dayMoments(state, dateKey, limit = 6) {
   const blocks = state?.days?.[dateKey]?.timeBlocks;
   if (!Array.isArray(blocks)) return [];
   const moments = [];
@@ -156,7 +155,7 @@ function dayMoments(state, dateKey) {
       if (text && text !== title) moments.push({ at: String(block?.start || ""), text });
     }
   }
-  return moments;
+  return moments.slice(0, limit);
 }
 
 function habitsDue(state) {
@@ -176,11 +175,6 @@ function habitsDue(state) {
 export function weekDaySummary(state, dateKey, todayKey = getDateKey()) {
   const record = dayRecord(state, dateKey);
   const day = state?.days?.[dateKey];
-  const moments = dayMoments(state, dateKey);
-  const activities = [...(day?.timeBlocks || [])].sort((a, b) => circleMinutes(String(a.start || '06:00')) - circleMinutes(String(b.start || '06:00'))).map(block => {
-    const words = logEntryWords(block);
-    return { id: block.id || block.start, at: String(block.start || ""), title: words.title, moments: words.moments.filter(text => text !== words.title) };
-  }).filter(block => block.title || block.moments.length);
   return {
     dateKey,
     letter: WEEK_DAY_LETTERS[weekdayIndex(dateKey)],
@@ -219,9 +213,7 @@ export function weekDaySummary(state, dateKey, todayKey = getDateKey()) {
      * moments inside them — and the counts sit underneath. A tally answers how
      * much; only his own words answer what it was.
      */
-    moments: moments.slice(0, 6),
-    activities,
-    writtenCount: moments.length,
+    moments: dayMoments(state, dateKey),
     kept: record.habits.length,
     due: habitsDue(state),
     tasks: record.tasks.length,

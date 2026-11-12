@@ -20,7 +20,6 @@ export type ChapterOption = {
 };
 
 export type ChapterPage = {
-  image?: { assetId: string; alt: string; caption?: string };
   id: string;
   type: ChapterPageType;
   title?: string;
@@ -73,7 +72,6 @@ export type ChapterRequirement = {
 };
 
 export type ChapterDefinition = {
-  designVersion?: "glass-v1";
   schemaVersion: 1;
   id: string;
   version: number;

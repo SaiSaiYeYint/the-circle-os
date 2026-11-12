@@ -1,8 +1,3 @@
-> Historical snapshot preserved on 2026-11-11 before the approved documentation cleanup.
-> This records earlier decisions, proposals and verification; it is not current instruction.
-> Start with the [active document map](../../../README.md#project-documents) and
-> [archive index](README.md) for the current replacement.
-
 # Today's Note storage and safe sync plan
 
 Date: 2026-10-31. Status: approved documentation scope; implementation proposed.

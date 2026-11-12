@@ -7,7 +7,6 @@ import {
 } from "../admin-access";
 
 export async function POST(request: NextRequest) {
-  if (process.env.NEXT_PUBLIC_CIRCLE_AUTH_MODE === "supabase") return NextResponse.json({ unlocked: false }, { status: 403 });
   const contentType = request.headers.get("content-type") || "";
   let code = "";
 

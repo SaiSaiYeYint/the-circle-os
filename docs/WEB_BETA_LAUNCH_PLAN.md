@@ -1,8 +1,3 @@
-> Historical snapshot preserved on 2026-11-11 before the approved documentation cleanup.
-> This records earlier decisions, proposals and verification; it is not current instruction.
-> Start with the [active document map](../../../README.md#project-documents) and
-> [archive index](README.md) for the current replacement.
-
 # Circle OS web beta launch plan
 
 2026-11-05 scope update: Week reviews remain read only; review corrections are
@@ -280,7 +275,7 @@ timers, leaderboards, native apps, advanced search/filtering, and chat/memory
 expansion beyond requested follow-ups and the confirmed basic sourced-memory
 controls are not beta requirements. Essential history/corrections are not part
 of that deferral. Keep
-[bugs](bugs.md) visible; deferrals need reasons when
+[bugs](../bugs.md) visible; deferrals need reasons when
 the launch audit establishes their severity.
 
 UI priority clarified on 2026-11-02: review and implement core writing/history
@@ -299,7 +294,7 @@ code. Promote it into launch scope only after reviewing the added work.
 
 ## Verification and release gate
 
-Follow the [workflow](../../DEVELOPMENT_WORKFLOW.md): code, test, fix, verify, measured
+Follow the [workflow](DEVELOPMENT_WORKFLOW.md): code, test, fix, verify, measured
 optimization when justified, then reverify. Run focused model and mobile browser
 checks plus appropriate production build/lint. Preserve local-first revisions,
 clearing edits, one profile per account, immutable chapters/readings, 06:00 Circle
@@ -337,7 +332,7 @@ planned requirements, not results of the documentation update.
 Existing gaps remain: standalone TypeScript's recorded `cloudflare:workers`
 failure, shell lint baseline, broad suite/lint, physical phones, other browsers,
 and real sync acknowledgement/retry certification. Historical results live in
-[journey evidence](../../USER_JOURNEY_TESTING.md) and the [handoff](SESSION_HANDOFF.md).
+[journey evidence](USER_JOURNEY_TESTING.md) and the [handoff](SESSION_HANDOFF.md).
 
 ## References
 

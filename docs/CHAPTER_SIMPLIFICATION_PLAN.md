@@ -1,8 +1,3 @@
-> Historical snapshot preserved on 2026-11-11 before the approved documentation cleanup.
-> This records earlier decisions, proposals and verification; it is not current instruction.
-> Start with the [active document map](../../../README.md#project-documents) and
-> [archive index](README.md) for the current replacement.
-
 # Circle OS chapter simplification plan
 
 Date: 2026-10-31 (Asia/Bangkok).
@@ -256,7 +251,7 @@ Compare with the current Log before deciding whether to keep or expand the trial
 
 ## Delivery sequence and outputs
 
-Follow [the development workflow](../../DEVELOPMENT_WORKFLOW.md). Existing Phase 1
+Follow [the development workflow](DEVELOPMENT_WORKFLOW.md). Existing Phase 1
 gaps remain open; planning does not certify stabilization or change release order.
 
 1. **Audit and dependencies:** map every original question to purpose, overlap,

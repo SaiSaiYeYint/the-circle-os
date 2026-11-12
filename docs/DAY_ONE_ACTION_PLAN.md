@@ -1,8 +1,3 @@
-> Historical snapshot preserved on 2026-11-11 before the approved documentation cleanup.
-> This records earlier decisions, proposals and verification; it is not current instruction.
-> Start with the [active document map](../../../README.md#project-documents) and
-> [archive index](README.md) for the current replacement.
-
 # Day One: from words to one chosen action
 
 Date: 2026-11-02 (Asia/Bangkok).
@@ -67,7 +62,7 @@ describe choices, not a replacement for the shared Page and button engines.
 
 The existing terminal interaction protects forward travel for 1.2 seconds,
 then allows a deliberate swipe. Its exact placement alongside commitment
-confirmation must be reviewed under the [Page standard](APP_SESSION_STANDARD.md#journey).
+confirmation must be reviewed under the [Page standard](../app/os/APP_SESSION_STANDARD.md#journey).
 Do not replace it with an unreviewed auto-exit or a second ending engine.
 
 An answer alone creates no commitment. A person can change branch, edit words,
@@ -124,18 +119,18 @@ a later requested reading under the applicable evidence boundaries.
 
 Read-only source inspection found:
 
-- [day-one-model.js](../../../app/os/day-one-model.js) stores V3 answers and returns
+- [day-one-model.js](../app/os/day-one-model.js) stores V3 answers and returns
   before legacy completion effects for every version at or above 3. New behavior
   needs explicit version handling that preserves V1/V2 effects and V3's contract.
-- [circle-os-shell.tsx](../../../app/os/circle-os-shell.tsx) contains V3-specific checks
+- [circle-os-shell.tsx](../app/os/circle-os-shell.tsx) contains V3-specific checks
   for Habit publication suppression and empty Routine access. Audit these along
   with splash, Thoughts delivery, Quest and direct publication paths.
-- [circle-os-model.js](../../../app/os/circle-os-model.js) has shared task/habit actions;
+- [circle-os-model.js](../app/os/circle-os-model.js) has shared task/habit actions;
   the basic task creation record does not itself supply a scheduled-day field.
   Review existing task/goal-step date handling and the new record/time contracts
   before choosing a standalone task date representation. Do not create a false
   goal or unlock Week as a shortcut.
-- [existing focused tests](../../../tests/day-one-simplification.test.mjs) preserve
+- [existing focused tests](../tests/day-one-simplification.test.mjs) preserve
   legacy effects, V3's no-commitment behavior, and started older runs. They also
   cover offering V3 after an older completion. The new existing-user policy must
   be version-specific, not a rewrite of that historical behavior.
@@ -214,5 +209,5 @@ They do not authorize changes to brand, ratios, delivery budgets or personal dat
 ## References
 
 - [Product](PRODUCT.md), [decisions](DECISION_LOG.md), [architecture](PRODUCTION_ARCHITECTURE.md).
-- [Roadmap](ROADMAP.md), [web beta plan](WEB_BETA_LAUNCH_PLAN.md), [workflow](../../DEVELOPMENT_WORKFLOW.md).
+- [Roadmap](ROADMAP.md), [web beta plan](WEB_BETA_LAUNCH_PLAN.md), [workflow](DEVELOPMENT_WORKFLOW.md).
 - [Earlier chapter plan](CHAPTER_SIMPLIFICATION_PLAN.md), [current task](CURRENT_TASK.md), [handoff](SESSION_HANDOFF.md).

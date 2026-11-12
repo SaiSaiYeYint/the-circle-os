@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { BottomNavigation } from "./bottom-navigation";
-import { RoutineHeaderButton, RoutineSwipeCue } from "./routine-controls";
 import { usePathname, useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
@@ -22,8 +20,6 @@ import {
 import {
   CIRCLE_DAY_START_HOUR,
   addHabitDefinition,
-  archiveHabitDefinition,
-  archiveTask,
   currentCharacter,
   declareLife,
   addTask,
@@ -86,6 +82,7 @@ import {
   toggleHabitForDay,
   updateHabitDefinition,
   updateHabitDefinitionDraft,
+  updateRoutineIdentity,
   updateDreamlineSetup,
   updateDreamlineStep,
   updateTask,
@@ -123,9 +120,8 @@ import { AccountMenu } from "./auth/account-menu";
 import { useAccountIdentity } from "./auth/account-context";
 import { correctLogEntry, logHistoryDays, type LogCorrection } from "./log-history.js";
 import { LogHistoryPage } from "./log-history-page";
-import { weekHistory, weekActivityHistory } from "./week-history.js";
+import { weekHistory } from "./week-history.js";
 import { WeekHistoryPage } from "./week-history-page";
-import { WeekPage } from "./week-page";
 import { questStepStatus } from "./quests.js";
 import {
   DreamlineIdlePage,
@@ -165,8 +161,10 @@ import {
 import {
   addGoalStep,
   addWeekGoal,
-  finishWeekGoalEdit,
+  discardEmptyGoal,
+  discardEmptyStep,
   goalStepForTask,
+
   taskIsUnderDoneGoal,
   toggleGoal,
   updateGoal,
@@ -253,10 +251,6 @@ import type {
  */
 const SHOW_DREAMLINE = false;
 
-// Temporarily pause automatic Spark delivery to writing. Keep published
-// versions and saved runs intact so this can be enabled again later.
-const SHOW_WRITING_SPARKS = false;
-
 /**
  * The Send button's design.
  *
@@ -266,20 +260,6 @@ const SHOW_WRITING_SPARKS = false;
  * uses the standard key.
  */
 const THOUGHT_BUTTON_STYLE = "default";
-
-function HabitRecordCopy({ habit }: {
-  habit: { text: string; parts?: { action: string; cue: string; identity: string } | null };
-}) {
-  const parts = habit.parts;
-  if (!parts || ![parts.action, parts.cue, parts.identity].some((value) => value.trim())) {
-    return <div className="os-record-habit-copy"><p className="os-record-text">{habit.text}</p></div>;
-  }
-  return <div className="os-record-habit-copy">
-    {parts.action.trim() ? <p className="os-record-text">{parts.action}</p> : null}
-    {parts.cue.trim() ? <p className="os-record-cue">{parts.cue}</p> : null}
-    {parts.identity.trim() ? <p className="os-record-text">{parts.identity}</p> : null}
-  </div>;
-}
 
 /**
  * The two faces of a habit row, and the height of whichever one is showing.
@@ -304,60 +284,98 @@ function HabitCopySwap({
 }) {
   const frame = useRef<HTMLDivElement | null>(null);
   const [height, setHeight] = useState<number | null>(null);
-  // Only completion toggles animate. Returning to an already completed habit
-  // or closing its editor restores the identity without replay.
+  // Whether this row has been on screen before. Swiping away unmounts the Page
+  // and coming back mounts it fresh, so a habit that was already showing its
+  // identity would otherwise sit through the three-second wait again with no
+  // height set — which is why the alignment was gone every time he came back.
   const firstRun = useRef(true);
+  // The wait belongs to the tick, not to the identity being on screen.
+  //
+  // Sai: "identity flashes everytime i view the page." Three states all used to
+  // arrive here as `showIdentity` going true, and only one of them is a change
+  // worth animating: the habit being ticked. Coming back to the Page, and
+  // closing the editor after a tap, are both just the row being what it already
+  // is. Tracking `completed` separately is what tells them apart.
   const wasCompleted = useRef(completed);
-  const wasShowingIdentity = useRef(showIdentity);
+  // Set when the identity is simply already here, so nothing fades.
   const [immediate, setImmediate] = useState(false);
-  const [returning, setReturning] = useState(false);
-  // Retain the shared CSS state name; it now selects the destination directly,
-  // rather than waiting for a separate height-settling timer.
+  // The identity is shown by this flag, not by a delay of its own. A CSS delay
+  // is counted from the tick, while the row's height is moved by a timer here,
+  // and the two drifted apart by enough that the identity sometimes arrived
+  // before the space for it did.
   const [settled, setSettled] = useState(false);
 
+  // Only `showIdentity` belongs here. `children` is a fresh value on every
+  // render, so depending on it re-ran this effect constantly and cleared the
+  // three-second timer before it could ever fire — the row simply never
+  // resized. Content changes are caught by the observer instead, which is what
+  // it is for.
   useLayoutEffect(() => {
     const element = frame.current;
     if (!element) return;
     const faces = () => Array.from(element.children) as HTMLElement[];
+
     const measure = () => {
       const face = faces()[showIdentity ? 1 : 0];
       if (!face) return;
-      // Measure the visible floor too, so a short face does not finish its
-      // apparent shrink before the height transition itself finishes.
-      const floor = parseFloat(getComputedStyle(element).minHeight) || 0;
-      const next = Math.max(floor, Math.ceil(face.getBoundingClientRect().height));
+      const next = Math.ceil(face.getBoundingClientRect().height);
       if (next > 0) setHeight(next);
     };
-    const justCompleted = completed && !wasCompleted.current;
-    const justUnchecked = !completed && wasCompleted.current && wasShowingIdentity.current;
-    wasCompleted.current = completed;
-    wasShowingIdentity.current = showIdentity;
-    setImmediate(completed && (firstRun.current || !justCompleted));
-    setReturning(justUnchecked);
-    setSettled(showIdentity);
-    // Both directions hold height through the response, then settle. The
-    // returning flag is separate from restored/edit arrivals, which are direct.
-    const style = getComputedStyle(element);
-    const response = style.getPropertyValue("--os-routine-text-ms").trim();
-    // Production CSS may serialize 300ms as .3s.
-    const responseMs = parseFloat(response) * (response.endsWith("ms") ? 1 : response.endsWith("s") ? 1000 : 1);
-    const returnTimer = justUnchecked ? window.setTimeout(() => setReturning(false),
-      (Number.isFinite(responseMs) ? responseMs : 300) +
-      (Number(style.getPropertyValue("--os-growth-ms")) || 600),
-    ) : undefined;
-    measure();
+
+    // A face grows while it is being typed into, and a webfont can replace the
+    // fallback after first layout.
     const observer =
       typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
-    for (const item of faces()) observer?.observe(item);
+    let timer = 0;
+
+    // Only a tick earns the wait. Arriving on the Page already done, or closing
+    // the editor again, are not changes — they are the row's resting state.
+    const justCompleted = completed && !wasCompleted.current;
+    wasCompleted.current = completed;
+
+    // A row that is already settled when it appears just measures. The wait is
+    // for the change itself, not for the state.
+    if (showIdentity && justCompleted && !firstRun.current) {
+      setImmediate(false);
+      // Turning into the identity is one deliberate motion: it waits out the
+      // three seconds the crossed row stays readable, then moves once.
+      timer = window.setTimeout(() => {
+        window.setTimeout(() => setSettled(true), 480);
+        // The App Box eases its own height for a Page change and snaps for a
+        // content edit, so typing never lags behind the finger. This is
+        // neither — it is one settling move — and without borrowing that ease
+        // the row glided while the frame jumped underneath it.
+        const box = element.closest(".os-app-window");
+        box?.classList.add("page-resizing");
+        window.setTimeout(() => box?.classList.remove("page-resizing"), 620);
+        measure();
+        for (const item of faces()) observer?.observe(item);
+      }, 3240);
+    } else {
+      // Either the row is going back to its action, or the identity is already
+      // what it says — a Page swiped away and returned to, or the editor
+      // closing. None of these is a change to animate, and animating them is
+      // what made the identity flash on arrival: the action sat there for three
+      // seconds while the identity faded in over the top of it.
+      setImmediate(showIdentity);
+      setSettled(showIdentity);
+      measure();
+      for (const item of faces()) observer?.observe(item);
+    }
+
     firstRun.current = false;
-    return () => { observer?.disconnect(); window.clearTimeout(returnTimer); };
+
+    return () => {
+      window.clearTimeout(timer);
+      observer?.disconnect();
+    };
   }, [completed, showIdentity]);
 
   return (
     <div
       className={`os-habit-copy-swap${showIdentity ? " show-identity" : ""}${
         settled ? " has-settled" : ""
-      }${immediate && completed ? " is-immediate" : ""}${returning ? " is-returning" : ""}`}
+      }${immediate ? " is-immediate" : ""}`}
       ref={frame}
       style={height === null ? undefined : { height: `${height}px` }}
     >
@@ -1647,62 +1665,6 @@ function RouteCrossfade({
   );
 }
 
-function RoutineThreadBackground() {
-  const ref = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    const layer = ref.current;
-    const shell = layer?.parentElement?.querySelector<HTMLElement>(".os-app-shell");
-    if (!layer || !shell) return;
-    let frame = 0;
-    const measure = () => {
-      const rect = shell.getBoundingClientRect();
-      for (const edge of ["top", "right", "bottom", "left"] as const) {
-        layer.style.setProperty(`--os-thread-shell-${edge}`, `${rect[edge]}px`);
-      }
-      layer.style.setProperty("--os-thread-shell-radius", getComputedStyle(shell).borderTopLeftRadius);
-      // Keep the fixed navigation on the same visible edges as the active frame.
-      const box = shell.querySelector<HTMLElement>(".os-routine-open .os-habit-session, .os-note-open .os-checkin-session, .os-log-open .os-log-session");
-      const main = shell.querySelector<HTMLElement>("main");
-      if (box) {
-        const bounds = box.getBoundingClientRect();
-        shell.style.setProperty("--os-nav-left", `${bounds.left}px`);
-        shell.style.setProperty("--os-nav-width", `${bounds.width}px`);
-        // Layout offsets exclude the route arrival's temporary translateY.
-        let top = 0;
-        const tool = box.closest<HTMLElement>(".os-routine-open, .os-note-open, .os-log-open") ?? box;
-        for (let element: HTMLElement | null = tool; element; element = element.offsetParent as HTMLElement | null) top += element.offsetTop + element.clientTop;
-        shell.style.setProperty("--os-tool-document-top", `${top}px`);
-      } else {
-        const bounds = main?.getBoundingClientRect() ?? rect;
-        const style = main ? getComputedStyle(main) : null;
-        const left = parseFloat(style?.paddingLeft ?? "0") || 24;
-        const right = parseFloat(style?.paddingRight ?? "0") || 24;
-        shell.style.setProperty("--os-nav-left", `${bounds.left + left}px`);
-        shell.style.setProperty("--os-nav-width", `${bounds.width - left - right}px`);
-      }
-    };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(() => { frame = 0; measure(); });
-    };
-    measure();
-    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(schedule);
-    observer?.observe(shell);
-    const mutations = new MutationObserver(schedule);
-    const stage = shell.querySelector(".os-route-stage");
-    if (stage) mutations.observe(stage, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    return () => {
-      observer?.disconnect();
-      mutations.disconnect();
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-    };
-  }, []);
-  return <div ref={ref} className="os-routine-threads" aria-hidden="true" />;
-}
-
 export function OSFrame({
   children,
 }: {
@@ -1711,17 +1673,18 @@ export function OSFrame({
   const { ready } = useCircleState();
   const pathname = usePathname();
   const router = useRouter();
+  const active = pathname.startsWith("/os/mirror")
+    ? "mirror"
+    : pathname.startsWith("/os/admin")
+      ? "connect"
+    : pathname.startsWith("/os/connect")
+      ? "connect"
+      : "today";
 
   function moveToRoute(
     event: ReactMouseEvent<HTMLAnchorElement>,
     nextPathname: string,
   ) {
-    if (pathname === nextPathname && ["#routine", "#protocol", "#note", "#thoughts", "#log"].includes(window.location.hash) &&
-      event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
-      event.preventDefault();
-      window.location.hash = "";
-      return;
-    }
     if (
       event.defaultPrevented ||
       event.button !== 0 ||
@@ -1757,7 +1720,6 @@ export function OSFrame({
   return (
     <div className="circle-os">
       <div className="os-future-room-background" aria-hidden="true" />
-      <RoutineThreadBackground />
       <div className="os-app-shell">
         <header className="os-header">
           <Link className="os-wordmark" href="/" aria-label="The Circle website">
@@ -1766,6 +1728,22 @@ export function OSFrame({
           </Link>
           <AccountMenu />
         </header>
+        <nav className="os-nav" aria-label="Circle OS" data-active={active}>
+          <Link
+            className={active === "today" ? "active" : ""}
+            href="/os"
+            onClick={(event) => moveToRoute(event, "/os")}
+          >
+            Today
+          </Link>
+          <Link
+            className={active === "mirror" ? "active" : ""}
+            href="/os/mirror"
+            onClick={(event) => moveToRoute(event, "/os/mirror")}
+          >
+            Reflect
+          </Link>
+        </nav>
         <div
           aria-busy={!ready}
           className={`os-route-stage ${ready ? "is-ready" : "is-opening"}`}
@@ -1779,7 +1757,6 @@ export function OSFrame({
             </div>
           ) : null}
         </div>
-        <BottomNavigation onNavigate={moveToRoute} />
       </div>
     </div>
   );
@@ -1798,7 +1775,7 @@ function hourFromTime(value: string, fallback: number) {
 }
 
 export function TodayExperience() {
-  const { state, today, ready, dateKey, updateState, updateToday } =
+  const { state, today, ready, dateKey, updateState, updateDay, updateToday } =
     useCircleState();
   const writing = useWriting();
   const accountIdentity = useAccountIdentity();
@@ -1857,12 +1834,9 @@ export function TodayExperience() {
   const [greeting, setGreeting] = useState("Hello.");
   const [liveNow, setLiveNow] = useState(() => new Date());
   const { publications } = useChapterPublications(ready);
-  const writingPublications = useMemo(() => publications.filter(
-    publication => SHOW_WRITING_SPARKS || publication.chapter.kind !== "spark",
-  ), [publications]);
   const profileSparkChapters = useMemo(() => {
     const profileId = state.ai.profileId || "local";
-    const eligiblePublications = writingPublications
+    const eligiblePublications = publications
       .map(normalizeChapterPublication)
       .filter(
         (publication) =>
@@ -1874,7 +1848,7 @@ export function TodayExperience() {
       )
       .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
     return latestPublishedChapters(eligiblePublications);
-  }, [writingPublications, state.ai.profileId]);
+  }, [publications, state.ai.profileId]);
   const schedulerFacts = useMemo(() => chapterFacts(state), [state]);
   // A republished chapter is offered again, so its finished run must not block
   // it. Dropping the run here keeps that behaviour without teaching the
@@ -1968,29 +1942,6 @@ export function TodayExperience() {
   const thoughtTextareaRef = useRef<HTMLTextAreaElement>(null);
   const routineBack = useAppBack<"habit" | "yesterday" | "history">("habit");
   const habitMode = routineBack.side;
-  const [routineOpen, setRoutineOpen] = useState(false);
-  const [noteOpen, setNoteOpen] = useState(false);
-  const [logToolOpen, setLogToolOpen] = useState(false);
-  const noteEntryRef = useRef<HTMLButtonElement>(null);
-  const noteReturnScroll = useRef(0);
-  const routineEntryRef = useRef<HTMLButtonElement>(null);
-  const routineReturnScroll = useRef(0);
-  useEffect(() => {
-    const readTool = () => {
-      setRoutineOpen(["#routine", "#protocol"].includes(window.location.hash));
-      setNoteOpen(["#note", "#thoughts"].includes(window.location.hash));
-      setLogToolOpen(window.location.hash === "#log");
-      if (window.location.hash === "#note") setCheckInApp(0);
-      if (window.location.hash === "#thoughts") setCheckInApp(1);
-    };
-    queueMicrotask(readTool);
-    window.addEventListener("hashchange", readTool);
-    window.addEventListener("popstate", readTool);
-    return () => {
-      window.removeEventListener("hashchange", readTool);
-      window.removeEventListener("popstate", readTool);
-    };
-  }, []);
   const [newProtocolItemId, setNewProtocolItemId] = useState<string | null>(null);
   const [sealedProtocolDay, setSealedProtocolDay] =
     useState<ProtocolSealView | null>(null);
@@ -2000,18 +1951,15 @@ export function TodayExperience() {
   // takes focus and closes when focus leaves it altogether.
   const [editingHabitId, setEditingHabitId] = useState<string | null>(null);
   const [newTaskId, setNewTaskId] = useState<string | null>(null);
-  const [clearingRoutineRows, setClearingRoutineRows] = useState<string[]>([]);
-  const routineClearTimers = useRef<Record<string, number>>({});
-  useEffect(() => () => {
-    Object.values(routineClearTimers.current).forEach(window.clearTimeout);
-  }, []);
   // A new goal or step takes the cursor the same way a new habit or task does.
   const [newGoalEditorId, setNewGoalEditorId] = useState<string | null>(null);
+  // Which goal a new step belongs to is asked only when there is a choice.
+  const [choosingStepGoal, setChoosingStepGoal] = useState(false);
   const [editingDreamline, setEditingDreamline] = useState(false);
   const [leavingMissionIds, setLeavingMissionIds] = useState<string[]>([]);
   const [fadingMissionIds, setFadingMissionIds] = useState<string[]>([]);
   const taskExitTimers = useRef<
-    Record<string, { remove: number }>
+    Record<string, { fade: number; remove: number }>
   >({});
   const [isLogOpen, setLogOpen] = useState(false);
   const logBack = useAppBack<"today" | "history" | "day">("today");
@@ -2038,10 +1986,12 @@ export function TodayExperience() {
 
   useEffect(
     () => () => {
-      Object.values(taskExitTimers.current).forEach(({ remove }) => {
+      Object.values(taskExitTimers.current).forEach(({ fade, remove }) => {
+        window.clearTimeout(fade);
         window.clearTimeout(remove);
       });
-      Object.values(goalExitTimers.current).forEach(({ remove }) => {
+      Object.values(goalExitTimers.current).forEach(({ fade, remove }) => {
+        window.clearTimeout(fade);
         window.clearTimeout(remove);
       });
     },
@@ -2168,7 +2118,7 @@ export function TodayExperience() {
   ]);
   const publicationProfileId = state.ai.profileId || "local";
   const thoughtsPublication = selectPendingAppPublication(
-    writingPublications,
+    publications,
     "thoughts",
     publicationProfileId,
     state.chapters.runs,
@@ -2437,7 +2387,7 @@ export function TodayExperience() {
   // A ticked goal on its way off the Page, and the timers that carry it there.
   const [leavingGoalIds, setLeavingGoalIds] = useState<string[]>([]);
   const [fadingGoalIds, setFadingGoalIds] = useState<string[]>([]);
-  const goalExitTimers = useRef<Record<string, { remove: number }>>({});
+  const goalExitTimers = useRef<Record<string, { fade: number; remove: number }>>({});
   /**
    * The review of one week, resumed rather than restarted.
    *
@@ -2564,7 +2514,6 @@ export function TodayExperience() {
       : habitBuildingRun;
   const habits = Object.values(state.habits.definitions)
     .filter((habit) =>
-      clearingRoutineRows.includes(`habit:${habit.id}`) ||
       (habit.status === "active" && Boolean(habit.text.trim())) ||
       ((habit.status === "draft" || habit.status === "active") && habit.id === newHabitId),
     )
@@ -2616,7 +2565,7 @@ export function TodayExperience() {
     state.habits.completions[`${key}:${habitId}`];
   const oneTimeTasks = Object.values(state.tasks.items)
     .filter(
-      (task) => task.status === "open" || leavingMissionIds.includes(task.id) || clearingRoutineRows.includes(`task:${task.id}`),
+      (task) => task.status === "open" || leavingMissionIds.includes(task.id),
     )
     // A step under a goal he has called done is carried by the goal, so Routine
     // stops asking for it. It is not deleted: reopening the goal brings it back.
@@ -2638,7 +2587,6 @@ export function TodayExperience() {
     .map((day) => habitHistoryRecord(state, day))
     .filter((record) => record.total > 0);
   const todaySoFar = dayRecord(state, dateKey);
-  const todayHabitWording = new Map(habitHistoryRecord(state, dateKey).habits.map((habit) => [habit.id, habit]));
 
   // Habit leads this App Box and Protocol is one swipe across. Habits and Tasks
   // are what Sai touches most; a protocol is a stretch of days he does not need
@@ -2810,6 +2758,9 @@ export function TodayExperience() {
    * routine task." What it achieved is kept — `toggleGoal` stamps
    * `completedAt` — and `weekGoalsDone` is what the flip side will read.
    */
+  const chosenWeekGoals = weekGoals(state, logWeekKey).filter(
+    (goal) => !goal.done || leavingGoalIds.includes(goal.id),
+  );
 
   // A goal and a step both arrive empty and take the cursor, the same way a new
   // habit or task does — writing is the point, so nothing asks twice.
@@ -2817,11 +2768,9 @@ export function TodayExperience() {
     const id = `goal-${Date.now()}`;
     updateState((current) => addWeekGoal(current, weekKey, id).state);
     setNewGoalEditorId(id);
-    return id;
   }
 
   function addStepToGoal(goalId: string, dateKey: string) {
-    if (dateKey < getDateKey()) return;
     let editorId = "";
     updateState((current) => {
       const added = addGoalStep(current, goalId, addTask, "", undefined, dateKey);
@@ -2837,7 +2786,7 @@ export function TodayExperience() {
   // A row opened and left blank goes when you look away, the same way an
   // unwritten habit or task does.
   function finishGoalEdit(goalId: string) {
-    updateState((current) => finishWeekGoalEdit(current, goalId, archiveTask));
+    updateState((current) => discardEmptyGoal(current, goalId));
     setNewGoalEditorId((current) => (current === goalId ? null : current));
   }
 
@@ -2846,7 +2795,7 @@ export function TodayExperience() {
     updateState((current) => {
       const step = current.goals?.steps?.[stepId];
       editorId = step ? weekStepEditorId(step.taskId) : "";
-      return discardEmptyTask(current, step?.taskId || "");
+      return discardEmptyStep(current, stepId, discardEmptyTask);
     });
     setNewGoalEditorId((current) => (current === editorId ? null : current));
   }
@@ -3044,32 +2993,6 @@ export function TodayExperience() {
     updateState((current) => updateTask(current, id, text));
   }
 
-  function retainClearingRoutineRow(key: string) {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (routineClearTimers.current[key]) return;
-    setClearingRoutineRows((rows) => [...rows, key]);
-    routineClearTimers.current[key] = window.setTimeout(() => {
-      setClearingRoutineRows((rows) => rows.filter((row) => row !== key));
-      delete routineClearTimers.current[key];
-    }, 300);
-  }
-
-  function clearHabit(id: string) {
-    retainClearingRoutineRow(`habit:${id}`);
-    updateState((current) => archiveHabitDefinition(current, id));
-    setEditingHabitId((current) => current === id ? null : current);
-    setNewHabitId((current) => current === id ? null : current);
-  }
-
-  function clearTask(id: string) {
-    retainClearingRoutineRow(`task:${id}`);
-    clearTaskExit(id);
-    setLeavingMissionIds((ids) => ids.filter((item) => item !== id));
-    setFadingMissionIds((ids) => ids.filter((item) => item !== id));
-    setNewTaskId((current) => current === id ? null : current);
-    updateState((current) => archiveTask(current, id));
-  }
-
   function finishTaskEdit(id: string) {
     updateState((current) => discardEmptyTask(current, id));
     setNewTaskId((current) => (current === id ? null : current));
@@ -3082,6 +3005,7 @@ export function TodayExperience() {
   function clearTaskExit(id: string) {
     const existingTimers = taskExitTimers.current[id];
     if (existingTimers) {
+      window.clearTimeout(existingTimers.fade);
       window.clearTimeout(existingTimers.remove);
       delete taskExitTimers.current[id];
     }
@@ -3096,13 +3020,19 @@ export function TodayExperience() {
     updateState((current) => reopenTask(current, id));
   }
 
-  // Goals and tasks save directly, fade immediately, then release their row.
+  /**
+   * Tick a week's goal, and let it leave.
+   *
+   * The same three seconds Routine gives a task and a habit, so every finished
+   * thing in the App waits the same amount of time before the row changes.
+   */
   function finishWeekGoal(id: string) {
     const goal = state.goals?.items?.[id];
     const wasDone = goal?.status === "done";
     updateState((current) => toggleGoal(current, id));
     const timers = goalExitTimers.current[id];
     if (timers) {
+      window.clearTimeout(timers.fade);
       window.clearTimeout(timers.remove);
       delete goalExitTimers.current[id];
     }
@@ -3112,15 +3042,16 @@ export function TodayExperience() {
       setFadingGoalIds((ids) => ids.filter((goalId) => goalId !== id));
       return;
     }
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     setLeavingGoalIds((ids) => [...new Set([...ids, id])]);
-    setFadingGoalIds((ids) => [...new Set([...ids, id])]);
+    const fade = window.setTimeout(() => {
+      setFadingGoalIds((ids) => [...new Set([...ids, id])]);
+    }, 3_000);
     const remove = window.setTimeout(() => {
       setLeavingGoalIds((ids) => ids.filter((goalId) => goalId !== id));
       setFadingGoalIds((ids) => ids.filter((goalId) => goalId !== id));
       delete goalExitTimers.current[id];
-    }, 300);
-    goalExitTimers.current[id] = { remove };
+    }, 3_340);
+    goalExitTimers.current[id] = { fade, remove };
   }
 
   function finishTask(id: string) {
@@ -3132,20 +3063,25 @@ export function TodayExperience() {
     }
     clearTaskExit(id);
     updateState((current) => completeTask(current, id));
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     setLeavingMissionIds((ids) => [...new Set([...ids, id])]);
-    // Match the Habit handoff: respond/fade for 300ms, then release the row
-    // so the shared frame can settle. Completion evidence is already saved.
-    setFadingMissionIds((ids) => [...new Set([...ids, id])]);
+    // The row stays put long enough to undo an accidental press before it
+    // begins to leave. Three seconds, matching the habit swap, so a completed
+    // task and a completed habit wait the same amount of time before the row
+    // changes under him.
+    const fade = window.setTimeout(() => {
+      setFadingMissionIds((ids) => [...new Set([...ids, id])]);
+    }, 3_000);
     const remove = window.setTimeout(() => {
       setLeavingMissionIds((ids) => ids.filter((missionId) => missionId !== id));
       setFadingMissionIds((ids) => ids.filter((missionId) => missionId !== id));
       delete taskExitTimers.current[id];
-    }, 300);
-    taskExitTimers.current[id] = { remove };
+    }, 3_340);
+    taskExitTimers.current[id] = { fade, remove };
   }
 
-  // Retain the shared swipe session and its saved page index.
+  // Habit and Yesterday are two modes of one App Page, changed in place. The
+  // standard makes Thoughts to Deep Thoughts the reference for this, so it uses
+  // the same ceremonial pause rather than swapping instantly.
   function saveHabitAppIndex(index: number) {
     updateState((current) =>
       setAppSessionIndex(current, "today-habit", habitAppVersion, index),
@@ -3211,56 +3147,6 @@ export function TodayExperience() {
     saveHabitAppIndex(index > 1 ? 1 : 0);
   }
 
-  function openRoutineTool(index: number) {
-    routineReturnScroll.current = window.scrollY;
-    saveHabitAppIndex(index);
-    window.location.hash = index ? "protocol" : "routine";
-    setRoutineOpen(true);
-    window.scrollTo(0, 0);
-  }
-
-  function openNoteTool() {
-    openWritingTool(0);
-  }
-
-  function openWritingTool(index: number) {
-    noteReturnScroll.current = window.scrollY;
-    noteBack.reset("note");
-    setCheckInApp(index);
-    window.location.hash = index ? "thoughts" : "note";
-    setNoteOpen(true);
-    window.scrollTo(0, 0);
-  }
-
-  function changeWritingAppPage(nextIndex: number) {
-    if (noteLineActive) {
-      setRevealedLinePage(nextIndex);
-      return;
-    }
-    if (nextIndex !== checkInThoughtsApp) {
-      concealThoughtButton();
-      setHoldThoughtsAfterSend(false);
-    }
-    setCheckInApp(nextIndex);
-    updateState(current => setAppSessionIndex(current, "today-checkin", checkInJourneyVersion, nextIndex));
-    if (noteOpen) window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}${nextIndex ? "#thoughts" : "#note"}`);
-  }
-
-  function closeNoteTool() {
-    window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
-    setNoteOpen(false);
-    window.requestAnimationFrame(() => window.scrollTo(0, noteReturnScroll.current));
-  }
-
-  function closeRoutineTool() {
-    window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
-    setRoutineOpen(false);
-    window.requestAnimationFrame(() => {
-      routineEntryRef.current?.focus({ preventScroll: true });
-      window.scrollTo(0, routineReturnScroll.current);
-    });
-  }
-
   function toggleHabitMode(event: ReactMouseEvent<HTMLButtonElement>) {
     const nextMode = habitMode === "yesterday" ? "habit" : "yesterday";
     routineBack.flip(nextMode, undefined, event.currentTarget);
@@ -3290,6 +3176,30 @@ export function TodayExperience() {
     );
     setFormError("");
     setLogOpen(true);
+  }
+
+  /**
+   * The hour it is, whether or not the Log is showing it yet.
+   *
+   * A day's range is the hours he said he keeps, and the hour he is actually in
+   * can fall outside them — early, late, or on a day whose range was set before
+   * the day went long. Sai: "the now button should be able to work, even when
+   * the time slot is not visible, it should automatically add those hours and
+   * ready to type state." So it opens the range far enough to hold this hour
+   * and then opens the hour.
+   */
+  function openNow() {
+    const hour = liveClockHour;
+    if (hour < logStartHour || hour > logEndHour) {
+      updateToday((day) =>
+        setDayLogRange(
+          day,
+          Math.min(logStartHour, hour),
+          Math.max(logEndHour, hour) + 1,
+        ),
+      );
+    }
+    openHour(hour);
   }
 
   function openHour(hour: number, defaultTitle = "") {
@@ -4016,7 +3926,7 @@ export function TodayExperience() {
   }
 
   function checkInIdleCard() {
-    if (writing) return <AccountWritingPage kind="note" placeholder={notePlaceholder} onLabel={openNoteLineFrom} onBusyChange={setAccountNoteBusy} onExit={noteOpen ? closeNoteTool : undefined} navigation={noteOpen ? <RoutineSwipeCue label="Deep Thoughts" onClick={() => changeWritingAppPage(checkInThoughtsApp)} /> : undefined} />;
+    if (writing) return <AccountWritingPage kind="note" placeholder={notePlaceholder} onLabel={openNoteLineFrom} onBusyChange={setAccountNoteBusy} />;
     return (
       <InfoPage
         className="os-note-page os-survey-card os-survey-complete"
@@ -4147,8 +4057,7 @@ export function TodayExperience() {
       onQuoteReaction={(quote, reaction) => updateState(current => reactToLineSeen(current, `quote-${quote.id}`, reaction))}
       onNextQuestion={nextDeepThought}
       onBusyChange={setAccountThoughtBusy}
-      navigation={noteOpen ? <RoutineSwipeCue back label="Note" onClick={() => changeWritingAppPage(checkInIdleApp)} /> : undefined}
-      onAdmin={() => { if (getAccountScope().kind === 'account') { router.push('/os/admin'); return; } setAdminUnlockMode(true); setAdminCodeDraft(""); revealThoughtButton(); }}
+      onAdmin={() => { setAdminUnlockMode(true); setAdminCodeDraft(""); revealThoughtButton(); }}
       onSent={() => { setHoldThoughtsAfterSend(true); }}
     />;
     if (thoughtBack.side === "quote" && legacyQuote) return <QuotePage quote={legacyQuote} feedback={legacyQuoteFeedback} onReact={reaction => { updateState(current => reactToLineSeen(current, `quote-${legacyQuote.id}`, reaction)); closeLegacyQuote(); }} />;
@@ -4280,8 +4189,7 @@ export function TodayExperience() {
 
   return (
       <main className="os-today">
-        <section className={`os-checkin${noteOpen ? " os-note-open" : ""}`} aria-label="Check-in questions">
-          {noteOpen ? <div className="os-note-tool-back"><RoutineHeaderButton onClick={closeNoteTool}>Back</RoutineHeaderButton></div> : null}
+        <section className="os-checkin" aria-label="Check-in questions">
           <div className="os-context-row">
             <div>
               <p className="os-eyebrow">{dateLabel}</p>
@@ -4320,11 +4228,10 @@ export function TodayExperience() {
               publication={thoughtsPublication}
             />
           ) : (
-          <div className="os-note-tool-content" inert={!noteOpen} aria-hidden={!noteOpen}>
           <SwipeSession
             availableIndices={checkInAvailableIndices}
             attentionIndex={checkInThoughtsApp}
-            className={`os-checkin-session${writing ? " os-note-glass-session" : ""}${
+            className={`os-checkin-session${
               checkInIdleEntering ? " idle-arrival" : ""
             }${
               thoughtBack.className ? ` ${thoughtBack.className}` : ""
@@ -4337,12 +4244,29 @@ export function TodayExperience() {
             onBackwardBoundary={quoteNavigation?.back || (noteLineActive ? dismissLineBackward : undefined)}
             onForwardBoundary={quoteNavigation?.forward || (noteLineActive ? passLineForward : undefined)}
             rotateMs={IDLE_PAGE_DWELL_MS}
-            rotatePaused={noteOpen || routineOpen || Boolean(quoteNavigation) || (!noteLineActive && (writing ? accountNoteBusy || accountThoughtBusy : Boolean(thoughtDraft.trim())))}
-            onIndexChange={changeWritingAppPage}
+            rotatePaused={Boolean(quoteNavigation) || (!noteLineActive && (writing ? accountNoteBusy || accountThoughtBusy : Boolean(thoughtDraft.trim())))}
+            onIndexChange={(nextIndex) => {
+              if (noteLineActive) {
+                setRevealedLinePage(nextIndex);
+                return;
+              }
+              if (nextIndex !== checkInThoughtsApp) {
+                concealThoughtButton();
+                setHoldThoughtsAfterSend(false);
+              }
+              setCheckInApp(nextIndex);
+              updateState((current) =>
+                setAppSessionIndex(
+                  current,
+                  "today-checkin",
+                  checkInJourneyVersion,
+                  nextIndex,
+                ),
+              );
+            }}
           >
             {checkInCards}
           </SwipeSession>
-          </div>
           )}
         </section>
 
@@ -4382,49 +4306,25 @@ export function TodayExperience() {
             />
           </section>
         ) : activeHabitChapter && activeHabitRun ? (
-          <section className={`os-habit${routineOpen ? " os-routine-open" : ""}`} aria-label="Routine session">
-            {!routineOpen && activeHabitRun.status === "completed" ? (
-              <div className="os-routine-entry" aria-label="Daily commitments">
-                <button ref={noteEntryRef} className="os-note-entry" type="button" onClick={openNoteTool}>Note</button>
-                <button type="button" onClick={() => openWritingTool(checkInThoughtsApp)}>Deep Thoughts</button>
-                <button ref={routineEntryRef} type="button" onClick={() => openRoutineTool(0)}>Routine</button>
-                <button type="button" onClick={() => openRoutineTool(1)}>Protocol</button>
-              </div>
-            ) : null}
-            <div hidden={!routineOpen && activeHabitRun.status === "completed"}>
-            {activeHabitRun.status === "completed" ? <div className="os-routine-navigation" aria-label="Daily tool navigation">
-              <button type="button" onClick={() => changeHabitAppPage(habitAppIndex === 0 ? (sealedProtocolDay ? 2 : 1) : 0)}>
-                {habitAppIndex === 0 ? "Open Protocol" : "Open Routine"}
-              </button>
-            </div> : null}
+          <section className="os-habit" aria-label="Routine session">
             <ChapterPlayer
-              className={`os-habit-session${habitMode !== "habit" ? " is-history" : ""}${routineBack.className ? ` ${routineBack.className}` : ""}`}
+              className={`os-habit-session${habitMode === "history" ? " is-history" : ""}${routineBack.className ? ` ${routineBack.className}` : ""}`}
               definition={activeHabitChapter}
               key={activeHabitChapter.id}
               idleLabel={
-                <RoutineHeaderButton
+                <button
                   aria-pressed={habitMode !== "habit"}
                   className="os-card-label os-habit-mode-toggle"
-                  onClick={habitMode === "habit" ? closeRoutineTool : (event) => routineBack.flip("habit", undefined, event.currentTarget)}
+                  onClick={habitMode === "history"
+                    ? (event) => routineBack.flip("yesterday", undefined, event.currentTarget)
+                    : toggleHabitMode}
                   type="button"
                 >
-                  Back
-                </RoutineHeaderButton>
+                  {habitMode === "history" ? <><span aria-hidden="true">‹</span> Record</>
+                    : habitMode === "yesterday" ? "Record" : "Routine"}
+                </button>
               }
-              idleBody={habitMode !== "habit" ? (<>
-                <section className="os-habit-body-session os-yesterday" aria-label="Habit record">
-                  <p className="os-record-label">Today so far</p>
-                  {todaySoFar.total ? <div className="os-yesterday-list">
-                    {todaySoFar.habits.map((habit: { id: string; text: string }) => <article className="os-extra-mission os-record-row" key={habit.id}>
-                      <HabitRecordCopy habit={todayHabitWording.get(habit.id) || habit} />
-                      <CreativeButton aria-label={`Undo: ${todayHabitWording.get(habit.id)?.parts?.action || todayHabitWording.get(habit.id)?.text || habit.text}`} aria-pressed className="os-row-tick os-row-tick-habit" keepMountedOnSuccess onClick={() => toggleHabit(habit.id)} release="latch" role="habit" styleId="soft-clay" type="button" />
-                    </article>)}
-                    {todaySoFar.tasks.map((task: { id: string; text: string }) => <article className="os-extra-mission os-record-row is-task" key={task.id}>
-                      <p className="os-record-text">{task.text}</p>
-                      <CreativeButton aria-label={`Undo task: ${task.text}`} aria-pressed className="os-row-tick os-row-tick-task" keepMountedOnSuccess onClick={() => finishTask(task.id)} release="latch" role="habit" styleId="soft-clay" type="button" />
-                    </article>)}
-                  </div> : <p className="os-yesterday-empty">Nothing completed yet today.</p>}
-                </section>
+              idleBody={habitMode === "history" ? (
                 <section className="os-habit-history-list" aria-label="Habit history">
                   {historyRecords.length ? historyRecords.map((record) => (
                     <section className="os-habit-history-day" key={record.dateKey} aria-label={record.dateKey}>
@@ -4433,7 +4333,7 @@ export function TodayExperience() {
                       </p>
                       <div className="os-yesterday-list">
                         {record.habits.map((habit) => (
-                          <div className="os-yesterday-row" key={habit.id}><HabitRecordCopy habit={habit} /></div>
+                          <p className="os-yesterday-row" key={habit.id}>{habit.text}</p>
                         ))}
                         {record.tasks.map((task: { id: string; text: string }) => (
                           <p className="os-yesterday-row is-task" key={task.id}>{task.text}</p>
@@ -4442,11 +4342,67 @@ export function TodayExperience() {
                     </section>
                   )) : <p className="os-yesterday-empty">No past records yet.</p>}
                 </section>
-              </>) : null}
-              idleContent={habitMode !== "habit" ? undefined : (
+              ) : habitMode === "yesterday" ? (
+                <section className="os-habit-body-session os-yesterday" aria-label="Habit record">
+                  <p className="os-record-label">Today so far</p>
+                  {todaySoFar.total ? (
+                    <div className="os-yesterday-list">
+                      {todaySoFar.habits.map((habit: { id: string; text: string }) => (
+                        <article className="os-extra-mission os-record-row" key={habit.id}>
+                          <p className="os-record-text">{habit.text}</p>
+                          <CreativeButton
+                            aria-label={`Undo: ${habit.text}`}
+                            aria-pressed
+                            className="os-row-tick os-row-tick-habit"
+                            keepMountedOnSuccess
+                            onClick={() => toggleHabit(habit.id)}
+                            release="latch"
+                            role="habit"
+                            styleId="soft-clay"
+                            type="button"
+                          />
+                        </article>
+                      ))}
+                      {todaySoFar.tasks.map((task: { id: string; text: string }) => (
+                        <article className="os-extra-mission os-record-row is-task" key={task.id}>
+                          <p className="os-record-text">{task.text}</p>
+                          <CreativeButton
+                            aria-label={`Undo task: ${task.text}`}
+                            aria-pressed
+                            className="os-row-tick os-row-tick-task"
+                            keepMountedOnSuccess
+                            onClick={() => finishTask(task.id)}
+                            release="latch"
+                            role="habit"
+                            styleId="soft-clay"
+                            type="button"
+                          />
+                        </article>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="os-yesterday-empty">Nothing completed yet today.</p>
+                  )}
+                </section>
+              ) : (
+                <input
+                  aria-label="Routine identity"
+                  className="os-app-page-heading os-routine-name-edit"
+                  data-os-app-heading
+                  maxLength={60}
+                  onChange={(event) =>
+                    updateState((current) =>
+                      updateRoutineIdentity(current, event.target.value),
+                    )
+                  }
+                  placeholder="Habits"
+                  value={state.habits.identity.text}
+                />
+              )}
+              idleContent={habitMode !== "habit" || (habits.length === 0 && oneTimeTasks.length === 0) ? undefined : (
                 <div className="os-routine-body">
                   <section className="os-habit-body-session" aria-labelledby="habit-session-title">
-                    <h2 className="os-record-label" id="habit-session-title">Habits</h2>
+                    <p className="os-record-label" id="habit-session-title">Habits</p>
                     <div className="os-repeated-habits">
                       {habits.map((habit) => {
                         const completed = Boolean(habitCompletion(habit.id)?.completed);
@@ -4456,12 +4412,10 @@ export function TodayExperience() {
                         const identity = habit.identity.trim();
                         return (
                           <article
-                            className={`os-extra-mission os-repeated-habit${newHabitId === habit.id ? " is-new" : ""}${completed ? " completed" : ""}${
+                            className={`os-extra-mission os-repeated-habit${completed ? " completed" : ""}${
                               editingHabitId === habit.id || newHabitId === habit.id ? " is-editing" : ""
                             }`}
                             key={habit.id}
-                            inert={clearingRoutineRows.includes(`habit:${habit.id}`)}
-                            data-clearing={clearingRoutineRows.includes(`habit:${habit.id}`) || undefined}
                             onBlurCapture={(event) => {
                               const next = event.relatedTarget as Node | null;
                               if (next && event.currentTarget.contains(next)) {
@@ -4473,23 +4427,11 @@ export function TodayExperience() {
                                 current === habit.id ? null : current,
                               );
                             }}
-                            onFocusCapture={(event) => {
-                              if (event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLInputElement) {
-                                setEditingHabitId(habit.id);
-                              } else {
-                                setEditingHabitId((current) => current === habit.id ? null : current);
-                              }
-                            }}
+                            onFocusCapture={() => setEditingHabitId(habit.id)}
                           >
-                            <button
-                              aria-label={`Clear habit: ${action || "New Habit"}`}
-                              className="os-routine-clear"
-                              onClick={() => clearHabit(habit.id)}
-                              type="button"
-                            ><span aria-hidden="true" className="os-routine-clear-cross" /></button>
                             <HabitCopySwap
                               completed={completed}
-                              // Editing wins over the completed face. Sai: "i want to
+                              // Editing wins over the identity. Sai: "i want to
                               // be able to tap on the identity to see the full
                               // action cue and identity edit." A done habit
                               // reads as who it makes him until he asks for the
@@ -4513,8 +4455,12 @@ export function TodayExperience() {
                                 />
                                 <textarea
                                   aria-label={`When you do it: ${action || "New Habit"}`}
+                                  // The action's own classes, not a copy of
+                                  // its numbers: one sentence over two lines
+                                  // can only stay one sentence if both halves
+                                  // are governed by the same rules, including
+                                  // the narrow-screen size the action takes.
                                   className="os-extra-mission-copy os-mission-text-edit os-habit-cue-edit"
-                                  data-empty={!habit.cue.trim()}
                                   maxLength={120}
                                   onChange={(event) =>
                                     changeHabitCue(habit.id, event.target.value)
@@ -4573,11 +4519,7 @@ export function TodayExperience() {
                               className="os-row-tick os-row-tick-habit"
                               disabled={!action.trim()}
                               keepMountedOnSuccess
-                              onClick={() => {
-                                setEditingHabitId((current) => current === habit.id ? null : current);
-                                setNewHabitId((current) => current === habit.id ? null : current);
-                                toggleHabit(habit.id);
-                              }}
+                              onClick={() => toggleHabit(habit.id)}
                               release="latch"
                               role="habit"
                               styleId="soft-clay"
@@ -4587,24 +4529,15 @@ export function TodayExperience() {
                         );
                       })}
                     </div>
-                    <button className="os-routine-create" type="button" onClick={beginNewHabit}>New habit</button>
                   </section>
                   <section className="os-task-body-session" aria-labelledby="task-session-title">
-                    <h2 className="os-task-session-label" id="task-session-title">Tasks</h2>
+                    <p className="os-task-session-label" id="task-session-title">Tasks</p>
                     <div className="os-one-time-tasks">
                       {oneTimeTasks.map((task) => (
                         <article
-                          className={`os-extra-mission os-task-row${newTaskId === task.id ? " is-new" : ""}${task.status === "completed" ? " completed" : ""}${fadingMissionIds.includes(task.id) ? " leaving" : ""}${goalStepForTask(state, task.id) ? " from-week" : ""}`}
+                          className={`os-extra-mission os-task-row${task.status === "completed" ? " completed" : ""}${fadingMissionIds.includes(task.id) ? " leaving" : ""}${goalStepForTask(state, task.id) ? " from-week" : ""}`}
                           key={task.id}
-                          inert={clearingRoutineRows.includes(`task:${task.id}`)}
-                          data-clearing={clearingRoutineRows.includes(`task:${task.id}`) || undefined}
                         >
-                          <button
-                            aria-label={`Clear task: ${task.text || "New Task"}`}
-                            className="os-routine-clear"
-                            onClick={() => clearTask(task.id)}
-                            type="button"
-                          ><span aria-hidden="true" className="os-routine-clear-cross" /></button>
                           <textarea
                             aria-label={`Edit task: ${task.text || "New Task"}`}
                             autoFocus={newTaskId === task.id}
@@ -4632,23 +4565,40 @@ export function TodayExperience() {
                         </article>
                       ))}
                     </div>
-                    <button className="os-routine-create" type="button" onClick={beginNewTask}>Add task</button>
                   </section>
                 </div>
               )}
               idlePlacement={
                 habitMode !== "habit" ? "content-flow" : "identity-stack"
               }
-              idleFooter={routineOpen && habitMode === "habit" ? <RoutineSwipeCue onClick={() => changeHabitAppPage(sealedProtocolDay ? 2 : 1)} /> : undefined}
-              idleHeaderAction={habitMode !== "habit" ? undefined : (
-                <RoutineHeaderButton className="os-new-habit" onClick={toggleHabitMode}>
-                  Record
-                </RoutineHeaderButton>
+              idleHeaderAction={habitMode === "history" ? (
+                <span className="os-card-label">History</span>
+              ) : habitMode === "yesterday" ? (
+                <button className="os-new-habit" type="button"
+                  onClick={(event) => routineBack.flip("history", undefined, event.currentTarget)}>
+                  History
+                </button>
+              ) : (
+                <button className="os-new-habit" type="button" onClick={beginNewHabit}>
+                  New habit
+                </button>
               )}
+              idleFooter={
+                habitMode === "habit" ? (
+                  <button
+                    className="os-add-habit-row"
+                    type="button"
+                    onClick={beginNewTask}
+                  >
+                    <span aria-hidden="true">+</span>
+                    Add task
+                  </button>
+                ) : undefined
+              }
               hideIdleHeading
               idleApps={[
                 ...(sealedProtocolDay && protocolIsOpen ? [
-                  <ProtocolKeptPage key="protocol-kept" seal={sealedProtocolDay} onClose={() => changeHabitAppPage(2)} />,
+                  <ProtocolKeptPage key="protocol-kept" seal={sealedProtocolDay} />,
                 ] : []),
                 /* Day one hands over the Apps that only need a person to be
                    present. A Protocol is a commitment to seven days, and on
@@ -4667,13 +4617,11 @@ export function TodayExperience() {
                 ...(protocolIsOpen ? [
                 <ProtocolPage
                   key={`protocol-${protocolRun?.id || "home"}`}
-                  navigation={routineOpen ? <RoutineSwipeCue back onClick={() => changeHabitAppPage(0)} /> : undefined}
                   protocol={protocol}
                   phaseRecords={phaseRecords}
                   canBegin={canBeginProtocolRun(protocolRun)}
                   editingItemId={newProtocolItemId}
                   onStart={startProtocol}
-                  onBack={closeRoutineTool}
                   onRename={(name) =>
                     protocolRun &&
                     updateState((current) => renameProtocolRun(current, protocolRun.id, name))
@@ -4756,7 +4704,6 @@ export function TodayExperience() {
               run={activeHabitRun}
               onRunChange={saveHabitBuildingRun}
             />
-            </div>
           </section>
         ) : null}
 
@@ -4891,16 +4838,14 @@ export function TodayExperience() {
             />
           </section>
         ) : (
-        <section className={`os-log-section${logToolOpen ? " os-log-open" : ""}`} aria-label="Daily Log">
-          {!logToolOpen ? <button className="os-log-entry os-routine-create" type="button" onClick={() => { saveLogAppIndex(0); logBack.reset("today"); weekBack.reset("current"); window.location.hash = "log"; setLogToolOpen(true); window.scrollTo(0, 0); }}>Log</button> : null}
-          <div className="os-log-tool-content" inert={!logToolOpen} aria-hidden={!logToolOpen}>
+        <section className="os-log-section" aria-labelledby="day-heading">
           <SwipeSession
             attentionKey={`today-log:${logAppVersion}`}
             availableIndices={weekBack.side !== "current" ? [1] : Array.from(
               { length: logBack.side === "today" ? logAppMaxIndex + 1 : 1 },
               (_, index) => index,
             )}
-            className={`os-log-session os-note-glass-session ${logBack.className} ${weekBack.className}`}
+            className={`os-log-session ${logBack.className} ${weekBack.className}`}
             index={logAppIndex}
             label="Log apps"
             maxIndex={logAppMaxIndex}
@@ -4919,10 +4864,13 @@ export function TodayExperience() {
             ) : (
             <PageLayout
               className="os-log-page"
+              /* Now sits in the header, where every App puts its one action.
+                 Sai: "remove add this hour button at the bottom. instead at top
+                 right header, add 'Now' button." */
               headerRight={
-                <RoutineHeaderButton className="os-new-habit" onClick={(event) => logBack.flip("history", undefined, event.currentTarget)}>
-                  History
-                </RoutineHeaderButton>
+                <button className="os-new-habit" onClick={openNow} type="button">
+                  Now
+                </button>
               }
               heading={
                 <input
@@ -4938,7 +4886,8 @@ export function TodayExperience() {
                   value={today.title || ""}
                 />
               }
-              footer={logToolOpen ? <RoutineSwipeCue label="Week" onClick={() => saveLogAppIndex(1)} /> : undefined}
+              headerLeft={<button className="os-card-label os-log-history-label" type="button"
+                onClick={(event) => logBack.flip("history", undefined, event.currentTarget)}>Log</button>}
               placement="content-flow"
               theme="dark"
             >
@@ -4954,7 +4903,7 @@ export function TodayExperience() {
                   )
                 }
               >
-                Add hour
+                <span aria-hidden="true">+</span>
               </button>
             ) : null}
             {visibleHours.map((hour) => {
@@ -4980,8 +4929,11 @@ export function TodayExperience() {
                   data-log-hour={hour}
                   key={hour}
                 >
+                  {isCurrentHour ? (
+                    <span aria-label="Current time" className="os-current-time" />
+                  ) : null}
                   <div className="os-time-range">
-                    <strong aria-current={isCurrentHour ? "time" : undefined}>{isCurrentHour ? <span className="os-visually-hidden">Current hour: </span> : null}{slotStart}</strong>
+                    <strong>{slotStart}</strong>
                   </div>
                   {editingMain ? (
                     <form
@@ -5015,7 +4967,7 @@ export function TodayExperience() {
                           type="button"
                           onClick={() => openEdit(block)}
                         >
-                          {block.title || block.activity || (isCurrentHour ? "Add activity" : "")}
+                          {block.title || block.activity || "Add main activity"}
                         </button>
                         {moments.length ? (
                           <ul>
@@ -5062,10 +5014,9 @@ export function TodayExperience() {
                     <button
                       className="os-empty-hour"
                       type="button"
-                      aria-label={`Edit activity at ${slotStart}`}
                       onClick={() => openHour(hour, defaultTitle)}
                     >
-                      {defaultTitle || (isCurrentHour ? "Add activity" : "")}
+                      {defaultTitle || "Add main activity"}
                     </button>
                   )}
                   {!editingMain ? (
@@ -5074,10 +5025,6 @@ export function TodayExperience() {
                       type="button"
                       aria-label={`Add a small moment at ${slotStart}`}
                       onClick={() => {
-                        if (!block?.title && !block?.activity) {
-                          openHour(hour, defaultTitle);
-                          return;
-                        }
                         setMomentHour(hour);
                         setNewMoment("");
                       }}
@@ -5119,7 +5066,7 @@ export function TodayExperience() {
                   )
                 }
               >
-                Add hour
+                <span aria-hidden="true">+</span>
               </button>
             ) : null}
               </div>
@@ -5145,49 +5092,328 @@ export function TodayExperience() {
 
             {weekIsOpen ? (
             weekBack.side !== "current" ? <WeekHistoryPage
-              activity={weekActivityHistory(state)}
               weeks={recordedWeeks}
               selectedWeek={weekBack.side === "week" ? historyWeek : null}
               onBack={event => weekBack.flip(weekBack.side === "week" ? "history" : "current", undefined, event.currentTarget)}
               onSelect={(key, source) => weekBack.flip("week", () => setHistoryWeek(key), source)}
             /> :
-            <WeekPage
-              weekKey={logWeekKey}
-              goals={weekGoals(state, logWeekKey)}
-              days={logWeekDays}
-              selectedDay={logChosenDay}
-              todayKey={dateKey}
-              newEditorId={newGoalEditorId}
-              leavingGoalIds={leavingGoalIds}
-              fadingGoalIds={fadingGoalIds}
-              leavingTaskIds={leavingMissionIds}
-              fadingTaskIds={fadingMissionIds}
-              onClearGoal={id => updateState(current => finishWeekGoalEdit(updateGoal(current, id, ""), id, archiveTask))}
-              onClearStep={clearTask}
-              onSelectDay={setLogChosenDayKey}
-              onHistory={event => weekBack.flip("history", undefined, event.currentTarget)}
-              onLog={() => saveLogAppIndex(0)}
-              onAddGoal={() => addGoalToWeek(logWeekKey)}
-              onAddStep={addStepToGoal}
-              onGoalText={(id, text) => updateState(current => updateGoal(current, id, text))}
-              onFinishGoalEdit={finishGoalEdit}
-              onStepText={(id, text) => updateState(current => updateTask(current, id, text))}
-              onFinishStepEdit={finishStepEdit}
-              onToggleGoal={finishWeekGoal}
-              onToggleStep={finishTask}
-              review={logChosenDay.name === "Sunday" &&
+            <PageLayout
+              className="os-log-page os-log-week"
+              /* Reading the week is the one act on this Page that is not
+                 planning it, so it stands on the Footer line where every App
+                 puts its one action — under the day's log, at the foot of the
+                 box, which is also the space the box was padding out to nothing.
+                 Sai: "'Review this week now' button should be below the
+                 collisible log, as a footer." */
+              /* And it is gone once the week has been read.
+                 *
+                 * A week is only lived once — `recordWeekReview` refuses to
+                 * overwrite one — so offering the review again is offering
+                 * something that cannot happen. Sai: "after i completed review
+                 * this week now, the button should disabled or disappear."
+                 * Gone rather than greyed: the Footer row collapses with it,
+                 * so a week already read simply ends on its own log. */
+              footer={
+                logChosenDay.name === "Sunday" &&
                 !weekWasReviewed(state, weekStartKey(logChosenDay.dateKey)) ? (
-                  <CreativeButton className="os-week-review-open"
+                  <CreativeButton
+                    className="os-week-review-open"
                     disabled={logChosenDay.isFuture || !weekReviewChapter}
-                    onClick={() => setReviewingWeekOf(weekStartKey(logChosenDay.dateKey))}
-                    sizing="content" styleId="default" type="button">
-                    {logChosenDay.isFuture ? "Review on Sunday" : "Review this week now"}
+                    onClick={() =>
+                      setReviewingWeekOf(weekStartKey(logChosenDay.dateKey))
+                    }
+                    sizing="content"
+                    styleId="default"
+                    type="button"
+                  >
+                    {logChosenDay.isFuture
+                      ? "Review on Sunday"
+                      : "Review this week now"}
                   </CreativeButton>
+                ) : undefined
+              }
+              headerLeft={<button className="os-card-label os-log-history-label" type="button"
+                onClick={event => weekBack.flip("history", undefined, event.currentTarget)}>Week</button>}
+              /* Opening a goal sits where Routine puts New habit: top right,
+                 opposite the App Label. Sai: "Add week goal button on top
+                 right." */
+              headerRight={
+                <button
+                  className="os-new-habit"
+                  onClick={() => addGoalToWeek(logWeekKey)}
+                  type="button"
+                >
+                  Add goal
+                </button>
+              }
+              key="log-week"
+              theme="dark"
+            >
+              {/* The week's goals are the Page.
+                *
+                * They read as rows that tick, the way Routine's habits do. Sai:
+                * "it should be the main screen for the week goals. Just like
+                * habit in routine. We can tick there." The days below are where
+                * each one is cut into steps. */}
+              <div className="os-page-main os-week-goals">
+                {chosenWeekGoals.length ? (
+                  chosenWeekGoals.map((goal) => (
+                    <div
+                      className={`os-week-goal-head${
+                        leavingGoalIds.includes(goal.id) ? " is-leaving" : ""
+                      }${fadingGoalIds.includes(goal.id) ? " is-fading" : ""}`}
+                      key={goal.id}
+                    >
+                      <textarea
+                        aria-label="Goal for this week"
+                        className={`os-week-goal-text${goal.done ? " is-done" : ""}`}
+                        data-inline-editor-id={goal.id}
+                        maxLength={240}
+                        onBlur={() => finishGoalEdit(goal.id)}
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          updateState((current) => updateGoal(current, goal.id, value));
+                          sizeTextAreaToContent(event.currentTarget);
+                        }}
+                        placeholder="Goal for this week"
+                        rows={1}
+                        value={goal.text}
+                      />
+                      <CreativeButton
+                        aria-label={`${goal.done ? "Undo" : "Complete"} goal: ${goal.text || "this week"}`}
+                        aria-pressed={goal.done}
+                        className="os-row-tick os-row-tick-habit os-row-tick-week"
+                        disabled={!goal.text.trim()}
+                        keepMountedOnSuccess
+                        onClick={() => finishWeekGoal(goal.id)}
+                        release="latch"
+                        role="habit"
+                        styleId="soft-clay"
+                        type="button"
+                      />
+                    </div>
+                  ))
                 ) : null}
-            />
+              </div>
+              <div className="os-page-sub os-week-day-body">
+                {/* The day names itself, and writes the same title the Log
+                    shows, so naming a day here names it there. */}
+                {/* The day and its date are one thing, so they are paired
+                    rather than spaced by the body's own rhythm. */}
+                <div className="os-week-day-head">
+                  <input
+                    aria-label={`What ${logChosenDay.name} is called`}
+                    className="os-week-day-name"
+                    maxLength={60}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      updateDay(logChosenDay.dateKey, (day) => setDayTitle(day, value));
+                    }}
+                    placeholder={logChosenDay.name}
+                    value={logChosenDay.title}
+                  />
+                  {/* Which day this is, under whatever he has called it. */}
+                  <p className="os-week-date">{logChosenDay.date}</p>
+                </div>
+                <div className="os-week-strip" role="group" aria-label="Days of this week">
+                  {logWeekDays.map((day) => (
+                    <button
+                      aria-label={day.name}
+                      aria-pressed={day.dateKey === logChosenDayKey}
+                      /* Two states, and one mark for what is behind him. Sai:
+                         "only show, what today is, and what is selected. the
+                         day behind should be marked as gone." Whether a day was
+                         written in is not what the strip is for. */
+                      className={`os-week-day${day.isToday ? " is-today" : ""}${
+                        day.isPast ? " is-gone" : ""
+                      }`}
+                      key={day.dateKey}
+                      onClick={() => {
+                        setChoosingStepGoal(false);
+                        setLogChosenDayKey(day.dateKey);
+                      }}
+                      type="button"
+                    >
+                      <span aria-hidden="true">{day.letter}</span>
+                    </button>
+                  ))}
+                </div>
+                {/* One box per goal, holding what that goal asks of this day.
+                  *
+                  * A step is written under the goal it serves, which is how it
+                  * gets assigned to one. Sai: "For each day, we can select goal
+                  * of the week to assign the step for the day ... with boxes
+                  * for each goal." The goal is named here but not ticked —
+                  * finishing it belongs to the list above. */}
+                {/* What this day asks of the week.
+                  *
+                  * Only the goals with something on this day are drawn: a box
+                  * per goal, always, meant three headings and three buttons on
+                  * an empty Tuesday. Sai: "It reads as clutter for each day."
+                  * One way to add a step stands at the foot of it, and when
+                  * there is more than one goal it asks which — the choice
+                  * arrives when it is needed rather than sitting there. */}
+                <div
+                  className={`os-week-day-plan${
+                    logChosenDay.isToday ? " is-today" : ""
+                  }`}
+                >
+                  {chosenWeekGoals
+                    .map((goal) => ({
+                      goal,
+                      steps: goal.steps.filter(
+                        (step) => step.dateKey === logChosenDayKey,
+                      ),
+                    }))
+                    .filter((entry) => entry.steps.length)
+                    .map(({ goal, steps }) => (
+                      <section className="os-week-goal-day" key={goal.id}>
+                        <p className="os-week-goal-day-name">
+                          {goal.text.trim() || "Unnamed goal"}
+                        </p>
+                        {steps.map((step) => (
+                          <div className="os-week-step" key={step.id}>
+                            <textarea
+                              aria-label="One step toward this goal"
+                              className={`os-week-step-text${step.done ? " is-done" : ""}`}
+                              data-inline-editor-id={weekStepEditorId(step.taskId)}
+                              maxLength={240}
+                              onBlur={() => finishStepEdit(step.id)}
+                              onChange={(event) => {
+                                const value = event.target.value;
+                                updateState((current) =>
+                                  updateTask(current, step.taskId, value),
+                                );
+                                sizeTextAreaToContent(event.currentTarget);
+                              }}
+                              placeholder="One step you could take in 2 min"
+                              rows={1}
+                              value={step.text}
+                            />
+                            <CreativeButton
+                              aria-label={`${step.done ? "Undo" : "Complete"} step: ${step.text || "this step"}`}
+                              aria-pressed={step.done}
+                              className="os-row-tick os-row-tick-task os-row-tick-week"
+                              disabled={!step.text.trim()}
+                              keepMountedOnSuccess
+                              onClick={() => finishTask(step.taskId)}
+                              release="latch"
+                              role="habit"
+                              styleId="soft-clay"
+                              type="button"
+                            />
+                          </div>
+                        ))}
+                      </section>
+                    ))}
+
+                  {choosingStepGoal ? (
+                    <div
+                      aria-label="Which goal is this step for?"
+                      className="os-week-goal-picker"
+                      role="group"
+                    >
+                      {chosenWeekGoals.map((goal) => (
+                        <button
+                          className="os-week-goal-pick"
+                          key={goal.id}
+                          onClick={() => {
+                            setChoosingStepGoal(false);
+                            addStepToGoal(goal.id, logChosenDayKey);
+                          }}
+                          type="button"
+                        >
+                          {goal.text.trim() || "Unnamed goal"}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  <button
+                    className="os-week-add-step"
+                    onClick={() => {
+                      if (!chosenWeekGoals.length) {
+                        addGoalToWeek(logWeekKey);
+                        return;
+                      }
+                      if (chosenWeekGoals.length === 1) {
+                        addStepToGoal(chosenWeekGoals[0].id, logChosenDayKey);
+                        return;
+                      }
+                      setChoosingStepGoal((open) => !open);
+                    }}
+                    type="button"
+                  >
+                    <span aria-hidden="true">+</span>
+                    {/* A step belongs to a goal, not to a day. The day is
+                        already the Page it is being written on, so naming it
+                        here said the obvious twice and left the thing the step
+                        is actually for unsaid. Sai: "rather than 'add a step
+                        for sunday', to 'add a step for a goal'." */}
+                    {chosenWeekGoals.length
+                      ? "Add a step toward a goal"
+                      : "Add the goal for the week"}
+                  </button>
+                </div>
+
+                {/* What the day actually held, folded away.
+                  *
+                  * The Week Page is for planning; the log is the evidence
+                  * underneath it, worth reaching for and not worth carrying.
+                  * Sai: "make the log of the day be collapsible." Closed by
+                  * default, and the same <details> Protocol folds its past
+                  * phases into, so one gesture opens everything foldable in
+                  * the App. */}
+                <details className="os-week-day-summary">
+                  <summary>
+                    <span>The day</span>
+                    <span className="os-week-day-log-count">
+                      {logChosenDay.moments.length
+                        ? `${logChosenDay.moments.length} written down`
+                        : logChosenDay.isFuture
+                          ? "Not yet"
+                          : "Nothing yet"}
+                    </span>
+                  </summary>
+                  {logChosenDay.moments.length ? (
+                    <ul className="os-week-day-moments">
+                      {logChosenDay.moments.map((moment, index) => (
+                        <li key={`${moment.at}-${index}`}>
+                          <b>{moment.at}</b>
+                          <span>{moment.text}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="os-week-day-empty">
+                      {logChosenDay.isFuture
+                        ? "Not yet."
+                        : logChosenDay.isToday
+                          ? "Nothing written down yet."
+                          : "Nothing written down."}
+                    </p>
+                  )}
+                  {logChosenDay.touched ? (
+                    <dl className="os-week-day-counts">
+                      <div>
+                        <dt>Habits</dt>
+                        <dd>{logChosenDay.kept} of {logChosenDay.due}</dd>
+                      </div>
+                      <div>
+                        <dt>Tasks</dt>
+                        <dd>{logChosenDay.tasks}</dd>
+                      </div>
+                      <div>
+                        <dt>Hours</dt>
+                        <dd>{logChosenDay.hours}</dd>
+                      </div>
+                    </dl>
+                  ) : null}
+                </details>
+              </div>
+            </PageLayout>
             ) : null}
           </SwipeSession>
-          </div>
         </section>
         )}
       </main>

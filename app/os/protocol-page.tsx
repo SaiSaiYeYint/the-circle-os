@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { PageLayout } from "./app-session";
 import { ButtonRewardBackdrop, CreativeButton } from "./button-engine";
-import { PROTOCOL_DURATIONS } from "./circle-os-model.js";
+import { PROTOCOL_DURATIONS, protocolStanding } from "./circle-os-model.js";
 import { useAppBack } from "./app-back";
-import { RoutineHeaderButton } from "./routine-controls";
 
 export type ProtocolItemView = {
   id: string;
@@ -57,11 +56,11 @@ export type ProtocolPhaseRecord = {
   }>;
 };
 
-export function ProtocolKeptPage({ seal, onClose }: { seal: ProtocolSealView; onClose: () => void }) {
+export function ProtocolKeptPage({ seal }: { seal: ProtocolSealView }) {
   return (
     <PageLayout
       className="os-protocol os-protocol-kept"
-      headerLeft={<RoutineHeaderButton className="os-card-label" onClick={onClose}>Back</RoutineHeaderButton>}
+      headerLeft={<p className="os-card-label">Protocol</p>}
       placement="content-flow"
       headerRight={<span>{seal.phaseName}</span>}
       theme="orange"
@@ -83,13 +82,11 @@ export function ProtocolKeptPage({ seal, onClose }: { seal: ProtocolSealView; on
 }
 
 type ProtocolPageProps = {
-  navigation?: ReactNode;
   protocol: ProtocolView;
   phaseRecords: ProtocolPhaseRecord[];
   canBegin: boolean;
   editingItemId: string | null;
   onStart: () => void;
-  onBack: () => void;
   onRename: (name: string) => void;
   onSetDays: (days: number) => void;
   onAddItem: (kind: "non-negotiable" | "negotiable") => void;
@@ -104,17 +101,14 @@ type ProtocolPageProps = {
 };
 
 function ProtocolHome({
-  navigation,
   className = "",
   currentPhase,
   onReturnToPhase,
   onStart,
-  onBack,
   onArchiveRecord,
   phaseRecords,
   running = false,
 }: {
-  navigation?: ReactNode;
   currentPhase?: {
     name: string;
     day: number;
@@ -125,13 +119,13 @@ function ProtocolHome({
   className?: string;
   onReturnToPhase?: (event: MouseEvent<HTMLButtonElement>) => void;
   onStart?: () => void;
-  onBack: () => void;
   onArchiveRecord: ProtocolPageProps["onArchiveRecord"];
   phaseRecords: ProtocolPhaseRecord[];
   running?: boolean;
 }) {
   const [confirmingRemoval, setConfirmingRemoval] = useState<string | null>(null);
   const removalTimer = useRef<number | null>(null);
+  const standing = protocolStanding(phaseRecords);
   useEffect(
     () => () => {
       if (removalTimer.current) window.clearTimeout(removalTimer.current);
@@ -157,7 +151,6 @@ function ProtocolHome({
   return (
     <PageLayout
       className={`os-protocol os-protocol-home ${className}`.trim()}
-      footerNavigation={navigation}
       footer={
         // A button, not an empty outline, and on the Footer line where every
         // other App puts its one action. Sai: "start phases button rather than
@@ -184,16 +177,16 @@ function ProtocolHome({
       }
       headerLeft={
         running ? (
-          <RoutineHeaderButton
+          <button
             aria-pressed
             className="os-card-label os-protocol-mode-toggle"
             onClick={onReturnToPhase}
             type="button"
           >
-            Back
-          </RoutineHeaderButton>
+            Phases
+          </button>
         ) : (
-          <RoutineHeaderButton className="os-card-label" onClick={onBack}>Back</RoutineHeaderButton>
+          <p className="os-card-label">Protocol</p>
         )
       }
       placement="content-flow"
@@ -210,7 +203,6 @@ function ProtocolHome({
         * the Page is its heading and the action on the Footer line. */}
       {currentPhase ? (
       <section className="os-protocol-home-part" aria-label="Current phase">
-        <p className="os-record-label">Current phase</p>
         {(
           <button
             className="os-protocol-current"
@@ -227,6 +219,30 @@ function ProtocolHome({
           </button>
         )}
       </section>
+      ) : null}
+
+      {/* What the App has held, across every phase.
+        *
+        * With nothing running the Page was a Label, a folded record and a
+        * button, saying nothing about the nine phases behind it. This is not a
+        * reading back — he does not do that — it is the standing fact of what
+        * he has kept, so the next phase starts in front of the last ones.
+        * Counted from his own completions; nothing averaged or praised. */}
+      {standing ? (
+        <section className="os-protocol-home-part os-protocol-standing" aria-label="What you have kept">
+          <div>
+            <b>{standing.daysKept}</b>
+            <span>days kept</span>
+          </div>
+          <div>
+            <b>{standing.phases}</b>
+            <span>{standing.phases === 1 ? "phase" : "phases"}</span>
+          </div>
+          <div>
+            <b>{standing.longestDays}</b>
+            <span>longest</span>
+          </div>
+        </section>
       ) : null}
 
       {/* Folded by default. Sai: "Past phases, i dont really care, i dont read
@@ -246,6 +262,9 @@ function ProtocolHome({
                 <span>{record.endedEarly ? "Ended early" : "Finished"}</span>
               </div>
               <div className="os-protocol-record-meta">
+                <p className="os-protocol-record-kept">
+                  {record.keptDays} of {record.days} days kept
+                </p>
                 <p className="os-protocol-record-dates">
                   {record.startDateKey && record.endDateKey
                     ? `${record.startDateKey} — ${record.endDateKey}`
@@ -259,7 +278,8 @@ function ProtocolHome({
                       <>
                         <span>{term.text}</span>
                         <small>{term.keptDays}/{term.applicableDays ?? record.days}</small>
-                        {term.wordingSource === "current" ? <small>Earlier wording unavailable</small> : null}
+                        <small>{term.wordingSource === "current" ? "Earlier wording unavailable" : term.fromDateKey
+                          ? `${term.fromDateKey} — ${term.toDateKey}` : null}</small>
                       </>
                     );
                     return (
@@ -299,21 +319,25 @@ function ProtocolHome({
  * The second page of the Habit App Box.
  *
  * A habit is open-ended; a protocol is a container of time. It starts, it ends,
- * and its terms were agreed before it began. Words and completion are separate:
- * only the checkbox keeps a term; rewriting belongs to the explicit editor.
+ * and its terms were agreed before it began. The difference is carried by the
+ * shape rather than the colour: habit rows are lines with a tick beside them,
+ * protocol terms are blocks, and the whole block is the button. That works
+ * because the terms are locked while a run is going, so there is nothing inside
+ * a block to tap for editing.
+ *
+ * Solid means non-negotiable. Dashed means negotiable. That is the whole visual
+ * language, which matters because this has to be usable by a child.
  *
  * It renders through the shared PageLayout so it keeps the same five regions as
  * every other Page: an App Page that builds its own frame gets none of the
  * padding, and its header runs into the edge of the App Box.
  */
 export function ProtocolPage({
-  navigation,
   protocol,
   phaseRecords,
   canBegin,
   editingItemId,
   onStart,
-  onBack,
   onRename,
   onSetDays,
   onAddItem,
@@ -326,7 +350,7 @@ export function ProtocolPage({
   onEndRun,
   onDiscardDraft,
 }: ProtocolPageProps) {
-  const label = <RoutineHeaderButton className="os-card-label" onClick={onBack}>Back</RoutineHeaderButton>;
+  const label = <p className="os-card-label">Protocol</p>;
   // Ending a run early is the one thing here that cannot be undone: the terms
   // were agreed before it began and the days do not come back. It asks once.
   const [confirmingEnd, setConfirmingEnd] = useState(false);
@@ -381,8 +405,6 @@ export function ProtocolPage({
   if (!protocol) {
     return (
       <ProtocolHome
-        navigation={navigation}
-        onBack={onBack}
         onArchiveRecord={onArchiveRecord}
         onStart={onStart}
         phaseRecords={phaseRecords}
@@ -395,8 +417,6 @@ export function ProtocolPage({
   if (run.status === "active" && protocolBack.side === "home") {
     return (
       <ProtocolHome
-        navigation={navigation}
-        onBack={onBack}
         className={protocolBack.className}
         currentPhase={{
           name: run.name,
@@ -419,7 +439,6 @@ export function ProtocolPage({
     return (
       <PageLayout
         className="os-protocol os-protocol-draft"
-        footerNavigation={navigation}
         headerLeft={
           // The way out. A draft is a phase not yet begun, and the top left is
           // where every App Box is left, so leaving one here throws it away
@@ -427,13 +446,13 @@ export function ProtocolPage({
           // dont want to, i cant go back by top left button so that i have to
           // type random to start the phase and end again, thats where 9
           // protocols come from."
-          <RoutineHeaderButton
+          <button
             className="os-card-label os-protocol-mode-toggle"
             onClick={onDiscardDraft}
             type="button"
           >
-            Back
-          </RoutineHeaderButton>
+            Protocol
+          </button>
         }
         placement="identity-stack"
         theme="orange"
@@ -508,7 +527,6 @@ export function ProtocolPage({
     return (
       <PageLayout
         className="os-protocol os-protocol-over"
-        footerNavigation={navigation}
         headerLeft={label}
         placement="identity-stack"
         theme="orange"
@@ -539,7 +557,7 @@ export function ProtocolPage({
   // Protocol names the daily front. Phases names the back. Editing is an action
   // on the front rather than pretending to be another side of the App.
   const runningLabel = (
-    <RoutineHeaderButton
+    <button
       aria-pressed={false}
       className="os-card-label os-protocol-mode-toggle"
       onClick={(event: MouseEvent<HTMLButtonElement>) =>
@@ -547,19 +565,18 @@ export function ProtocolPage({
       }
       type="button"
     >
-      Phases
-    </RoutineHeaderButton>
+      Protocol
+    </button>
   );
 
   if (editing) {
     return (
       <PageLayout
         className="os-protocol os-protocol-draft os-protocol-editing"
-        footerNavigation={navigation}
-        headerLeft={<RoutineHeaderButton className="os-card-label" onClick={finishEditing}>Back</RoutineHeaderButton>}
+        headerLeft={<p className="os-card-label">Protocol</p>}
         placement="identity-stack"
         headerRight={
-          <RoutineHeaderButton
+          <button
             className={`os-new-habit os-protocol-editor-end${
               confirmingEnd ? " is-confirming" : ""
             }`}
@@ -567,7 +584,7 @@ export function ProtocolPage({
             type="button"
           >
             {confirmingEnd ? "Tap again" : "End"}
-          </RoutineHeaderButton>
+          </button>
         }
         theme="orange"
         footer={
@@ -633,11 +650,19 @@ export function ProtocolPage({
   return (
     <PageLayout
       className={`os-protocol ${protocolBack.className}`.trim()}
-      footerNavigation={navigation}
-      headerLeft={label}
+      headerLeft={runningLabel}
       placement="identity-stack"
-      /* Phases is navigation; Edit stays with the chosen phase name. */
-      headerRight={runningLabel}
+      /* Edit sits top right, where New habit sits on Routine: the same class,
+       * so it lines up with the App Label opposite it the same way. */
+      headerRight={
+        <button
+          className="os-new-habit"
+          onClick={() => setEditing(true)}
+          type="button"
+        >
+          Edit
+        </button>
+      }
       theme="orange"
       /* The day count moved down to where the day is actually finished. Sai:
        * "move day 7 of 7 progress to the bottom where complete the day button
@@ -671,12 +696,9 @@ export function ProtocolPage({
         {rewarding ? "You did it" : ""}
       </span>
       <div className="os-page-main os-protocol-identity">
-        <div className="os-protocol-title-row">
-          <p className="os-app-page-heading os-protocol-name" data-os-app-heading>
-            {run.name}
-          </p>
-          <button className="os-new-habit" type="button" onClick={() => setEditing(true)}>Edit</button>
-        </div>
+        <p className="os-app-page-heading os-protocol-name" data-os-app-heading>
+          {run.name}
+        </p>
       </div>
 
       <div className="os-page-sub os-app-page-stacks os-protocol-terms">
@@ -703,7 +725,7 @@ export function ProtocolPage({
   );
 }
 
-/** Only the checkbox toggles a term; its words fill Orange in the same beat. */
+/** The block is the button. Pressing it fills it in. */
 function ProtocolBlock({
   item,
   onToggle,
@@ -712,17 +734,22 @@ function ProtocolBlock({
   onToggle: (itemId: string) => void;
 }) {
   return (
-    <div
-      className={`os-protocol-block os-protocol-term-row${
+    <CreativeButton
+      aria-label={`${item.completed ? "Undo" : "Keep"}: ${item.text}`}
+      aria-pressed={item.completed}
+      className={`os-protocol-block${
         item.kind === "negotiable" ? " is-negotiable" : ""
       }${item.completed ? " is-kept" : ""}`}
+      keepMountedOnSuccess
+      onClick={() => onToggle(item.id)}
+      release="latch"
+      role="habit"
+      styleId="soft-clay"
+      type="button"
     >
-      <span className="os-protocol-block-text"><span className="os-protocol-word-base">{item.text}</span><span aria-hidden="true" className="os-protocol-word-liquid">{item.text}</span></span>
-      <CreativeButton aria-label={`${item.completed ? "Undo" : "Keep"}: ${item.text}`}
-        aria-pressed={item.completed} className="os-row-tick os-row-tick-habit"
-        keepMountedOnSuccess onClick={() => onToggle(item.id)} release="latch"
-        role="habit" styleId="soft-clay" type="button" />
-    </div>
+      <span className="os-protocol-block-text">{item.text}</span>
+      <span aria-hidden="true" className="os-protocol-block-dot" />
+    </CreativeButton>
   );
 }
 

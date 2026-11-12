@@ -1,7 +1,5 @@
 "use client";
 
-import { CheckboxFace } from "./checkbox-face";
-
 import {
   useEffect,
   useReducer,
@@ -429,7 +427,6 @@ export function CreativeButton({
             ))}
           </svg>
         ) : null}
-        {className?.split(/\s+/).includes("os-row-tick") ? <CheckboxFace /> : null}
         <span className="os-creative-button-label">{children}</span>
       </button>
     </div>

@@ -17,6 +17,7 @@ import {
   type AppPagePlacement,
 } from "../app-session";
 import { CreativeButton } from "../button-engine";
+import { ContentFigure } from "../admin/content-media";
 import { sizeTextAreaToContent } from "../text-area-size";
 import {
   advanceChapterRun,
@@ -208,20 +209,22 @@ function ChapterPageView({
   }
 
   if (page.type === "cover") {
-    if (onEdit) {
+    if (onEdit || page.image || chapter.designVersion === "glass-v1") {
       return (
         <PageLayout
           className={`os-cover-page os-chapter-editable-cover theme-${chapter.theme}`}
-          footer={<button disabled type="button">Swipe to begin</button>}
+          footer={<button className="os-chapter-continue" disabled={Boolean(onEdit)} type="button" onClick={() => onComplete({page})}>Swipe to begin</button>}
           theme={chapter.theme}
           variant="cover"
+          placement={chapter.designVersion === "glass-v1" ? "content-flow" : undefined}
         >
           <div className="os-session-intro-copy">
             <div className="os-info-page-main">
-              <EditableCopy className="main" label="Edit cover title" onChange={(value) => onEdit(page.id, "title", value)} value={page.title || ""} />
+              {onEdit ? <EditableCopy className="main" label="Edit cover title" onChange={(value) => onEdit(page.id, "title", value)} value={page.title || ""} /> : <h2>{title}</h2>}
             </div>
             <div className="os-info-page-sub">
-              <EditableCopy className="sub" label="Edit cover subtitle" onChange={(value) => onEdit(page.id, "body", value)} rows={2} value={page.body || ""} />
+              <ContentFigure image={page.image} />
+              {onEdit ? <EditableCopy className="sub" label="Edit cover subtitle" onChange={(value) => onEdit(page.id, "body", value)} rows={2} value={page.body || ""} /> : <p>{renderedBody}</p>}
             </div>
           </div>
         </PageLayout>
@@ -297,11 +300,12 @@ function ChapterPageView({
         headerLeft={isIdle ? (idleLabel ?? <p className="os-card-label">{chapter.session}</p>) : undefined}
         headerRight={isIdle ? idleHeaderAction : !isCompletionPage ? progress : undefined}
         theme={chapter.theme}
-        placement={isIdle ? idlePlacement : undefined}
+        placement={chapter.designVersion === "glass-v1" ? "content-flow" : isIdle ? idlePlacement : undefined}
         variant={isIdle ? "app" : "chapter"}
       >
         <div className="os-page-main">
           {mainContent}
+          <ContentFigure image={page.image} />
         </div>
         <div
           className={`os-page-sub${
@@ -519,9 +523,11 @@ function ChapterPageView({
       headerRight={progress}
       theme={chapter.theme}
       variant="chapter"
+      placement={chapter.designVersion === "glass-v1" ? "content-flow" : undefined}
     >
       <div className="os-page-main">
         {onEdit ? <EditableCopy className="main" label="Edit page question" onChange={(value) => onEdit(page.id, "question", value)} rows={2} value={page.question || page.title || ""} /> : <h2>{title}</h2>}
+        <ContentFigure image={page.image} />
       </div>
       <div className="os-page-sub">{subContent}</div>
     </PageLayout>
@@ -668,7 +674,7 @@ export function ChapterPlayer({
   ]);
 
   const sessionClassName =
-    `os-chapter-session theme-${definition.theme} ${className}`.trim();
+    `os-chapter-session theme-${definition.theme} ${definition.designVersion === "glass-v1" ? "os-content-glass" : ""} ${className}`.trim();
 
   if (!previewMode && run.status === "completed" && idleApps.length) {
     const idlePage = definition.pages[idleIndex >= 0 ? idleIndex : currentIndex];

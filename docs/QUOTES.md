@@ -7,6 +7,11 @@ but its entry is temporarily hidden. Reading requests no Athena or writing save.
 
 ## Managing quotes
 
+In account mode, open the account menu and choose Admin after a verified content
+grant. Account requests use bearer authentication and a live permission check;
+the legacy password cookie is not accepted. See [Content Admin setup](CONTENT_ADMIN_SETUP.md).
+The doorway described below remains the legacy-mode procedure.
+
 Open the existing hidden Admin doorway through Deep Thoughts: enter `admin`
 in a fresh answer and press Send, then enter the configured Admin password.
 For an already answered question, choose Next question first. Open the Quotes

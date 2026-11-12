@@ -112,17 +112,32 @@ not replaced by changing product-document authority.
 
 ## Planned Content Admin and shared catalog
 
+The approved local catalog follow-up adds mutable item/discovery state and
+immutable version/image references. Transactional RPCs snapshot saved drafts and
+record exact retry receipts. Signed-in reads separate discovery from exact old
+versions. Withdrawal preserves content/assets. Targeted image signing uses the
+caller token and Storage policies. Migration 003 remains unapplied; no hosted
+acceptance is claimed. Direct Chapter readers use local runs and Reflect resolves
+exact catalog definitions, never newer replacements.
+
 [The Admin-first plan](CONTENT_ADMIN_PLAN.md) extends existing authoring with
 server-verified developer-account privileges, a shared Supabase Postgres catalog
 and Supabase Storage media. Chapters and articles/blogs support images; habit
 and Protocol templates create user-personalized copies through existing domain
 actions. Shared material stays separate from personal evidence.
 
+The first account-Admin/catalog/media implementation and both foundation/operations
+migrations have bounded hosted verification; see [setup and current limits](CONTENT_ADMIN_SETUP.md).
+Two content grants exist, with the second invitation awaiting email verification.
+Account Workshop saves shared drafts,
+uses account/tab recovery, and blocks the legacy publisher and run-reset paths.
+
 Review draft/published access, immutable versions/assets, schema/policies,
 media lifetime and account bootstrap before implementation. Current password
 Admin, browser drafts and legacy publishing are foundations, not this account-
-bound service. No catalog migration, Storage setup or live publication exists
-by documenting this target. Explore consumes the catalog after Admin is built.
+bound service. Hosted private Storage and shared draft access are verified for
+synthetic accounts and actual built HTTP routes. Live publication remains pending.
+Explore consumes the catalog after Admin is built.
 
 ## Target system and constraints
 

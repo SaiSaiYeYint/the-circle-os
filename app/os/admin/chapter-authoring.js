@@ -95,6 +95,7 @@ export function createChapterDraft(now = new Date().toISOString()) {
     updatedAt: now,
     chapter: {
       schemaVersion: 1,
+      designVersion: "glass-v1",
       id: "untitled-chapter",
       version: 1,
       status: "published",
@@ -229,6 +230,7 @@ export function createFirstUseChapterDraft(appSpace, now = new Date().toISOStrin
   const app = ["check-in", "reflection"].includes(appSpace) ? "note" : appSpace;
   draft.appSpaces = [app];
   draft.chapter = {
+    designVersion: "glass-v1",
     schemaVersion: 1,
     id: `first-${appSpace}`,
     version: 1,
@@ -267,21 +269,15 @@ export function chapterDefinitionToDraft(chapter, now = new Date().toISOString()
 /**
  * Open a published chapter to work on.
  *
- * This used to bump the version, because a chapter somebody has already
- * answered cannot change the questions under them. Nobody has answered
- * anything yet. Sai: "we dont need v1 v2 yet. because nobody is seeing this
- * until i release v1 so everything here is v1."
- *
- * So the version stays where it is and editing is editing. When there are
- * people on the other side of a published chapter this is the one place that
- * has to change back — bump `version` here and the runs, which are keyed by
- * `id@version`, separate themselves again.
+ * Published wording stays immutable, including before the public release.
+ * Editing prepares a new version; existing runs retain their original Pages.
  */
 export function createNextVersionDraft(source, now = new Date().toISOString()) {
   const copy = structuredClone(source);
   copy.draftId = `draft-${source.chapter.id}-${Date.now()}`;
   copy.workflowStatus = "draft";
   copy.updatedAt = now;
+  copy.chapter.version = source.chapter.version + 1;
   if (copy.chapter.pages.at(-1)?.type === "idle") copy.chapter.pages.pop();
   copy.chapter.app = source.chapter.app || chapterApp(source.chapter);
   copy.chapter.kind = source.chapter.kind || chapterKind(source.chapter);
@@ -298,6 +294,7 @@ export function duplicateChapterDraft(source, now = new Date().toISOString()) {
   copy.workflowStatus = "draft";
   copy.updatedAt = now;
   copy.chapter.id = `${source.chapter.id}-copy`;
+  copy.chapter.designVersion = "glass-v1";
   copy.chapter.title = `${source.chapter.title} copy`;
   copy.chapter.version = 1;
   copy.chapter.app = source.chapter.app || chapterApp(source.chapter);
@@ -310,6 +307,7 @@ export function validateChapterDraft(draft) {
   const errors = [];
   const chapter = draft?.chapter;
   if (!chapter) return ["Chapter data is missing."];
+  if (chapter.designVersion && chapter.designVersion !== "glass-v1") errors.push("Unknown design version.");
   if (!ID_PATTERN.test(chapter.id || "")) errors.push("Chapter ID must use lowercase words and hyphens.");
   if (!Number.isInteger(chapter.version) || chapter.version < 1) errors.push("Version must be a positive whole number.");
   if (!ID_PATTERN.test(chapter.session || "")) errors.push("Session must use lowercase words and hyphens.");
@@ -339,6 +337,7 @@ export function validateChapterDraft(draft) {
   if (new Set(ids).size !== ids.length) errors.push("Every page needs a unique ID.");
   chapter.pages.forEach((page, index) => {
     const label = `Page ${index + 1}`;
+    if (page.image && (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(page.image.assetId || "") || !page.image.alt?.trim())) errors.push(`${label} needs a valid image reference and alternative text.`);
     if (!ID_PATTERN.test(page.id || "")) errors.push(`${label} ID must use lowercase words and hyphens.`);
     if (!CHAPTER_PAGE_TYPES.includes(page.type)) errors.push(`${label} has an unsupported type.`);
     const input = ["single-choice", "multi-choice", "yes-no", "slider", "short-text", "long-text", "time"].includes(page.type);
@@ -367,6 +366,7 @@ export function chapterDraftToMarkdown(draft) {
     line("Kind", chapter.kind),
     line("Completion", chapter.completion),
     line("theme", chapter.theme),
+    line("design", chapter.designVersion),
     line("title", chapter.title),
     line("purpose", chapter.purpose),
     line("estimated_minutes", chapter.estimatedMinutes),
@@ -382,6 +382,9 @@ export function chapterDraftToMarkdown(draft) {
       line("Type", page.type),
       line("Title", page.title),
       line("Body", page.body),
+      line("Image", page.image?.assetId),
+      line("Image alt", page.image?.alt),
+      line("Image caption", page.image?.caption),
       line("Question", page.question),
       line("Why", page.why),
       line("Button", page.button),

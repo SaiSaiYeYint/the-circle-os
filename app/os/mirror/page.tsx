@@ -50,6 +50,7 @@ import {
 } from "../chapters/chapter-publication-store";
 import { chapterAnswerText, chapterRunId } from "../chapters/chapter-model.js";
 import { getPublishedChapter } from "../chapters/registry";
+import { useCatalogDefinitions } from '../catalog/definitions';
 import { CreativeButton } from "../button-engine";
 import { writePinnedChapter } from "../day-door.js";
 import { QUESTS } from "../chapters/quest-registry";
@@ -514,6 +515,7 @@ export default function CircleOSMirror() {
     updateState,
   } = useCircleState();
   const { publications } = useChapterPublications(ready);
+  const catalogDefinitions=useCatalogDefinitions(state.chapters.runs);
   const router = useRouter();
   const [error, setError] = useState("");
   const [editing, setEditing] = useState<string | null>(null);
@@ -647,9 +649,9 @@ export default function CircleOSMirror() {
   const chapterBack = useAppBack<"quests" | "history" | "chapter">("quests");
   const [historyChapterId, setHistoryChapterId] = useState<string | null>(null);
   const [historyQuestId, setHistoryQuestId] = useState<string | null>(null);
-  const savedChapterHistory = chapterHistory(state.chapters.runs, publications.map(normalizeChapterPublication)
+  const savedChapterHistory = chapterHistory(state.chapters.runs, [...catalogDefinitions,...publications.map(normalizeChapterPublication)
     .filter(item => item.visibility === "public" || item.audienceProfileId === publicationProfileId || item.audienceProfileId === "local")
-    .map(item => item.chapter));
+    .map(item => item.chapter)]);
 
   /**
    * Start a step, which means: put its chapter in the door and go there.

@@ -1,5 +1,23 @@
 # Content Admin and Explore plan
 
+## Catalog follow-up — 2026-11-11
+
+Developer approved local publication, signed-in reading/images and withdrawal/
+restore. Migration 003 is prepared, not applied. Publication snapshots exact saved
+drafts with revision checks and retry receipts. Each new version is immutable;
+Article identity uses its draft ID rather than the placeholder chapter ID.
+Bundled IDs are reserved at the application boundary; use independent copies.
+Withdrawal hides discovery while any verified signed-in account can still read
+exact old links. Publishing while withdrawn does not restore discovery.
+Images remain private; published references permit targeted signing. The app
+issues five-minute links, which are temporarily shareable and cannot be recalled
+on logout. Chapter reading uses local runs; Reflect resolves exact definitions.
+New Chapter links preview without saving evidence; existing unfinished runs resume
+locally and completed runs cannot be rewritten. Starting new runs through Explore
+remains separate, preserving current rationing. New reads/image refresh need a
+connection. Explore, legacy import and deployment
+remain separate. See Current Task and journey evidence for acceptance gaps.
+
 Approved direction: 2026-11-11, Asia/Bangkok. Documentation approved; application,
 SQL, Storage setup, content publication and deployment need bounded implementation
 approval. The developer separately requested committing/pushing current repository work.
@@ -27,6 +45,12 @@ The developer owns authored philosophy and approves content.
 - Reuse current authoring, Page, persistence and domain engines.
 
 ## Existing foundation and gaps
+
+The approved first implementation has bounded hosted setup/verification. See
+[setup, access and remaining limits](CONTENT_ADMIN_SETUP.md). The second Admin
+invitation awaits verification. The inventory below describes the starting foundation; the account
+path now has shared-draft/recovery and private-media code, with publishing,
+content images and additional editors still pending.
 
 Repository inventory: 47 distinct chapter IDs across 56 versions, plus three
 Quests. This does not inventory external publications or browser-only drafts.
@@ -67,7 +91,12 @@ never a client toggle or user-editable alias/metadata.
 | Protocol | Name/purpose, allowed duration, required/optional terms and supporting explanation; preview an editable draft |
 | Media | Upload/reuse images, alternative text, optional caption and mobile preview |
 
-Article block editing and exact image placement are proposals for UI review.
+Article block editing and image placement received the subsequent review below.
+The developer subsequently approved cover/title/summary and movable heading,
+paragraph and image blocks, shared draft saving/recovery and previews. Newly
+created Chapters and Articles use the current glass design; existing chapters
+retain their appearance. Image selection uses stable private Media references,
+alternative text and optional captions. Catalog publication remains separate.
 Do not introduce arbitrary executable HTML. Normal content editing uses supported
 fields/blocks; entirely new interaction types still need reviewed code.
 

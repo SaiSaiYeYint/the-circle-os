@@ -1,5 +1,335 @@
 # Circle OS user-journey test record
 
+## Hosted catalog acceptance — 2026-11-12
+
+Developer reported successful manual migration 003 application, then explicitly
+approved extending the runner and hosted synthetic testing/cleanup. No migrations
+were reapplied. main/9f2425f; pre-existing uncommitted work preserved. Only runner
+and setup/verification/continuity records changed in this pass.
+
+With bundled Node first on PATH,
+`node --env-file=.env.local scripts/check-content-admin-live.mjs --write --app --catalog`
+passes **62 functional checks**, then exact cleanup and absence checks. Real
+Supabase Auth/RPC/RLS/Storage and an isolated built Next server verify protected
+drafts, retry/conflicts, Chapter image placement, v1/v2 publication and unchanged
+v1 content, Article publication, signed-in HTTP Article reading and image signing/
+download, signed-out reader/signing denial, ordinary/anonymous publication denial,
+withdrawal/discovery removal, original-version reads, restore/discovery return
+and grant revocation. Image bytes match the uploaded synthetic fixture.
+
+Both accounts, temporary grant, two drafts, all synthetic versions/references,
+image object/metadata and all receipts were removed; exact-ID absence checks
+passed. The isolated server stopped. No credentials, signed URLs, private writing
+or account IDs are recorded. No real authored item was published or touched.
+
+Syntax and focused ESLint pass. `node --test tests/catalog-publication.test.mjs tests/catalog-routes.test.mjs`
+passes 3/3. `git diff --check` passes. First sandbox attempt failed to reach the
+services, logged no successful resource creation and ended with fetch/cleanup
+errors. Approved outside-sandbox execution passed fully and confirmed cleanup.
+No product code/migration changed; earlier build/browser evidence retains its
+dated scope. Real URL expiry, true contention, full Reflect, backup/restore,
+second invitation and physical phones remain open. No optimization was justified.
+No staging, commit, deployment, personal migration or writing activation occurred.
+
+## Catalog publication local checks — 2026-11-11
+
+Developer approved repository implementation. Migration 003 is prepared only;
+001/002 were not reapplied. Pre-existing work remains preserved. No hosted writes,
+authored publication, personal migration, deployment or writing activation.
+
+Bundled Node was invoked directly because the first PATH entry is an unavailable
+nvm shim. `node --test tests/catalog-publication.test.mjs tests/catalog-routes.test.mjs tests/content-admin.test.mjs tests/content-admin-routes.test.mjs` passes
+11/11. Real local SQL covers publication, stale edits, exact retry, v1/v2 content,
+reader denial, published-image RLS, withdrawal/restore. Transpiled reader/media
+routes verify identity, caller-token transport, no-store and targeted signing.
+Storage tables are stand-ins, not hosted proof.
+
+`node --test tests/content-admin.browser.mjs` passes 9/9 in isolated Chromium.
+The new test loses a publication response, reloads, retries the exact operation,
+then withdraws while retaining version links. Existing editor/Media/recovery cases
+pass. Glass still measures 25px from outer edge and 704px high. Sandbox loopback
+denial required approved outside-sandbox execution.
+
+Production `node node_modules/next/dist/bin/next build --webpack` passes including
+TypeScript. Initial Turbopack worker found the nvm shim; the first webpack build
+hit sandbox mkdir EPERM. Final run used bundled Node first on PATH outside the
+sandbox. Production TypeScript and focused lint pass; full tsconfig still reports
+cloudflare:workers. Chapter compiler checks 33 sources/0 quests. No optimization
+was justified. Full Reflect presentation, true contention, real URL expiration,
+hosted policies, second invitation and physical phones remain unverified.
+
+Additional production-CSS browser selections pass: Article exact-version reload
+and targeted image retry; new Chapter reading/reload without creating evidence;
+existing Chapter run reload and exact-definition hook resolution. Together with
+the prior 9-case Admin run, these cover 12 distinct cases (not one full 12-case
+invocation). The reader fixture initially ignored query parameters, then a test
+incorrectly assumed a region role; both fixture assertions were corrected.
+Final focused selection of Chapter/Article/publication passes 3/3, followed by
+the existing-run case passing 1/1. The reader waits for local hydration; completed
+runs are protected and new previews do not bypass Chapter delivery budgets.
+
+## Article cover-first order - 2026-11-11
+
+Developer approved cover image, title, summary, body in both Article editing and
+reading preview. Reordered article-editor.tsx without changing saved data or CSS.
+Extended the existing isolated new-content browser journey to fill/save/reload
+Summary, verify editor and preview DOM order and measure ascending visible top
+positions for image/title/summary. The first run exposed an ambiguous filled
+Summary textarea label; explicit aria-label fixes it.
+
+Final `node node_modules/next/dist/bin/next build` passes including TypeScript.
+Focused ESLint on article-editor.tsx and content-admin.browser.mjs passes.
+With installed Node v24.22.1, Playwright cache and `CIRCLE_PRODUCTION_CSS=1`,
+`node --test --test-name-pattern='new chapter glass' tests/content-admin.browser.mjs`
+passes 1/1 after the final rebuild. The synthetic 390px journey verifies actual
+image loading, saved paragraph/summary restoration and visible cover-first order.
+Screenshot outputs/new-article-glass.png was inspected. No remote writes occurred.
+The exact repository preview process was stopped and restarted from this build
+with a hidden window on port 3012; /os/admin returns HTTP 200. git diff --check
+passes. No shared geometry, chapter definition or personal record changed;
+physical-phone acceptance remains manual. No commit or deployment.
+
+## New glass Chapters and Articles - 2026-11-11
+
+Developer confirmed Media review and approved the editor/images proposal with
+glass design for newly created Chapters and Articles only. Existing published
+JSON, drafts and runs are not converted. New blank/template chapters and new
+independent copies carry glass-v1; revisions of existing definitions retain
+their design. Images retain stable asset references, alternative text, captions
+and natural proportions. Articles use the existing account/tab recovery and
+revision-checked shared save protocol, separated from Chapter lists.
+
+Commands use installed Node v24.22.1 on PATH and the installed Playwright cache:
+
+- `node node_modules/next/dist/bin/next build`: final pass including TypeScript.
+- Focused ESLint on article-editor, content-media, account-admin, chapter-editor,
+  chapter-authoring, chapter-player and new/updated tests: pass.
+- `node --test tests/content-design.test.mjs tests/content-admin.test.mjs tests/content-admin-routes.test.mjs tests/chapter-engine.test.mjs`:
+  23/23 pass. Tests verify legacy design preservation, new-copy defaults, image/
+  design Markdown round trips, invalid alt rejection and existing access/retry/
+  immutability behavior.
+- `node scripts/chapter-compiler.mjs --check`: 33 sources/0 quests pass.
+- With `CIRCLE_PRODUCTION_CSS=1`, `node --test tests/content-admin.browser.mjs`:
+  8/8 pass. New 390px journey selects/saves a Chapter image, checks the glass
+  marker, creates an Article paragraph/cover/caption, saves, reloads and verifies
+  actual image loading and restored text. Seven existing Media/account cases
+  pass. All transport is intercepted and synthetic; no hosted records are written.
+- With compiled CSS, `node --test --test-name-pattern="tool consistency|shared App Box geometry|reading-only Chapter" tests/writing.browser.mjs`:
+  7/7 pass. Reference Note, Deep Thoughts, Habit and Protocol remain 648px with
+  24px content gaps at 360/390px; matrix includes 360/390/416px. Legacy reading
+  cover/info retain their type scale.
+- After the final glass-only cover anchor correction and production rebuild,
+  `node --test --test-name-pattern='new chapter glass' tests/content-admin.browser.mjs`:
+  1/1 pass; cover title top/left 25px from the outer frame (24px inside border),
+  704px frame at 390x900. Screenshots inspected under ignored outputs:
+  new-chapter-glass.png and new-article-glass.png. Full browser logs are
+  content-glass-admin-final.log and content-glass-regression-final.log.
+
+Initial sandbox loopback access failed; outside-sandbox checks pass. A sandbox
+build stalled in CSS workers and was stopped; the outside-sandbox build passes.
+Browser testing caught an ambiguous textarea label; screenshot review caught
+missing Admin field styling and inherited old-cover spacing. These were fixed
+and affected checks repeated. No measured optimization justified further changes.
+
+No physical-phone or new hosted Article/image acceptance, broad-suite result,
+publication, migration, deployment or writing-sync activation is claimed. Existing
+session-expiry, backup/restore, contention and other device gaps remain. Catalog
+publishing, reader/asset audience and withdrawal require their own reviewed slice.
+
+## Media controls and gallery - 2026-11-11
+
+**Approval/scope.** Developer approved the concrete Media control/gallery
+proposal before edits. Existing uncommitted Admin code was preserved. The slice
+changes account-admin.tsx, Media-only os-app.css selectors, the Admin browser
+harness and continuity records. No server route, Storage policy, personal data,
+publication or writing-sync activation changed.
+
+Choose file opens the native picker and shows the filename plus accepted formats
+and size. Upload image is a distinct Orange primary action, enabled only with
+an image and nonblank alternative text. A separate busy flag prevents duplicate
+submits even if a gallery copy action changes the status message. Upload failure
+retains the same bytes, reference and description; success clears the actual
+file input/state, announces success and refreshes the gallery. Per-image copy
+actions retain full accessible descriptions. Previews crop within square tiles;
+captions clamp to two lines. A missing signed preview keeps a square placeholder.
+
+**Final checks.** Installed Node v24.22.1 with its directory first on PATH;
+PLAYWRIGHT_BROWSERS_PATH points to the installed ms-playwright cache. Browser
+checks use CIRCLE_PRODUCTION_CSS=1 and the final Next-generated CSS:
+
+- `node node_modules/next/dist/bin/next build`: pass, including TypeScript.
+- `node --test tests/content-admin.browser.mjs`: **7/7 pass**. Four Media
+  journeys cover native pointer picker opening, Tab/focus outline, selected long
+  filename, disabled blank description, distinct button styling, 44px targets,
+  busy-state duplicate prevention, copy action during upload, retained retry
+  payload, success reset, same-file reselection and gallery reload. The earlier
+  three Admin draft/account-scope cases also pass. All HTTP is intercepted with
+  synthetic accounts/images; external requests are blocked and no uncaught
+  browser errors occur. This is UI evidence, not a new hosted upload check.
+- `node --test --test-name-pattern="tool consistency|shared App Box geometry" tests/writing.browser.mjs`:
+  **5/5 pass**, after the final scoped button-weight correction/rebuild. Matrix
+  covers six tools/supporting views at 360/390/416px. Note, Deep Thoughts, Habit
+  and Protocol retain 648px frames, 24px content gaps and no nested tool scrolling
+  in the reference measurements at 360/390px. Shared tokens are unchanged.
+- `node node_modules/eslint/bin/eslint.js app/os/admin/account-admin.tsx tests/content-admin.browser.mjs`:
+  pass. Standalone `tsc --noEmit --incremental false -p tsconfig.vercel.json` also
+  passed before the final CSS-only adjustment. Final build rechecks TypeScript.
+- `git diff --check`: pass.
+
+| Viewport | Columns | Square thumbnail edge | Gallery width |
+| --- | --- | --- | --- |
+| 360px | 3 | 101.33px | 328px |
+| 416px | 3 | 120px | 384px |
+| 640px | 4 | 102.5px | 446px |
+| 1280px | 4 | 290.5px | 1198px |
+
+The 640px viewport retains the existing narrow app shell; the desktop shell
+expands at its existing breakpoint. Every gallery fills its shell's available
+width within the existing gutters, with no horizontal document overflow. Final
+360px/1280px screenshots were visually inspected. Ignored evidence:
+`outputs/admin-media-{360,416,640,1280}-production.png`,
+`outputs/media-admin-production.log`, `outputs/media-tool-geometry-production.log`.
+
+**Attempts/limits.** Original three-case baseline passes outside the sandbox;
+inside it Chromium receives ERR_NETWORK_ACCESS_DENIED. Turbopack's CSS worker
+also fails to connect inside the sandbox; the approved outside-sandbox build
+passes. Initial focus and shell-border assumptions were corrected in the
+harness, which now includes the real globals/app-shell structure. Headless
+keyboard picker activation was intermittent in an earlier fixture run; final
+picker opening uses pointer activation and Tab focus is separately verified.
+Synthetic SVG fixtures were corrected to fill their declared aspect ratios.
+Visual review found the existing Admin font shorthand overriding the new action
+weight; scoped specificity was corrected and both final browser selections were
+rerun. No additional measured optimization was justified. Physical-phone/native
+picker acceptance, other browser engines and broad-suite acceptance remain open.
+
+The exact existing local Next process on port 3012 was identified/restarted from
+the final passing build. Fresh /os/admin returns HTTP 200 and linked production
+CSS contains os-admin-media-grid. This refreshed only the local preview; no
+deployment or commit occurred. Developer phone review is the next acceptance.
+
+## Hosted Content Admin setup - 2026-11-11
+
+**Approval and preflight.** Developer approved hosted policy review, migration,
+two requested account grants, the second account's invitation, and temporary
+synthetic verification/cleanup. The authenticated CircleOS SQL console was used
+through the computer-use skill. A read-only query confirmed all four checks:
+new tables absent, new functions absent, bucket absent, and no existing Storage
+object policies. Earlier user SQL queries were preserved in their original tab.
+No credential, private writing, account address/UUID or signed URL is recorded.
+
+**Applied changes.** `202611110001_content_admin.sql` succeeded transactionally.
+The first hosted check then found missing service-role grants for bootstrap and
+cleanup. Its cleanup stopped at that permission error; the two created synthetic
+Auth accounts were identified by the exact fixture format/recent creation and
+removed. No draft or image had been created. The already applied foundation was
+preserved; `202611110002_content_admin_operations.sql` separately added trusted
+bootstrap/inspection/cleanup grants and succeeded. Browser permissions remain
+unchanged; the service role receives no publication/update grants.
+The initial cleanup failure masked the first grant failure; the live script now
+attempts every cleanup step even after an individual error, as recorded in the
+completed hosted-session handoff.
+
+The existing verified account received its content grant. Supabase accepted an
+email invitation for the second requested account, whose grant remains gated by
+email verification. A final metadata check confirmed both grants, the first
+verified and the second invited/unverified. Receipt/delivery and first sign-in
+on the second account remain user acceptance, not a claim from the API response.
+
+**Final checks.** With bundled Node on PATH:
+
+- `node --env-file=.env.local scripts/check-content-admin-live.mjs --write --app`:
+  **38 functional checks passed**, followed by exact fixture cleanup and absence
+  checks. It starts a separate built Next server on an ephemeral loopback port;
+  that server stops afterward. Real Supabase accounts/tokens, RPC/RLS and Storage
+  verify admin allow, ordinary/anonymous denial, draft save/reload/exact replay,
+  stale-edit rejection, private bucket metadata, image upload/read/signing,
+  overwrite/public-read denial and grant revocation. Actual production HTTP
+  routes verify status, forged-cookie denial, draft save/retry/reload, Media
+  listing and signed previews, same-byte upload retry, changed-byte rejection,
+  and ordinary upload denial. No browser mocking substitutes for these backend
+  checks. The preceding direct-only run passed 27 checks and cleaned its fixtures.
+- `node --test tests/content-admin.test.mjs tests/content-admin-routes.test.mjs tests/quotes.test.mjs tests/admin-access.test.mjs`:
+  **18/18 pass**, including the operations grant regression.
+- Focused ESLint for the live script and migration tests passes. `git diff --check`
+  passes. Earlier three Admin browser cases/types/builds retain their dated scopes;
+  no new full-suite or physical-phone result is claimed.
+
+Both successful runs removed their exact synthetic accounts, grant, draft,
+receipts, asset metadata and image. Post-cleanup checks found no matching rows
+or image/account resources. The final Auth inventory found zero `admin-check-*`
+accounts, including the first failed attempt. No authored content was published,
+personal records changed, writing activated, deployment made or commit created.
+
+**Remaining limits.** Second invitation acceptance, actual session revocation,
+signed-preview expiry, real database contention, operational backup/restore,
+production-store/device recovery and physical phones remain unverified. Existing
+CSS assertions and broader beta gaps remain separate. The owner's long-running
+local preview initially returned 404 for the new Admin endpoint. After the final
+Next build passed, its exact repository-owned `next start -p 3012` process was
+restarted with a hidden window and output under ignored `outputs/`. A fresh
+HTTP check returned the expected unauthenticated 403. Refreshing the browser
+loads the new UI. No hosted deployment or personal-record test was performed.
+
+## Account Content Admin foundation - 2026-11-11
+
+**Continuation: account-switch readiness check.** Review identified that draft
+JSON decoding could finish after the request-level scope check and cache data
+under a newly selected account. Admin now captures its mount's owner scope,
+rechecks it after decoding and replay receipts, and refuses stale recovery writes.
+Media state updates also recheck the captured scope. The regression harness
+pauses the decoded draft body, switches accounts, then releases it; no old draft
+enters the next account cache. All three Admin browser cases pass after the fix,
+including the existing 360px/1280px save/reload/Media journeys. The 17 focused
+SQL/route/access checks pass again; final type and focused lint checks pass.
+No shared geometry changed. Existing CSS-only assertion failures remain separate.
+
+Read-only hosted checks requested zero table rows and received HTTP 404 for all
+five new Admin tables. Account metadata checks confirmed the first requested
+account exists with verified email; the second requested account does not yet
+exist. Addresses, UUIDs and credentials are not recorded here. No table, bucket,
+role, account or invitation was created. The Opera connector was unavailable;
+no SQL-console connection is established. Hosted migration and invitations still
+need the separately reviewed scope. No deployment or writing activation occurred.
+
+Developer approved the concrete first repository implementation proposal. Started
+main/9f2425f with a clean tree; no commit/deployment/hosted setup. Details and
+remaining scope are in [Content Admin setup](CONTENT_ADMIN_SETUP.md).
+
+The isolated browser harness mounts the real AccountAdmin/ChapterEditor, auth
+context, account scope and Admin CSS. It supplies a synthetic token and intercepts
+all Admin HTTP; external requests are blocked. Chromium at 360x900 and 1280x900
+verifies online save, failed save with edited title retained, reload/reopening
+the recovered draft, Media entry and a 44px upload button. Both cases pass.
+This is mock-transport browser evidence, not hosted Supabase acceptance.
+
+Focused commands use bundled Node with its bin directory first on PATH:
+
+- `node --test tests/content-admin.test.mjs tests/content-admin-routes.test.mjs tests/quotes.test.mjs tests/admin-access.test.mjs`: 17/17 pass. Real PGlite migration/RLS/RPC execution covers admin/ordinary/missing identity, grant denial/removal, exact retry receipts, changed-payload/stale-edit rejection and version/asset mutation denial. Actual transpiled route handlers cover old-cookie/forged/unconfirmed denial, live role rechecks, invalid MIME rejection and byte-compared immutable upload retry. Storage tables are local stand-ins, not the hosted service.
+- `node --test --test-name-pattern='editing a published chapter' tests/chapter-authoring.test.mjs`: 1/1 pass; source version/Pages stay independent.
+- `node --test tests/content-admin.browser.mjs`: 2/2 pass with `PLAYWRIGHT_BROWSERS_PATH` pointing to installed Chromium. Network-dependent loopback checks needed approved execution outside the sandbox.
+- `node node_modules/typescript/bin/tsc --noEmit --incremental false -p tsconfig.vercel.json`: pass.
+- `node node_modules/eslint/bin/eslint.js app/os/admin app/os/auth/account-menu.tsx tests/content-admin*.mjs`: final check recorded with the slice; no shell-wide lint pass is claimed.
+- `node scripts/chapter-compiler.mjs --check`: 33 chapter sources and zero quests checked. This command's source inventory differs from bundled runtime versions.
+- `node node_modules/next/dist/bin/next build` and `node node_modules/vinext/dist/cli.js build`: production builds pass; Vinext retains its existing unknown-route classification notice.
+
+Initial failures: the shell Node shim could not locate Node 22; bundled Node
+works. Turbopack's CSS workers needed the real runtime on PATH and approved
+execution outside the sandbox. The initial browser harness emitted an untransformed
+JSX syntax error; using the existing createElement harness pattern corrected it.
+The migration test caught an ambiguous PL/pgSQL argument, which was qualified
+and rechecked. Two unchanged CSS-only typography assertions in the full chapter
+authoring test file still fail; the stylesheet is unchanged by this slice.
+No full-suite pass is claimed. No measured performance problem justified optimization.
+
+Local-first personal stores, 06:00 attribution, immutable existing chapters/runs,
+readings and shared tool geometry are untouched. New published edits prepare a
+new version; account catalog code cannot invoke personal run-reset/door publication.
+Legacy local drafts are preserved without automatic import. Remote migration,
+actual Storage access/retry, signed-preview expiry, session revocation, true lock
+contention, backup/rollback and physical phones remain unverified. Existing
+writing/sync/ResizeObserver/device gaps carry forward; writing activation is off.
+
 ## Protocol checkbox-only action and liquid words - 2026-11-11
 
 **Approval/change.** Developer rejected whole-term word tapping as approved

@@ -7886,6 +7886,127 @@ body:has(.os-splash) .os-header .os-account-control { visibility: hidden; }
   line-height: 1.35;
 }
 
+.circle-os .os-admin-file-picker {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.circle-os .os-admin-file-picker > span {
+  flex: 1 1 120px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.circle-os .os-admin-media-upload input {
+  font-size: var(--os-type-secondary);
+  min-width: 0;
+}
+
+.circle-os #admin-media-file-help {
+  color: var(--c-neutral-400);
+  font-size: var(--os-type-meta);
+  margin: 0;
+}
+
+.circle-os .os-admin-media .os-admin-choose-file,
+.circle-os .os-admin-media .os-admin-media-submit,
+.circle-os .os-admin-media-item button {
+  border: 1px solid rgb(241 239 232 / 0.3);
+  border-radius: var(--r-md);
+  color: var(--c-bone);
+  font-size: var(--os-type-secondary);
+  font-weight: var(--os-weight-bold);
+  padding: var(--space-2) var(--space-4);
+}
+
+.circle-os .os-admin-choose-file,
+.circle-os .os-admin-media-item button {
+  background: transparent;
+}
+
+.circle-os .os-admin-media .os-admin-media-submit {
+  background: var(--c-orange);
+  border-color: var(--c-orange);
+  color: var(--c-ink);
+}
+
+.circle-os .os-admin-media button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.circle-os .os-admin-media button:focus-visible {
+  outline: 2px solid var(--c-bone);
+  outline-offset: var(--space-1);
+}
+
+.circle-os .os-admin-media-grid {
+  display: grid;
+  gap: var(--space-6) var(--space-3);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: var(--space-6);
+}
+
+.circle-os .os-admin-media-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  min-width: 0;
+}
+
+.circle-os .os-admin-media-thumbnail {
+  align-items: center;
+  aspect-ratio: 1;
+  background: var(--c-ink);
+  border-radius: var(--r-md);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.circle-os .os-admin-media-thumbnail img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.circle-os .os-admin-media-thumbnail > span,
+.circle-os .os-admin-media-item figcaption {
+  color: var(--c-neutral-400);
+  font-size: var(--os-type-meta);
+  overflow-wrap: anywhere;
+}
+
+.circle-os .os-admin-media-thumbnail > span {
+  padding: var(--space-2);
+  text-align: center;
+}
+
+.circle-os .os-admin-media-item figcaption {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.circle-os .os-admin-media-item button {
+  font-size: var(--os-type-meta);
+  margin-top: auto;
+  padding: var(--space-1);
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .circle-os .os-admin-media-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 .circle-os .os-admin-icon-actions {
   display: flex;
   gap: var(--space-1);

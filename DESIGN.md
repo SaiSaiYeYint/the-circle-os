@@ -121,7 +121,7 @@ Main/Sub carry roughly two-to-one visual weight, not reserved blank space on
 Cover or writing pages. Content-heavy Routine/Protocol tracks size to real rows.
 The frame stays still and paints one uninterrupted shape while Pages move.
 
-Compact/chapter contexts retain their shared default minimum and existing
+Existing unmarked chapter contexts retain their shared default minimum and existing
 tokens unless explicitly adopted into the opened-tool contract. Do not copy the
 six-tool dimensions into Reflect, chapters or Admin as an unreviewed redesign.
 The [Page standard](app/os/APP_SESSION_STANDARD.md) distinguishes those contexts.
@@ -164,3 +164,12 @@ The developer decides visual language. Installed Taste skills can improve craft
 but cannot override Circle identity, this guide or the Page standard.
 Admin previews use the production frame/anatomy and bounded parent width;
 choice options remain one full-width row each. Preview metadata does not call AI.
+
+Newly created Chapters and Articles use the current glass frame, role typography,
+24px anchors and focused minimum with natural downward growth. Chapters persist
+`designVersion: glass-v1`; an absent marker retains the existing design, including
+saved drafts, published versions and old runs. New blank/template chapters and
+new independent copies receive the marker. A new version of an existing chapter
+preserves its design. Previews use the same rendering path. Images retain their
+natural proportions, with alternative text and optional captions. This adoption
+does not restyle historical chapters or alter completion/answer rules.

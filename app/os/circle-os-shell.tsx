@@ -4148,7 +4148,7 @@ export function TodayExperience() {
       onNextQuestion={nextDeepThought}
       onBusyChange={setAccountThoughtBusy}
       navigation={noteOpen ? <RoutineSwipeCue back label="Note" onClick={() => changeWritingAppPage(checkInIdleApp)} /> : undefined}
-      onAdmin={() => { setAdminUnlockMode(true); setAdminCodeDraft(""); revealThoughtButton(); }}
+      onAdmin={() => { if (getAccountScope().kind === 'account') { router.push('/os/admin'); return; } setAdminUnlockMode(true); setAdminCodeDraft(""); revealThoughtButton(); }}
       onSent={() => { setHoldThoughtsAfterSend(true); }}
     />;
     if (thoughtBack.side === "quote" && legacyQuote) return <QuotePage quote={legacyQuote} feedback={legacyQuoteFeedback} onReact={reaction => { updateState(current => reactToLineSeen(current, `quote-${legacyQuote.id}`, reaction)); closeLegacyQuote(); }} />;

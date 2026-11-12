@@ -1,8 +1,12 @@
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, adminAccessTokenMatches } from "../admin-access";
 import { addQuote, readQuotes, removeQuote } from "../../quotes/quote-server";
+import { accountAdmin } from "../account-admin-server";
 
 async function authorized(request: Request, mutation = false) {
+  if (process.env.NEXT_PUBLIC_CIRCLE_AUTH_MODE === "supabase") {
+    try { await accountAdmin(request); return !mutation || request.headers.get('content-type')?.split(';')[0] === 'application/json'; } catch { return false; }
+  }
   const store = await cookies();
   if (!adminAccessTokenMatches(store.get(ADMIN_COOKIE)?.value)) return false;
   if (!mutation) return true;

@@ -269,14 +269,24 @@ progress uses chapter/version.
 
 ## Admin previews and access
 
+Newly created Chapters and Articles adopt the current glass Page design. Chapter
+definitions persist `designVersion: glass-v1`; missing markers retain the existing
+renderer. New independent copies use glass; revisions of existing chapters retain
+their design. Existing definitions, drafts and saved runs are not converted.
+The glass frame uses the shared focused minimum, 24px anchors and natural growth;
+Chapter navigation and the protected terminal swipe remain unchanged.
+
 Workshop and Button Studio use production Page anatomy and parent-bounded width.
 Choice rows stack full-width. Button Studio keeps its preview action mounted;
 Background changes the preview surface, not button lifecycle.
 
 Admin has no public tab/login link. The reserved phrase in Deep Thoughts opens
-only the password prompt; only a server-checked password unlocks the session.
+the account-checked Admin route in account mode. A permission-checked Admin
+entry also appears in that account's menu. Legacy mode retains the password
+prompt; only a server-checked password unlocks that legacy session.
 Phrase/password are intercepted before persistence. Missing/invalid server
-configuration stays locked; unauthorized direct visits return to Today.
+configuration stays locked; unauthorized account visits show a locked state
+with a return to Today, while unauthorized legacy visits return directly.
 Library group order is Foundation, Short, Guided Learning, Reflection, Information;
 hide empty groups. Matching preview versions restore position; a new one starts
 at page zero. No preview metadata calls an AI provider.

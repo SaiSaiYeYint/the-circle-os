@@ -59,7 +59,7 @@ test("every current app has a valid first-time-use starter", () => {
 
 // Sai: "we dont need v1 v2 yet. because nobody is seeing this until i release
 // v1 so everything here is v1."
-test("a published chapter opens for editing at the version it already has", () => {
+test("editing a published chapter prepares a new immutable version", () => {
   const published = chapterDraftToPreview(createChapterDraft("2026-08-01T00:00:00.000Z"));
   published.id = "published-test";
   published.version = 4;
@@ -72,7 +72,7 @@ test("a published chapter opens for editing at the version it already has", () =
   // chapter from having its questions changed under them; there is nobody on
   // the other side of these yet, and a version he never asked for is a version
   // he has to reason about.
-  assert.equal(next.chapter.version, 4);
+  assert.equal(next.chapter.version, 5);
   assert.equal(libraryItem.chapter.version, 4);
 
   // The draft is still its own row, and still opens ready to work on.

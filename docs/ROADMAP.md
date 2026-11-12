@@ -35,6 +35,7 @@ Implementation, remote setup and publication need reviewed scopes.
 | Workstream | State and practical limit |
 | --- | --- |
 | Accounts/local isolation | Implemented; hosted entry/reset/logout/offline return have recorded/developer-reported evidence. Mail, refresh/revocation, lost-device and wider-device coverage remain open. |
+| Content Admin foundation | Account grants, shared drafts and private media have bounded hosted/RPC/production-HTTP evidence. Second invitation acceptance, content images/editors, catalog publication and Explore remain pending. No deployment occurred. |
 | Existing tools and histories | Writing, Habit Record, prospective Protocol terms, Log correction/history, read-only Week/chapter/reading history delivered for bounded scopes. Six-tool local visual/interaction evidence is recorded; lived/device acceptance is separate. |
 | Writing cloud foundation | Original and resolution migrations applied; bounded hosted two-account and separate-test-store reload checks recorded. Product activation remains off. |
 | General safe sync and operations | Other domains, production writing-store/device recovery, personal migration, backup/restore, deletion and protected admin operations remain incomplete. |

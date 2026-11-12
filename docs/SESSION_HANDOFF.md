@@ -1,47 +1,99 @@
 # Session handoff
 
-## Content Admin planning and Git delivery - 2026-11-11
+## Hosted catalog acceptance — 2026-11-12
 
-**Approval/Git.** Developer approved the revised Admin-first documentation scope
-and requested pushing everything to Git afterward. Starting main/eb38011;
-main was already 15 commits ahead of its origin tracking ref. Existing extensive
-application/test changes, concepts and documentation cleanup are included in
-the requested delivery. No new application edit, hosted migration, sync
-activation, content publication or deployment action is part of this task.
+**Approval/Git.** Developer approved extending the runner and hosted synthetic
+testing/cleanup after reporting successful manual migration 003 application.
+main/9f2425f, all pre-existing changes preserved; no staging/commit/deployment.
 
-**Direction.** [Content Admin plan](CONTENT_ADMIN_PLAN.md) records account-bound
-Admin privileges, shared Supabase catalog/media, chapters and articles/blogs
-with images, and adoptable habit/Protocol templates. Admin is first; Explore
-consumption follows. This supersedes the prior after-beta chapter-publishing
-deferral. Critical data-safety gates and other beta requirements remain.
+**Prepared.** Catalog publishing snapshots saved online drafts with revision
+checks, next-version confirmation and durable account/tab pending operations.
+Transactional SQL preserves versions/images and withdrawal state; exact links
+remain readable by verified signed-in accounts. Restore is explicit. Reader
+images use targeted caller-token signing. New Chapter links preview without
+saving evidence or bypassing delivery budgets; unfinished runs use the local
+engine and completed runs cannot be rewritten by the reader. Reflect resolves
+exact definitions. Article IDs use draft identity. Bundled chapter IDs remain
+reserved at the application boundary; legacy import is separate.
 
-**Current versus planned.** The source has 47 distinct bundled chapters across
-56 versions and three Quests. Workshop edits/previews exist, but public publishing
-uses the legacy server and rejects account mode. Drafts are browser-local and
-Admin uses a separate password/cookie. Article/image/template catalog support
-is planned. Quotes already use a separate Supabase catalog. The plan keeps
-published chapters and assets immutable and adopted personal copies independent
-of later catalog edits; exact storage/access/adoption contracts need review.
+**Checks.** 11 focused SQL/route cases pass. Production webpack build/TypeScript
+pass. Original 9 Admin cases pass with production CSS. Added Article reload/image
+retry and Chapter preview/no-evidence checks pass. A fixture query-routing bug
+and incorrect test region-role assumption were corrected. Compiler: 33 sources/
+0 quests. No shared geometry tokens changed; no optimization was justified.
 
-**Documentation.** Product, Roadmap, Work Plan, architecture, decisions and
-README align to the new priority. The earlier cleanup remains verified: eight
-retired active documents, 21 archival snapshots, preserved journey prose,
-1,060 then-current local links/399 fragments and unchanged pre-existing code.
-Its detailed evidence remains in the cleanup archive and repository history.
-Current-task records now focus on this job rather than accumulating old entries.
+**Hosted result.** The extended script with --write --app --catalog passes 62
+functional checks using real Supabase and isolated production Next HTTP handlers.
+Chapter v1/v2 immutability, Article reading, reader-image access, signed-out denial,
+retry/conflict, withdrawal/restore and grant removal pass. Exact cleanup and
+absence checks pass for both accounts, drafts, versions/references, image and
+receipts. No real authored content was published. Syntax/lint, 3 focused local
+cases and diff checks pass. Sandbox fetch denial required approved execution
+outside the sandbox. See the dated journey entry for details.
 
-**Checks/Gaps.** Local document file links and heading fragments pass; git diff
---check passes. The initial credential-pattern scan found no matches. Commit
-and push of all current work are authorized; the exact delivery result is in
-Git history and the final chat report. No fresh runtime acceptance is claimed.
-Prior tool/Protocol checks remain dated evidence. Physical phones/keyboards,
-other engines, ResizeObserver notices, the Habit source assertion, production
-writing-store recovery, hosted session expiry/revocation, true lock contention,
-backups/deletion and wider sync remain gaps. Writing activation stays off.
-The latest Protocol lived review remains outstanding unless separately completed.
+**Gaps/next.** Migration 003 is operationally verified; never reapply 001/002/003.
+Added existing-run reload and
+exact-definition resolution pass, as do Article reload/image retry and new Chapter
+preview/no-evidence checks (12 distinct browser cases across selections). Full
+Reflect presentation, real URL expiry/contention, second invitation and physical
+phones, backup/restore and true contention remain open. Next review the local
+Catalog publishing flow and choose the first authored item; deployment remains
+separate. No product code/migration was changed in this verification pass.
+Nothing authored
+was published and writing activation is unchanged. See journey evidence.
 
-**Invariants/Next.** Runtime/data are unchanged by the plan. Preserve local-first
-acknowledgements, ownership, 06:00 days, immutable chapters/readings and old runs.
-Finish commit/push, then prepare the first bounded account-Admin/catalog/media
-proposal with exact source/test/SQL/config files and synthetic/hosted checks.
-Implementation and remote setup require that review. Reflect remains deferred.
+## Previous editor snapshot (retained evidence)
+
+## New glass Chapters and Articles — 2026-11-11
+
+**Approved follow-up.** Developer approved cover-first Article ordering in both
+editor and reading preview: cover image, title, summary, body. article-editor.tsx
+and its focused browser case changed. Explicit Summary accessible labeling fixes
+a filled/reloaded textarea lookup found by that case. Final production build with
+TypeScript, focused lint and compiled-CSS order/save/reload journey pass (1/1).
+Screenshot inspected; local preview restarted from the final build at port 3012,
+Admin HTTP 200. No shared CSS, chapter data, publication or deployment changed.
+
+**Approval/Git.** Developer confirmed Media review and explicitly approved the
+reviewed editor/images proposal with glass only for newly created Chapters and
+Articles. main/9f2425f; all pre-existing Admin changes preserved. No staging,
+commit, push, hosted migration or deployment.
+
+**Implemented.** New blank/template chapters and independent copies persist
+designVersion glass-v1. Unmarked chapters, saved drafts, published versions and
+existing-version edits retain their appearance. Shared ChapterPlayer gates the
+new glass styling; schema, validation and Markdown preserve design and image
+references. Image picking uses the existing private Media library, alt text,
+optional captions and signed previews with refresh/retry. Articles use the same
+account/tab draft/recovery protocol through a separate typed envelope and editor:
+title, summary, cover and movable heading/paragraph/image blocks. Preview is
+read-only and uses the glass design. Account Chapter lists filter Article drafts.
+Article form changes lock during save; invalid required image descriptions block
+save. Published catalog operations remain disconnected.
+
+**Verification.** Next production build with TypeScript and focused ESLint pass.
+23 focused model/SQL/route tests pass; compiler check passes 33 sources/0 quests.
+Compiled-CSS Admin suite passes 8/8 and geometry/tool/legacy chapter checks 7/7.
+The final glass-only cover anchor fix was rebuilt and its new-content browser
+journey rechecked: text begins 25px from outer top/left (24px within the border),
+704px frame at 390x900. Prior reference tools measure 648px/24px at 360/390px.
+Screenshots were inspected. Exact commands and attempts are in
+[evidence](USER_JOURNEY_TESTING.md#new-glass-chapters-and-articles---2026-11-11).
+
+**Attempts/gaps.** Sandbox browser loopback denial and stalled CSS-worker build
+required outside-sandbox execution. Browser review corrected an ambiguous
+textarea label, field styling and inherited old-cover top spacing. No broad
+suite, physical phone, new hosted Article save/upload, true concurrency or
+signed-link-expiry acceptance is claimed. Existing access/session/recovery and
+backup gaps remain in [setup](CONTENT_ADMIN_SETUP.md). Both hosted migrations
+are already applied; never reapply them. Second invitation verification remains
+manual. Media has developer review; new editor/device acceptance remains open.
+
+**Invariants/records.** Existing published JSON and chapter answers/runs are
+untouched. Glass uses shared tokens with scoped selectors. No Circle-day,
+personal evidence, reading edition, budget, shared tool token or writing
+activation changed. Design, Page standard, decision log, plan and current task
+record the approved boundary. No measured optimization was justified.
+
+**Next.** Review the new local editor and previews; prepare the separate catalog
+publishing/read-access/withdrawal proposal. No authored publication is authorized.

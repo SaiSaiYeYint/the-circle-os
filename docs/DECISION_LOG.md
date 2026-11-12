@@ -44,6 +44,34 @@ Code, hosted setup, personal migration and publication need their own scopes.
 
 ## Current decisions and reasons
 
+On 2026-11-11 the developer approved local catalog publication, signed-in reading/
+images, withdrawal and explicit restore. Exact old links remain readable by any
+verified signed-in account, including first-time readers. Reason: preserve old
+runs/references without per-reader entitlements. Publishing while withdrawn does
+not restore discovery. Hosted migration, synthetic checks, authored publication
+and deployment remain separate approvals.
+
+On 2026-11-11 the developer reviewed the Media page and approved chapter/article
+editing, image selection/preview and glass design for newly created content.
+Existing chapters must retain their design. Persist an explicit design marker on
+new chapters rather than inferring appearance from dates or changing old data.
+New independent copies use glass; existing-version edits retain their design.
+Articles begin with glass. This reviewed repository slice includes focused tests
+and continuity records; catalog publishing remains a separate slice.
+The developer subsequently approved Article ordering as cover image, title,
+summary, then body, in both the editor and reading preview.
+
+The developer subsequently explicitly approved hosted migration, both requested
+content-admin grants, the second account's invitation and bounded synthetic
+verification/cleanup. Both migrations were applied on 2026-11-11. This approval
+does not include deployment, publication, personal migration or writing activation.
+
+The developer approved the first bounded Content Admin repository implementation
+in chat on 2026-11-11: account permission, shared chapter drafts/recovery,
+catalog/media foundation, Quotes integration and verification records. Hosted
+setup, publication, deployment and migration of personal/legacy drafts remain
+outside that approval. See [prepared implementation and limits](CONTENT_ADMIN_SETUP.md).
+
 | Decision | Current rule and reason | Owning reference |
 | --- | --- | --- |
 | Product and audience | Support chosen action/reflection without scoring a person's worth. Founder audience assumptions remain hypotheses, not research. | [Product](PRODUCT.md), [audience](AUDIENCE_AND_PURPOSE.md) |

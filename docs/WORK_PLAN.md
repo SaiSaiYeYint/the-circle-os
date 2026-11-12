@@ -19,7 +19,7 @@ Reflect implementation is explicitly deferred.
 
 | Order | Work | Current limit and next review |
 | --- | --- | --- |
-| 0 | Content Admin/catalog/media | New first priority: account-bound permissions, shared drafts/versions and images, then chapter/article and habit/Protocol editors. Explore consumption/adoption follows; exact implementation scope pending. |
+| 0 | Content Admin/catalog/media | Account permissions, shared drafts and private media now have bounded hosted checks. Second invitation acceptance is pending. Review chapter/article image placement and publication, then habit/Protocol editors; Explore consumption/adoption follows. |
 | 1 | Critical journey and current-tool acceptance | Preserve latest local tool/Protocol evidence. Reproduce open defects against current code; distinguish old fixture failures from current app defects. Phone keyboard/caret, other engines, ResizeObserver and the unrelated Habit source assertion remain gaps. |
 | 2 | Production writing recovery and activation readiness | Both migrations and bounded hosted resolution/test-store checks exist. Review production writing-store reload/restart, offline load, eviction/recovery, session expiry/revocation and actual phones before any activation proposal. Do not reapply migrations. |
 | 3 | Remaining record sync and operating recovery | Review per-domain ownership, revisions, atomic local/outbox writes, exact receipts, conflicts, deletion, backup/restore and admin/log access. Personal import needs its own owner mapping, backup and rollback approval. |
